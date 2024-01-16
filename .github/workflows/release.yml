@@ -1,0 +1,40 @@
+name: Publish OpenAPI schema
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 * * * *"
+jobs:
+  build:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Commit latest openapi schema
+        working-directory: ./
+        run: |
+          # Pull the spec from the API (URL subject to change)
+          curl -H "Accept: application/json" \
+          ${{ secrets.API_URL }} \
+          -o openapi.json
+
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./openapi.json
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update schema: openapi.json"
+
+          cat openapi.json | yq -P > openapi.yaml
+          git add ./openapi.yaml
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update schema: openapi.yaml"
+          git remote set-url origin https://onlineornot:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push origin main
