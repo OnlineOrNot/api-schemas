@@ -707,6 +707,124 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages:
+    post:
+      tags:
+        - Status Pages
+      description: Create an OnlineOrNot Status Page
+      security:
+        - api_token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the Status Page
+                  example: OnlineOrNot
+                subdomain:
+                  type: string
+                  pattern: ^\w(?:[\w-]{0,61}\w)?$
+                  description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
+                  example: status
+                components:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  description: The components that whose status be displayed on your status page
+                  example:
+                    - API
+                    - Website
+                custom_domain:
+                  type: string
+                  format: uri
+                  description: The custom domain your status page is hosted at. For example "status.yourdomain.com"
+                  example: status.yourdomain.com
+                password:
+                  type: string
+                  description: The password that will be required to view your status page
+              required:
+                - name
+                - subdomain
+                - components
+      responses:
+        "200":
+          description: Create a new OnlineOrNot Status Page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: Name of the Status Page
+                        example: OnlineOrNot
+                      subdomain:
+                        type: string
+                        pattern: ^\w(?:[\w-]{0,61}\w)?$
+                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
+                        example: status
+                      custom_domain:
+                        type: string
+                        format: uri
+                        description: The custom domain your status page is hosted at. For example "status.yourdomain.com"
+                        example: status.yourdomain.com
+                    required:
+                      - id
+                      - name
+                      - subdomain
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/heartbeat/{heartbeat_id}:
     get:
       tags:
