@@ -21,7 +21,7 @@ paths:
   /v1/tokens/verify:
     get:
       tags:
-        - Tokens
+        - tokens
       security:
         - api_token: []
       description: Verify a token
@@ -142,7 +142,7 @@ paths:
   /v1/tokens/permissions:
     get:
       tags:
-        - Tokens
+        - tokens
       security:
         - api_token: []
       description: Retrieve a token's permissions
@@ -210,7 +210,7 @@ paths:
   /v1/checks:
     get:
       tags:
-        - Checks
+        - checks
       description: List all checks
       security:
         - api_token: []
@@ -348,7 +348,7 @@ paths:
           description: Internal Server Error
     post:
       tags:
-        - Checks
+        - checks
       description: Create a check
       security:
         - api_token: []
@@ -535,7 +535,7 @@ paths:
   /v1/checks/{check_id}:
     get:
       tags:
-        - Checks
+        - checks
       description: Retrieve a check
       security:
         - api_token: []
@@ -635,7 +635,7 @@ paths:
           description: Internal Server Error
     delete:
       tags:
-        - Checks
+        - checks
       description: Delete a check
       security:
         - api_token: []
@@ -710,8 +710,8 @@ paths:
   /v1/status_pages:
     post:
       tags:
-        - Status Pages
-      description: Create an OnlineOrNot Status Page
+        - status-pages
+      description: Create a status page
       security:
         - api_token: []
       requestBody:
@@ -828,7 +828,7 @@ paths:
   /v1/heartbeat/{heartbeat_id}:
     get:
       tags:
-        - Heartbeats
+        - heartbeats
       description: Send a heartbeat
       parameters:
         - schema:
@@ -846,7 +846,7 @@ paths:
           description: Internal Server Error
     post:
       tags:
-        - Heartbeats
+        - heartbeats
       description: Send a heartbeat
       parameters:
         - schema:
