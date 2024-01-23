@@ -216,17 +216,14 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: number
-            minimum: 1
-            default: 1
+            type: string
             description: Page number of paginated results.
             example: 1
           required: false
           name: page
           in: query
         - schema:
-            type: number
-            default: 20
+            type: string
             description: Number of items per page.
             example: 20
           required: false
@@ -267,7 +264,7 @@ paths:
                             - OFFLINE
                           description: Status of the check
                           example: ONLINE
-                        lastQueued:
+                        last_queued:
                           type: string
                           description: Last time the check was queued
                           example: "2021-01-01T00:00:00.000Z"
@@ -276,7 +273,7 @@ paths:
                         - name
                         - url
                         - status
-                        - lastQueued
+                        - last_queued
                   result_info:
                     type: object
                     properties:
@@ -367,16 +364,16 @@ paths:
                   format: uri
                   description: URL to check
                   example: https://example.com
-                textToSearchFor:
+                text_to_search_for:
                   type: string
                   description: Text to search for in the response
                   example: Example Domain
-                testInterval:
+                test_interval:
                   type: integer
                   minimum: 30
                   description: Interval in seconds between checks
                   example: 60
-                numberOfFailsBeforeAlert:
+                number_of_fails_before_alert:
                   type: integer
                   minimum: 1
                   default: 2
@@ -390,7 +387,7 @@ paths:
                   default: UPTIME_CHECK
                   description: Type of check
                   example: UPTIME_CHECK
-                alertPriority:
+                alert_priority:
                   type: string
                   enum:
                     - LOW
@@ -422,7 +419,7 @@ paths:
                 body:
                   type: string
                   example: Hello World
-                followRedirects:
+                follow_redirects:
                   type: boolean
                   default: true
                   description: Whether to follow redirects
@@ -431,16 +428,16 @@ paths:
                   type: object
                   additionalProperties:
                     type: string
-                verifySsl:
+                verify_ssl:
                   type: boolean
                   default: false
                   description: Whether to fail a check if SSL verification fails
                   example: false
-                authUsername:
+                auth_username:
                   type: string
                   description: Username to use for URLs behind HTTP Basic Auth
                   example: username
-                authPassword:
+                auth_password:
                   type: string
                   description: Password to use for URLs behind HTTP Basic Auth
                   example: password
@@ -480,7 +477,7 @@ paths:
                           - OFFLINE
                         description: Status of the check
                         example: ONLINE
-                      lastQueued:
+                      last_queued:
                         type: string
                         description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
@@ -489,7 +486,7 @@ paths:
                       - name
                       - url
                       - status
-                      - lastQueued
+                      - last_queued
                   success:
                     type: boolean
                     default: true
@@ -581,7 +578,7 @@ paths:
                           - OFFLINE
                         description: Status of the check
                         example: ONLINE
-                      lastQueued:
+                      last_queued:
                         type: string
                         description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
@@ -590,7 +587,7 @@ paths:
                       - name
                       - url
                       - status
-                      - lastQueued
+                      - last_queued
                   success:
                     type: boolean
                     default: true
@@ -723,7 +720,7 @@ paths:
                 name:
                   type: string
                   description: Name of the Status Page
-                  example: OnlineOrNot
+                  example: My Example SaaS
                 subdomain:
                   type: string
                   pattern: ^\w(?:[\w-]{0,61}\w)?$
@@ -741,8 +738,8 @@ paths:
                 custom_domain:
                   type: string
                   format: uri
-                  description: The custom domain your status page is hosted at. For example "status.yourdomain.com"
-                  example: status.yourdomain.com
+                  description: The custom domain your status page is hosted at.
+                  example: https://status.yourdomain.com
                 password:
                   type: string
                   description: The password that will be required to view your status page
@@ -768,7 +765,7 @@ paths:
                       name:
                         type: string
                         description: Name of the Status Page
-                        example: OnlineOrNot
+                        example: My Example SaaS
                       subdomain:
                         type: string
                         pattern: ^\w(?:[\w-]{0,61}\w)?$
@@ -777,8 +774,8 @@ paths:
                       custom_domain:
                         type: string
                         format: uri
-                        description: The custom domain your status page is hosted at. For example "status.yourdomain.com"
-                        example: status.yourdomain.com
+                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                        example: https://status.yourdomain.com
                     required:
                       - id
                       - name
