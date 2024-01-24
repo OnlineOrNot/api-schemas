@@ -728,15 +728,6 @@ paths:
                   pattern: ^\w(?:[\w-]{0,61}\w)?$
                   description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                   example: status
-                components:
-                  type: array
-                  items:
-                    type: string
-                  minItems: 1
-                  description: The components that whose status be displayed on your status page
-                  example:
-                    - API
-                    - Website
                 custom_domain:
                   type: string
                   format: uri
@@ -748,7 +739,6 @@ paths:
               required:
                 - name
                 - subdomain
-                - components
       responses:
         "200":
           description: Create a new OnlineOrNot Status Page
