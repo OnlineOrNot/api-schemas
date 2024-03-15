@@ -951,6 +951,14 @@ paths:
       parameters:
         - schema:
             type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
             default: "1"
             description: Page number of paginated results.
             example: 1
@@ -982,24 +990,36 @@ paths:
                           type: string
                           description: Identifier
                           example: a1b2c3d4
-                        name:
+                        title:
                           type: string
-                          description: Name of the Status Page
-                          example: My Example SaaS
-                        subdomain:
+                          description: a title for the incident
+                          example: API is inaccessible
+                        impact:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - MAJOR_OUTAGE
+                            - MINOR_OUTAGE
+                            - PARTIAL_OUTAGE
+                            - DEGRADED_PERFORMANCE
+                            - NO_IMPACT
+                            - MAINTENANCE
+                          description: Impact of the incident
+                          example: MAJOR_OUTAGE
+                        started:
                           type: string
-                          pattern: ^\w(?:[\w-]{0,61}\w)?$
-                          description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
-                          example: status
-                        custom_domain:
+                          description: When the incident started
+                          example: "2021-01-01T00:00:00.000Z"
+                        ended:
                           type: string
-                          format: uri
-                          description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
-                          example: https://status.yourdomain.com
+                          description: When the incident was resolved
+                          example: "2021-02-01T00:00:00.000Z"
                       required:
                         - id
-                        - name
-                        - subdomain
+                        - title
+                        - impact
+                        - started
                   result_info:
                     type: object
                     properties:
