@@ -814,6 +814,261 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+    get:
+      tags:
+        - Status Pages
+      description: List all status pages
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            description: Page number of paginated results.
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            description: Number of items per page.
+            example: 20
+          required: false
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of OnlineOrNot Status Pages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Identifier
+                          example: a1b2c3d4
+                        name:
+                          type: string
+                          description: Name of the Status Page
+                          example: My Example SaaS
+                        subdomain:
+                          type: string
+                          pattern: ^\w(?:[\w-]{0,61}\w)?$
+                          description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
+                          example: status
+                        custom_domain:
+                          type: string
+                          format: uri
+                          description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                          example: https://status.yourdomain.com
+                      required:
+                        - id
+                        - name
+                        - subdomain
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        description: Page number of paginated results.
+                        example: 1
+                      per_page:
+                        type: number
+                        default: 20
+                        description: Number of items per page.
+                        example: 20
+                      count:
+                        type: number
+                        description: Number of items on the current page.
+                        example: 1
+                      total_count:
+                        type: number
+                        description: Total number of items.
+                        example: 1
+                    required:
+                      - page
+                      - per_page
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/incidents:
+    get:
+      tags:
+        - Status Pages
+      description: List all incidents for a status page
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            description: Page number of paginated results.
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            description: Number of items per page.
+            example: 20
+          required: false
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of OnlineOrNot Status Page Incidents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Identifier
+                          example: a1b2c3d4
+                        name:
+                          type: string
+                          description: Name of the Status Page
+                          example: My Example SaaS
+                        subdomain:
+                          type: string
+                          pattern: ^\w(?:[\w-]{0,61}\w)?$
+                          description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
+                          example: status
+                        custom_domain:
+                          type: string
+                          format: uri
+                          description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                          example: https://status.yourdomain.com
+                      required:
+                        - id
+                        - name
+                        - subdomain
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        description: Page number of paginated results.
+                        example: 1
+                      per_page:
+                        type: number
+                        default: 20
+                        description: Number of items per page.
+                        example: 20
+                      count:
+                        type: number
+                        description: Number of items on the current page.
+                        example: 1
+                      total_count:
+                        type: number
+                        description: Total number of items.
+                        example: 1
+                    required:
+                      - page
+                      - per_page
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/heartbeat/{heartbeat_id}:
     get:
       tags:
