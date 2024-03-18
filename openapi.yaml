@@ -706,6 +706,97 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}:
+    get:
+      tags:
+        - Status Pages
+      description: Retrieve a status page
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+      responses:
+        "200":
+          description: Retrieve the specified OnlineOrNot Status Page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: Name of the Status Page
+                        example: My Example SaaS
+                      subdomain:
+                        type: string
+                        pattern: ^\w(?:[\w-]{0,61}\w)?$
+                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
+                        example: status
+                      custom_domain:
+                        type: string
+                        format: uri
+                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                        example: https://status.yourdomain.com
+                    required:
+                      - id
+                      - name
+                      - subdomain
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages:
     post:
       tags:
