@@ -1222,6 +1222,317 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}/components:
+    post:
+      tags:
+        - Status Page Components
+      description: Create a component
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  description: a name for the component
+                  example: Website
+                status:
+                  type: string
+                  enum:
+                    - OPERATIONAL
+                    - MAJOR_OUTAGE
+                    - PARTIAL_OUTAGE
+                    - DEGRADED_PERFORMANCE
+                    - NO_IMPACT
+                    - MAINTENANCE
+                  default: OPERATIONAL
+                  description: Status of the component
+                  example: MAJOR_OUTAGE
+                display_uptime:
+                  type: boolean
+                  default: true
+                  description: Show this component's uptime and historical incidents on the status page.
+                  example: true
+                display_metrics:
+                  type: boolean
+                  default: true
+                  description: Show this component's response time metrics on the status page.
+                  example: true
+              required:
+                - name
+      responses:
+        "200":
+          description: Returns the newly created status page component
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: a name for the component
+                        example: Website
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - OPERATIONAL
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Status of the component
+                        example: MAJOR_OUTAGE
+                      display_uptime:
+                        type: boolean
+                        default: true
+                        description: Show this component's uptime and historical incidents on the status page.
+                        example: true
+                      display_metrics:
+                        type: boolean
+                        default: true
+                        description: Show this component's response time metrics on the status page.
+                        example: true
+                      created_at:
+                        type: string
+                        description: When the component was created
+                        example: "2021-01-01T00:00:00.000Z"
+                      updated_at:
+                        type: string
+                        description: When the component was last updated
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - name
+                      - status
+                      - display_uptime
+                      - display_metrics
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - Status Page Components
+      description: List all components
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            default: "1"
+            description: Page number of paginated results.
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            description: Number of items per page.
+            example: 20
+          required: false
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of components for a status page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Identifier
+                          example: a1b2c3d4
+                        name:
+                          type: string
+                          description: a name for the component
+                          example: Website
+                        status:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - OPERATIONAL
+                            - MAJOR_OUTAGE
+                            - PARTIAL_OUTAGE
+                            - DEGRADED_PERFORMANCE
+                            - NO_IMPACT
+                            - MAINTENANCE
+                          description: Status of the component
+                          example: MAJOR_OUTAGE
+                        display_uptime:
+                          type: boolean
+                          default: true
+                          description: Show this component's uptime and historical incidents on the status page.
+                          example: true
+                        display_metrics:
+                          type: boolean
+                          default: true
+                          description: Show this component's response time metrics on the status page.
+                          example: true
+                        created_at:
+                          type: string
+                          description: When the component was created
+                          example: "2021-01-01T00:00:00.000Z"
+                        updated_at:
+                          type: string
+                          description: When the component was last updated
+                          example: "2021-02-01T00:00:00.000Z"
+                      required:
+                        - id
+                        - name
+                        - status
+                        - display_uptime
+                        - display_metrics
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        description: Page number of paginated results.
+                        example: 1
+                      per_page:
+                        type: number
+                        default: 20
+                        description: Number of items per page.
+                        example: 20
+                      count:
+                        type: number
+                        description: Number of items on the current page.
+                        example: 1
+                      total_count:
+                        type: number
+                        description: Total number of items.
+                        example: 1
+                    required:
+                      - page
+                      - per_page
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}/components/{status_page_component_id}:
     get:
       tags:
@@ -1278,6 +1589,16 @@ paths:
                           - MAINTENANCE
                         description: Status of the component
                         example: MAJOR_OUTAGE
+                      display_uptime:
+                        type: boolean
+                        default: true
+                        description: Show this component's uptime and historical incidents on the status page.
+                        example: true
+                      display_metrics:
+                        type: boolean
+                        default: true
+                        description: Show this component's response time metrics on the status page.
+                        example: true
                       created_at:
                         type: string
                         description: When the component was created
@@ -1290,6 +1611,166 @@ paths:
                       - id
                       - name
                       - status
+                      - display_uptime
+                      - display_metrics
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Status Page Components
+      description: Update a component
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_component_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  description: a name for the component
+                  example: Website
+                status:
+                  type: string
+                  enum:
+                    - OPERATIONAL
+                    - MAJOR_OUTAGE
+                    - PARTIAL_OUTAGE
+                    - DEGRADED_PERFORMANCE
+                    - NO_IMPACT
+                    - MAINTENANCE
+                  default: OPERATIONAL
+                  description: Status of the component
+                  example: MAJOR_OUTAGE
+                display_uptime:
+                  type: boolean
+                  default: true
+                  description: Show this component's uptime and historical incidents on the status page.
+                  example: true
+                display_metrics:
+                  type: boolean
+                  default: true
+                  description: Show this component's response time metrics on the status page.
+                  example: true
+              required:
+                - name
+      responses:
+        "200":
+          description: Returns the updated status page component
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: a name for the component
+                        example: Website
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - OPERATIONAL
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Status of the component
+                        example: MAJOR_OUTAGE
+                      display_uptime:
+                        type: boolean
+                        default: true
+                        description: Show this component's uptime and historical incidents on the status page.
+                        example: true
+                      display_metrics:
+                        type: boolean
+                        default: true
+                        description: Show this component's response time metrics on the status page.
+                        example: true
+                      created_at:
+                        type: string
+                        description: When the component was created
+                        example: "2021-01-01T00:00:00.000Z"
+                      updated_at:
+                        type: string
+                        description: When the component was last updated
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - name
+                      - status
+                      - display_uptime
+                      - display_metrics
                       - created_at
                       - updated_at
                   success:
@@ -1411,155 +1892,6 @@ paths:
                     example: []
                 required:
                   - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-  /v1/status_pages/{status_page_id}/components:
-    get:
-      tags:
-        - Status Page Components
-      description: List all components
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            description: Identifier
-            example: a1b2c3d4
-          required: true
-          name: status_page_id
-          in: path
-        - schema:
-            type: string
-            default: "1"
-            description: Page number of paginated results.
-            example: 1
-          required: false
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            description: Number of items per page.
-            example: 20
-          required: false
-          name: per_page
-          in: query
-      responses:
-        "200":
-          description: Returns a list of components for a status page
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          description: Identifier
-                          example: a1b2c3d4
-                        name:
-                          type: string
-                          description: a name for the component
-                          example: Website
-                        status:
-                          type:
-                            - string
-                            - "null"
-                          enum:
-                            - OPERATIONAL
-                            - MAJOR_OUTAGE
-                            - PARTIAL_OUTAGE
-                            - DEGRADED_PERFORMANCE
-                            - NO_IMPACT
-                            - MAINTENANCE
-                          description: Status of the component
-                          example: MAJOR_OUTAGE
-                        created_at:
-                          type: string
-                          description: When the component was created
-                          example: "2021-01-01T00:00:00.000Z"
-                        updated_at:
-                          type: string
-                          description: When the component was last updated
-                          example: "2021-02-01T00:00:00.000Z"
-                      required:
-                        - id
-                        - name
-                        - status
-                        - created_at
-                        - updated_at
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        description: Page number of paginated results.
-                        example: 1
-                      per_page:
-                        type: number
-                        default: 20
-                        description: Number of items per page.
-                        example: 20
-                      count:
-                        type: number
-                        description: Number of items on the current page.
-                        example: 1
-                      total_count:
-                        type: number
-                        description: Total number of items.
-                        example: 1
-                    required:
-                      - page
-                      - per_page
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    description: Whether the API call was successful
-                    example: true
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
                   - success
                   - errors
                   - messages
