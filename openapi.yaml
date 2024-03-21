@@ -1222,11 +1222,205 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}/components/{status_page_component_id}:
+    get:
+      tags:
+        - Status Page Components
+      description: Retrieve a component
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_component_id
+          in: path
+      responses:
+        "200":
+          description: Returns a status page component
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: a name for the component
+                        example: Website
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - OPERATIONAL
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Status of the component
+                        example: MAJOR_OUTAGE
+                      created_at:
+                        type: string
+                        description: When the component was created
+                        example: "2021-01-01T00:00:00.000Z"
+                      updated_at:
+                        type: string
+                        description: When the component was last updated
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - name
+                      - status
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Status Page Components
+      description: Delete a component
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_component_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted component's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}/components:
     get:
       tags:
-        - Status Pages
-      description: List all components for a status page
+        - Status Page Components
+      description: List all components
       security:
         - api_token: []
       parameters:
@@ -1256,7 +1450,7 @@ paths:
           in: query
       responses:
         "200":
-          description: Returns a list of OnlineOrNot Status Page Components
+          description: Returns a list of components for a status page
           content:
             application/json:
               schema:
@@ -1374,8 +1568,8 @@ paths:
   /v1/status_pages/{status_page_id}/incidents:
     get:
       tags:
-        - Status Pages
-      description: List all incidents for a status page
+        - Status Page Incidents
+      description: List all incidents
       security:
         - api_token: []
       parameters:
@@ -1405,7 +1599,7 @@ paths:
           in: query
       responses:
         "200":
-          description: Returns a list of OnlineOrNot Status Page Incidents
+          description: Returns a list of incidents for a status page
           content:
             application/json:
               schema:
