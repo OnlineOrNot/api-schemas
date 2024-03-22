@@ -38,7 +38,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Token ID
                         example: a1b2c3d4
                       status:
                         type: string
@@ -246,7 +246,7 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Identifier
+                          description: Uptime Check ID
                           example: a1b2c3d4
                         name:
                           type: string
@@ -459,7 +459,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Uptime Check ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -542,7 +542,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Uptime Check ID
             example: a1b2c3d4
           required: true
           name: check_id
@@ -560,7 +560,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Uptime Check ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -642,7 +642,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Uptime Check ID
             example: a1b2c3d4
           required: true
           name: check_id
@@ -660,7 +660,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Uptime Check ID
                         example: a1b2c3d4
                     required:
                       - id
@@ -717,7 +717,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -735,7 +735,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -807,7 +807,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -851,7 +851,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -923,7 +923,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -941,7 +941,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page ID
                         example: a1b2c3d4
                     required:
                       - id
@@ -1033,7 +1033,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -1133,7 +1133,7 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Identifier
+                          description: Status Page ID
                           example: a1b2c3d4
                         name:
                           type: string
@@ -1233,7 +1233,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1286,7 +1286,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Component ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -1383,7 +1383,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1419,7 +1419,7 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Identifier
+                          description: Status Page Component ID
                           example: a1b2c3d4
                         name:
                           type: string
@@ -1544,7 +1544,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1552,7 +1552,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page Component ID
             example: a1b2c3d4
           required: true
           name: status_page_component_id
@@ -1570,7 +1570,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Component ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -1667,7 +1667,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1675,7 +1675,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page Component ID
             example: a1b2c3d4
           required: true
           name: status_page_component_id
@@ -1728,7 +1728,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Component ID
                         example: a1b2c3d4
                       name:
                         type: string
@@ -1825,7 +1825,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1833,7 +1833,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page Component ID
             example: a1b2c3d4
           required: true
           name: status_page_component_id
@@ -1851,7 +1851,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Component ID
                         example: a1b2c3d4
                     required:
                       - id
@@ -1908,7 +1908,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -1980,7 +1980,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Incident ID
                         example: a1b2c3d4
                       title:
                         type: string
@@ -2063,7 +2063,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -2099,7 +2099,7 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Identifier
+                          description: Status Page Incident ID
                           example: a1b2c3d4
                         title:
                           type: string
@@ -2210,7 +2210,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -2218,7 +2218,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page Incident ID
             example: a1b2c3d4
           required: true
           name: status_page_incident_id
@@ -2236,7 +2236,154 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Incident ID
+                        example: a1b2c3d4
+                      title:
+                        type: string
+                        description: a title for the incident
+                        example: API is inaccessible
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Impact of the incident
+                        example: MAJOR_OUTAGE
+                      started:
+                        type: string
+                        description: When the incident started
+                        example: "2021-01-01T00:00:00.000Z"
+                      ended:
+                        type: string
+                        description: When the incident was resolved
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Status Page Incidents
+      description: Update an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Status Page ID
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Status Page Incident ID
+            example: a1b2c3d4
+          required: true
+          name: status_page_incident_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: a title for the incident
+                  example: API is inaccessible
+                impact:
+                  type:
+                    - string
+                    - "null"
+                  enum:
+                    - MAJOR_OUTAGE
+                    - PARTIAL_OUTAGE
+                    - DEGRADED_PERFORMANCE
+                    - NO_IMPACT
+                    - MAINTENANCE
+                  description: Impact of the incident
+                  example: MAJOR_OUTAGE
+                components:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    enum:
+                      - MAJOR_OUTAGE
+                      - PARTIAL_OUTAGE
+                      - DEGRADED_PERFORMANCE
+                      - NO_IMPACT
+                      - MAINTENANCE
+                    description: Impact of the incident on the component
+                    example: MAJOR_OUTAGE
+              required:
+                - title
+                - impact
+                - components
+      responses:
+        "200":
+          description: Returns the updated status page incident
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Status Page Incident ID
                         example: a1b2c3d4
                       title:
                         type: string
@@ -2319,7 +2466,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page ID
             example: a1b2c3d4
           required: true
           name: status_page_id
@@ -2327,7 +2474,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Status Page Incident ID
             example: a1b2c3d4
           required: true
           name: status_page_incident_id
@@ -2345,7 +2492,7 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Identifier
+                        description: Status Page Incident ID
                         example: a1b2c3d4
                     required:
                       - id
@@ -2400,7 +2547,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Heartbeat ID
             example: a1b2c3d4
           required: true
           name: heartbeat_id
@@ -2418,7 +2565,7 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Identifier
+            description: Heartbeat ID
             example: a1b2c3d4
           required: true
           name: heartbeat_id
