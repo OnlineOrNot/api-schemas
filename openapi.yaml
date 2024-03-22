@@ -1897,6 +1897,199 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}/incidents/{status_page_incident_id}:
+    get:
+      tags:
+        - Status Page Incidents
+      description: Retrieve an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_incident_id
+          in: path
+      responses:
+        "200":
+          description: Returns a status page incident
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      title:
+                        type: string
+                        description: a title for the incident
+                        example: API is inaccessible
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - MINOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Impact of the incident
+                        example: MAJOR_OUTAGE
+                      started:
+                        type: string
+                        description: When the incident started
+                        example: "2021-01-01T00:00:00.000Z"
+                      ended:
+                        type: string
+                        description: When the incident was resolved
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Status Page Incidents
+      description: Delete an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_incident_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted incident's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}/incidents:
     get:
       tags:
