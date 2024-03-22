@@ -1897,6 +1897,308 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}/incidents:
+    post:
+      tags:
+        - Status Page Incidents
+      description: Create an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: a title for the incident
+                  example: API is inaccessible
+                description:
+                  type: string
+                  description: a description of the incident
+                  example: We are currently investigating the issue
+                status:
+                  type: string
+                  enum:
+                    - INVESTIGATING
+                    - IDENTIFIED
+                    - MONITORING
+                    - RESOLVED
+                    - UPDATE
+                  description: The current status of the incident
+                  example: INVESTIGATING
+                impact:
+                  type:
+                    - string
+                    - "null"
+                  enum:
+                    - MAJOR_OUTAGE
+                    - PARTIAL_OUTAGE
+                    - DEGRADED_PERFORMANCE
+                    - NO_IMPACT
+                    - MAINTENANCE
+                  description: Impact of the incident
+                  example: MAJOR_OUTAGE
+                components:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    enum:
+                      - MAJOR_OUTAGE
+                      - PARTIAL_OUTAGE
+                      - DEGRADED_PERFORMANCE
+                      - NO_IMPACT
+                      - MAINTENANCE
+                    description: Impact of the incident on the component
+                    example: MAJOR_OUTAGE
+              required:
+                - title
+                - description
+                - status
+                - impact
+                - components
+      responses:
+        "200":
+          description: Returns the newly created status page component
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Identifier
+                        example: a1b2c3d4
+                      title:
+                        type: string
+                        description: a title for the incident
+                        example: API is inaccessible
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        description: Impact of the incident
+                        example: MAJOR_OUTAGE
+                      started:
+                        type: string
+                        description: When the incident started
+                        example: "2021-01-01T00:00:00.000Z"
+                      ended:
+                        type: string
+                        description: When the incident was resolved
+                        example: "2021-02-01T00:00:00.000Z"
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - Status Page Incidents
+      description: List all incidents
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Identifier
+            example: a1b2c3d4
+          required: true
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            default: "1"
+            description: Page number of paginated results.
+            example: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            description: Number of items per page.
+            example: 20
+          required: false
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of incidents for a status page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Identifier
+                          example: a1b2c3d4
+                        title:
+                          type: string
+                          description: a title for the incident
+                          example: API is inaccessible
+                        impact:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - MAJOR_OUTAGE
+                            - PARTIAL_OUTAGE
+                            - DEGRADED_PERFORMANCE
+                            - NO_IMPACT
+                            - MAINTENANCE
+                          description: Impact of the incident
+                          example: MAJOR_OUTAGE
+                        started:
+                          type: string
+                          description: When the incident started
+                          example: "2021-01-01T00:00:00.000Z"
+                        ended:
+                          type: string
+                          description: When the incident was resolved
+                          example: "2021-02-01T00:00:00.000Z"
+                      required:
+                        - id
+                        - title
+                        - impact
+                        - started
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        description: Page number of paginated results.
+                        example: 1
+                      per_page:
+                        type: number
+                        default: 20
+                        description: Number of items per page.
+                        example: 20
+                      count:
+                        type: number
+                        description: Number of items on the current page.
+                        example: 1
+                      total_count:
+                        type: number
+                        description: Total number of items.
+                        example: 1
+                    required:
+                      - page
+                      - per_page
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}/incidents/{status_page_incident_id}:
     get:
       tags:
@@ -1946,7 +2248,6 @@ paths:
                           - "null"
                         enum:
                           - MAJOR_OUTAGE
-                          - MINOR_OUTAGE
                           - PARTIAL_OUTAGE
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
@@ -2085,154 +2386,6 @@ paths:
                     example: []
                 required:
                   - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-  /v1/status_pages/{status_page_id}/incidents:
-    get:
-      tags:
-        - Status Page Incidents
-      description: List all incidents
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            description: Identifier
-            example: a1b2c3d4
-          required: true
-          name: status_page_id
-          in: path
-        - schema:
-            type: string
-            default: "1"
-            description: Page number of paginated results.
-            example: 1
-          required: false
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            description: Number of items per page.
-            example: 20
-          required: false
-          name: per_page
-          in: query
-      responses:
-        "200":
-          description: Returns a list of incidents for a status page
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          description: Identifier
-                          example: a1b2c3d4
-                        title:
-                          type: string
-                          description: a title for the incident
-                          example: API is inaccessible
-                        impact:
-                          type:
-                            - string
-                            - "null"
-                          enum:
-                            - MAJOR_OUTAGE
-                            - MINOR_OUTAGE
-                            - PARTIAL_OUTAGE
-                            - DEGRADED_PERFORMANCE
-                            - NO_IMPACT
-                            - MAINTENANCE
-                          description: Impact of the incident
-                          example: MAJOR_OUTAGE
-                        started:
-                          type: string
-                          description: When the incident started
-                          example: "2021-01-01T00:00:00.000Z"
-                        ended:
-                          type: string
-                          description: When the incident was resolved
-                          example: "2021-02-01T00:00:00.000Z"
-                      required:
-                        - id
-                        - title
-                        - impact
-                        - started
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        description: Page number of paginated results.
-                        example: 1
-                      per_page:
-                        type: number
-                        default: 20
-                        description: Number of items per page.
-                        example: 20
-                      count:
-                        type: number
-                        description: Number of items on the current page.
-                        example: 1
-                      total_count:
-                        type: number
-                        description: Total number of items.
-                        example: 1
-                    required:
-                      - page
-                      - per_page
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    description: Whether the API call was successful
-                    example: true
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
                   - success
                   - errors
                   - messages
