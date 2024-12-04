@@ -993,7 +993,7 @@ paths:
       parameters:
         - schema:
             type: string
-            minLength: 8
+            minLength: 1
             description: The subdomain part of a status page's URL
             example: hackernews
           required: true
