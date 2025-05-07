@@ -212,6 +212,8 @@ paths:
       tags:
         - Checks
       description: List all checks
+      summary: Retrieve a paginated list of all uptime checks
+      operationId: listChecks
       security:
         - api_token: []
       parameters:
@@ -270,6 +272,15 @@ paths:
                           type: string
                           description: Last time the check was queued
                           example: "2021-01-01T00:00:00.000Z"
+                        headers:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            description: Header value
+                            example: My Value
+                          description: Headers to send with the request
+                          example:
+                            X-My-Header: My Value
                       required:
                         - id
                         - name
@@ -347,6 +358,8 @@ paths:
       tags:
         - Checks
       description: Create a check
+      summary: Create a new uptime check to monitor a URL
+      operationId: createCheck
       security:
         - api_token: []
       requestBody:
@@ -444,6 +457,22 @@ paths:
               required:
                 - name
                 - url
+            examples:
+              basic:
+                summary: Basic uptime check
+                value:
+                  name: My Website Check
+                  url: https://example.com
+                  test_interval: 60
+              advanced:
+                summary: Advanced check with headers
+                value:
+                  name: API Check with Auth
+                  url: https://api.example.com
+                  headers:
+                    Authorization: Bearer token
+                  test_interval: 30
+                  alert_priority: HIGH
       responses:
         "200":
           description: Create a new OnlineOrNot Check
@@ -481,6 +510,15 @@ paths:
                         type: string
                         description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
+                      headers:
+                        type: object
+                        additionalProperties:
+                          type: string
+                          description: Header value
+                          example: My Value
+                        description: Headers to send with the request
+                        example:
+                          X-My-Header: My Value
                     required:
                       - id
                       - name
@@ -534,6 +572,8 @@ paths:
       tags:
         - Checks
       description: Retrieve a check
+      summary: Look up detailed information about a specific uptime check
+      operationId: getCheck
       security:
         - api_token: []
       parameters:
@@ -582,6 +622,15 @@ paths:
                         type: string
                         description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
+                      headers:
+                        type: object
+                        additionalProperties:
+                          type: string
+                          description: Header value
+                          example: My Value
+                        description: Headers to send with the request
+                        example:
+                          X-My-Header: My Value
                     required:
                       - id
                       - name
@@ -634,6 +683,8 @@ paths:
       tags:
         - Checks
       description: Delete a check
+      summary: Permanently delete an uptime check
+      operationId: deleteCheck
       security:
         - api_token: []
       parameters:
@@ -662,6 +713,141 @@ paths:
                         example: a1b2c3d4
                     required:
                       - id
+                  success:
+                    type: boolean
+                    default: true
+                    description: Whether the API call was successful
+                    example: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Checks
+      description: Modify a check
+      summary: Modify the configuration of an existing uptime check
+      operationId: updateCheck
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            description: Uptime Check ID
+            example: a1b2c3d4
+          required: true
+          name: check_id
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                headers:
+                  type: object
+                  additionalProperties:
+                    type:
+                      - string
+                      - "null"
+                    description: Header value. Set to null to remove the header.
+                    example: My Value
+                  description: Headers to send with the request
+                  example:
+                    X-My-Header: My Value
+            examples:
+              updateHeaders:
+                summary: Update check headers
+                value:
+                  headers:
+                    X-Custom-Header: new-value
+                    My-Unused-Header: null
+      responses:
+        "200":
+          description: Modify an OnlineOrNot Check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Uptime Check ID
+                        example: a1b2c3d4
+                      name:
+                        type: string
+                        description: Name of the check
+                        example: My landing page
+                      url:
+                        type: string
+                        format: uri
+                        description: URL to check
+                        example: https://example.com
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - ONLINE
+                          - OFFLINE
+                        description: Status of the check
+                        example: ONLINE
+                      last_queued:
+                        type: string
+                        description: Last time the check was queued
+                        example: "2021-01-01T00:00:00.000Z"
+                      headers:
+                        type: object
+                        additionalProperties:
+                          type: string
+                          description: Header value
+                          example: My Value
+                        description: Headers to send with the request
+                        example:
+                          X-My-Header: My Value
+                    required:
+                      - id
+                      - name
+                      - url
+                      - status
+                      - last_queued
                   success:
                     type: boolean
                     default: true
