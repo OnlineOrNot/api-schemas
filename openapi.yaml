@@ -264,10 +264,16 @@ paths:
                             - string
                             - "null"
                           enum:
-                            - ONLINE
-                            - OFFLINE
-                          description: Status of the check
-                          example: ONLINE
+                            - UP
+                            - DOWN
+                            - PENDING
+                            - PAUSED
+                            - MUTED
+                            - MAINTENANCE
+                            - RECOVERING
+                            - VERIFYING
+                          description: Current status of the check based on the latest uptime event
+                          example: UP
                         last_queued:
                           type: string
                           description: Last time the check was queued
@@ -502,10 +508,16 @@ paths:
                           - string
                           - "null"
                         enum:
-                          - ONLINE
-                          - OFFLINE
-                        description: Status of the check
-                        example: ONLINE
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                          - MAINTENANCE
+                          - RECOVERING
+                          - VERIFYING
+                        description: Current status of the check based on the latest uptime event
+                        example: UP
                       last_queued:
                         type: string
                         description: Last time the check was queued
@@ -614,10 +626,16 @@ paths:
                           - string
                           - "null"
                         enum:
-                          - ONLINE
-                          - OFFLINE
-                        description: Status of the check
-                        example: ONLINE
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                          - MAINTENANCE
+                          - RECOVERING
+                          - VERIFYING
+                        description: Current status of the check based on the latest uptime event
+                        example: UP
                       last_queued:
                         type: string
                         description: Last time the check was queued
@@ -789,10 +807,19 @@ paths:
                   description: Headers to send with the request
                   example:
                     X-My-Header: My Value
+                paused:
+                  type: boolean
+                  description: Whether the check is paused (completely stops execution) or actively running
+                  example: false
+                muted:
+                  type: boolean
+                  description: Whether the check is muted (continues running but suppresses alerts) or sending alerts normally
+                  example: false
             examples:
               updateHeaders:
                 summary: Update check headers
                 value:
+                  muted: true
                   headers:
                     X-Custom-Header: new-value
                     My-Unused-Header: null
@@ -825,10 +852,16 @@ paths:
                           - string
                           - "null"
                         enum:
-                          - ONLINE
-                          - OFFLINE
-                        description: Status of the check
-                        example: ONLINE
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                          - MAINTENANCE
+                          - RECOVERING
+                          - VERIFYING
+                        description: Current status of the check based on the latest uptime event
+                        example: UP
                       last_queued:
                         type: string
                         description: Last time the check was queued
