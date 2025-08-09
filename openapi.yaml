@@ -38,20 +38,20 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Token ID
                         example: a1b2c3d4
+                        description: Token ID
                       status:
                         type: string
-                        description: Status
                         example: active
+                        description: Status
                     required:
                       - id
                       - status
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -99,8 +99,8 @@ paths:
                   success:
                     type: boolean
                     default: false
-                    description: Whether the API call was successful
                     example: false
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -108,12 +108,12 @@ paths:
                       properties:
                         code:
                           type: number
-                          description: Error code
                           example: 10001
+                          description: Error code
                         message:
                           type: string
-                          description: A message to describe the error
                           example: This API Token is invalid
+                          description: A message to describe the error
                       required:
                         - code
                         - message
@@ -161,15 +161,15 @@ paths:
                         type: array
                         items:
                           type: string
-                          description: One of the token's permissions
                           example: uptime_checks (read)
+                          description: One of the token's permissions
                     required:
                       - permissions
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -220,17 +220,19 @@ paths:
         - schema:
             type: string
             default: "1"
-            description: Page number of paginated results.
             example: 1
+            description: Page number of paginated results.
           required: false
+          description: Page number of paginated results.
           name: page
           in: query
         - schema:
             type: string
             default: "20"
-            description: Number of items per page.
             example: 20
+            description: Number of items per page.
           required: false
+          description: Number of items per page.
           name: per_page
           in: query
       responses:
@@ -248,17 +250,17 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Uptime Check ID
                           example: a1b2c3d4
+                          description: Uptime Check ID
                         name:
                           type: string
-                          description: Name of the check
                           example: My landing page
+                          description: Name of the check
                         url:
                           type: string
                           format: uri
-                          description: URL to check
                           example: https://example.com
+                          description: URL to check
                         status:
                           type:
                             - string
@@ -272,21 +274,21 @@ paths:
                             - MAINTENANCE
                             - RECOVERING
                             - VERIFYING
-                          description: Current status of the check based on the latest uptime event
                           example: UP
+                          description: Current status of the check based on the latest uptime event
                         last_queued:
                           type: string
-                          description: Last time the check was queued
                           example: "2021-01-01T00:00:00.000Z"
+                          description: Last time the check was queued
                         headers:
                           type: object
                           additionalProperties:
                             type: string
-                            description: Header value
                             example: My Value
-                          description: Headers to send with the request
+                            description: Header value
                           example:
                             X-My-Header: My Value
+                          description: Headers to send with the request
                       required:
                         - id
                         - name
@@ -299,29 +301,29 @@ paths:
                       page:
                         type: number
                         default: 1
-                        description: Page number of paginated results.
                         example: 1
+                        description: Page number of paginated results.
                       per_page:
                         type: number
                         default: 20
-                        description: Number of items per page.
                         example: 20
+                        description: Number of items per page.
                       count:
                         type: number
-                        description: Number of items on the current page.
                         example: 1
+                        description: Number of items on the current page.
                       total_count:
                         type: number
-                        description: Total number of items.
                         example: 1
+                        description: Total number of items.
                     required:
                       - count
                       - total_count
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -376,53 +378,53 @@ paths:
               properties:
                 name:
                   type: string
-                  description: Name of the check
                   example: My landing page
+                  description: Name of the check
                 url:
                   type: string
                   format: uri
-                  description: URL to check
                   example: https://example.com
+                  description: URL to check
                 text_to_search_for:
                   type: string
-                  description: Text to search for in the response
                   example: Example Domain
+                  description: Text to search for in the response
                 test_interval:
                   type: integer
                   minimum: 30
-                  description: Interval in seconds between checks
                   example: 60
+                  description: Interval in seconds between checks
                 number_of_fails_before_alert:
                   type: integer
                   minimum: 1
                   default: 2
-                  description: Number of failing checks before an alert is sent
                   example: 2
+                  description: Number of failing checks before an alert is sent
                 type:
                   type: string
                   enum:
                     - UPTIME_CHECK
                     - BROWSER_CHECK
                   default: UPTIME_CHECK
-                  description: Type of check
                   example: UPTIME_CHECK
+                  description: Type of check
                 alert_priority:
                   type: string
                   enum:
                     - LOW
                     - HIGH
                   default: LOW
-                  description: Alert Priority
                   example: LOW
+                  description: Alert Priority
                 headers:
                   type: object
                   additionalProperties:
                     type: string
-                    description: Header value
                     example: My Value
-                  description: Headers to send with the request
+                    description: Header value
                   example:
                     X-My-Header: My Value
+                  description: Headers to send with the request
                 method:
                   type: string
                   enum:
@@ -433,16 +435,16 @@ paths:
                     - PATCH
                     - DELETE
                   default: GET
-                  description: HTTP Method
                   example: GET
+                  description: HTTP Method
                 body:
                   type: string
                   example: Hello World
                 follow_redirects:
                   type: boolean
                   default: true
-                  description: Whether to follow redirects
                   example: true
+                  description: Whether to follow redirects
                 assertions:
                   type: object
                   additionalProperties:
@@ -450,16 +452,16 @@ paths:
                 verify_ssl:
                   type: boolean
                   default: false
-                  description: Whether to fail a check if SSL verification fails
                   example: false
+                  description: Whether to fail a check if SSL verification fails
                 auth_username:
                   type: string
-                  description: Username to use for URLs behind HTTP Basic Auth
                   example: username
+                  description: Username to use for URLs behind HTTP Basic Auth
                 auth_password:
                   type: string
-                  description: Password to use for URLs behind HTTP Basic Auth
                   example: password
+                  description: Password to use for URLs behind HTTP Basic Auth
               required:
                 - name
                 - url
@@ -492,17 +494,17 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Uptime Check ID
                         example: a1b2c3d4
+                        description: Uptime Check ID
                       name:
                         type: string
-                        description: Name of the check
                         example: My landing page
+                        description: Name of the check
                       url:
                         type: string
                         format: uri
-                        description: URL to check
                         example: https://example.com
+                        description: URL to check
                       status:
                         type:
                           - string
@@ -516,21 +518,21 @@ paths:
                           - MAINTENANCE
                           - RECOVERING
                           - VERIFYING
-                        description: Current status of the check based on the latest uptime event
                         example: UP
+                        description: Current status of the check based on the latest uptime event
                       last_queued:
                         type: string
-                        description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       headers:
                         type: object
                         additionalProperties:
                           type: string
-                          description: Header value
                           example: My Value
-                        description: Headers to send with the request
+                          description: Header value
                         example:
                           X-My-Header: My Value
+                        description: Headers to send with the request
                     required:
                       - id
                       - name
@@ -540,8 +542,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -592,9 +594,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Uptime Check ID
             example: a1b2c3d4
+            description: Uptime Check ID
           required: true
+          description: Uptime Check ID
           name: check_id
           in: path
       responses:
@@ -610,17 +613,17 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Uptime Check ID
                         example: a1b2c3d4
+                        description: Uptime Check ID
                       name:
                         type: string
-                        description: Name of the check
                         example: My landing page
+                        description: Name of the check
                       url:
                         type: string
                         format: uri
-                        description: URL to check
                         example: https://example.com
+                        description: URL to check
                       status:
                         type:
                           - string
@@ -634,21 +637,21 @@ paths:
                           - MAINTENANCE
                           - RECOVERING
                           - VERIFYING
-                        description: Current status of the check based on the latest uptime event
                         example: UP
+                        description: Current status of the check based on the latest uptime event
                       last_queued:
                         type: string
-                        description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       headers:
                         type: object
                         additionalProperties:
                           type: string
-                          description: Header value
                           example: My Value
-                        description: Headers to send with the request
+                          description: Header value
                         example:
                           X-My-Header: My Value
+                        description: Headers to send with the request
                     required:
                       - id
                       - name
@@ -658,8 +661,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -709,9 +712,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Uptime Check ID
             example: a1b2c3d4
+            description: Uptime Check ID
           required: true
+          description: Uptime Check ID
           name: check_id
           in: path
       responses:
@@ -727,15 +731,15 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Uptime Check ID
                         example: a1b2c3d4
+                        description: Uptime Check ID
                     required:
                       - id
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -785,9 +789,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Uptime Check ID
             example: a1b2c3d4
+            description: Uptime Check ID
           required: true
+          description: Uptime Check ID
           name: check_id
           in: path
       requestBody:
@@ -802,19 +807,19 @@ paths:
                     type:
                       - string
                       - "null"
-                    description: Header value. Set to null to remove the header.
                     example: My Value
-                  description: Headers to send with the request
+                    description: Header value. Set to null to remove the header.
                   example:
                     X-My-Header: My Value
+                  description: Headers to send with the request
                 paused:
                   type: boolean
-                  description: Whether the check is paused (completely stops execution) or actively running
                   example: false
+                  description: Whether the check is paused (completely stops execution) or actively running
                 muted:
                   type: boolean
-                  description: Whether the check is muted (continues running but suppresses alerts) or sending alerts normally
                   example: false
+                  description: Whether the check is muted (continues running but suppresses alerts) or sending alerts normally
             examples:
               updateHeaders:
                 summary: Update check headers
@@ -836,17 +841,17 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Uptime Check ID
                         example: a1b2c3d4
+                        description: Uptime Check ID
                       name:
                         type: string
-                        description: Name of the check
                         example: My landing page
+                        description: Name of the check
                       url:
                         type: string
                         format: uri
-                        description: URL to check
                         example: https://example.com
+                        description: URL to check
                       status:
                         type:
                           - string
@@ -860,21 +865,21 @@ paths:
                           - MAINTENANCE
                           - RECOVERING
                           - VERIFYING
-                        description: Current status of the check based on the latest uptime event
                         example: UP
+                        description: Current status of the check based on the latest uptime event
                       last_queued:
                         type: string
-                        description: Last time the check was queued
                         example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       headers:
                         type: object
                         additionalProperties:
                           type: string
-                          description: Header value
                           example: My Value
-                        description: Headers to send with the request
+                          description: Header value
                         example:
                           X-My-Header: My Value
+                        description: Headers to send with the request
                     required:
                       - id
                       - name
@@ -884,8 +889,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -934,9 +939,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
       responses:
@@ -952,22 +958,22 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page ID
                         example: a1b2c3d4
+                        description: Status Page ID
                       name:
                         type: string
-                        description: Name of the Status Page
                         example: My Example SaaS
+                        description: Name of the Status Page
                       subdomain:
                         type: string
                         pattern: ^\w(?:[\w-]{0,61}\w)?$
-                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                         example: status
+                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
                         type: string
                         format: uri
-                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                         example: https://status.yourdomain.com
+                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                     required:
                       - id
                       - name
@@ -975,8 +981,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1024,9 +1030,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
       requestBody:
@@ -1037,18 +1044,18 @@ paths:
               properties:
                 name:
                   type: string
-                  description: Name of the Status Page
                   example: My Example SaaS
+                  description: Name of the Status Page
                 subdomain:
                   type: string
                   pattern: ^\w(?:[\w-]{0,61}\w)?$
-                  description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                   example: status
+                  description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                 custom_domain:
                   type: string
                   format: uri
-                  description: The custom domain your status page is hosted at.
                   example: https://status.yourdomain.com
+                  description: The custom domain your status page is hosted at.
                 password:
                   type: string
                   description: The password that will be required to view your status page
@@ -1068,22 +1075,22 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page ID
                         example: a1b2c3d4
+                        description: Status Page ID
                       name:
                         type: string
-                        description: Name of the Status Page
                         example: My Example SaaS
+                        description: Name of the Status Page
                       subdomain:
                         type: string
                         pattern: ^\w(?:[\w-]{0,61}\w)?$
-                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                         example: status
+                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
                         type: string
                         format: uri
-                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                         example: https://status.yourdomain.com
+                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                     required:
                       - id
                       - name
@@ -1091,8 +1098,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1140,9 +1147,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
       responses:
@@ -1158,15 +1166,15 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page ID
                         example: a1b2c3d4
+                        description: Status Page ID
                     required:
                       - id
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1213,9 +1221,10 @@ paths:
         - schema:
             type: string
             minLength: 1
-            description: The subdomain part of a status page's URL
             example: hackernews
+            description: The subdomain part of a status page's URL
           required: true
+          description: The subdomain part of a status page's URL
           name: status_page_subdomain
           in: path
       responses:
@@ -1240,8 +1249,8 @@ paths:
                               - Partially Degraded Service
                               - Service Under Maintenance
                               - All Systems Operational
-                            description: The overall system's current status
                             example: All Systems Operational
+                            description: The overall system's current status
                         required:
                           - description
                       status_page:
@@ -1249,22 +1258,22 @@ paths:
                         properties:
                           id:
                             type: string
-                            description: Status Page ID
                             example: a1b2c3d4
+                            description: Status Page ID
                           name:
                             type: string
-                            description: Name of the Status Page
                             example: My Example SaaS
+                            description: Name of the Status Page
                           subdomain:
                             type: string
                             pattern: ^\w(?:[\w-]{0,61}\w)?$
-                            description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                             example: status
+                            description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                           custom_domain:
                             type: string
                             format: uri
-                            description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                             example: https://status.yourdomain.com
+                            description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                         required:
                           - id
                           - name
@@ -1276,12 +1285,12 @@ paths:
                           properties:
                             id:
                               type: string
-                              description: Status Page Component ID
                               example: a1b2c3d4
+                              description: Status Page Component ID
                             name:
                               type: string
-                              description: a name for the component
                               example: Website
+                              description: a name for the component
                             status:
                               type:
                                 - string
@@ -1293,30 +1302,30 @@ paths:
                                 - DEGRADED_PERFORMANCE
                                 - NO_IMPACT
                                 - MAINTENANCE
-                              description: Status of the component
                               example: MAJOR_OUTAGE
+                              description: Status of the component
                             display_uptime:
                               type: boolean
                               default: true
-                              description: Show this component's uptime and historical incidents on the status page.
                               example: true
+                              description: Show this component's uptime and historical incidents on the status page.
                             display_metrics:
                               type: boolean
                               default: true
-                              description: Show this component's response time metrics on the status page.
                               example: true
+                              description: Show this component's response time metrics on the status page.
                             created_at:
                               type: string
-                              description: When the component was created
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the component was created
                             updated_at:
                               type: string
-                              description: When the component was last updated
                               example: "2021-02-01T00:00:00.000Z"
+                              description: When the component was last updated
                             group_id:
                               type: string
-                              description: Status Page Group ID
                               example: a1b2c3d4
+                              description: Status Page Group ID
                           required:
                             - id
                             - name
@@ -1333,12 +1342,12 @@ paths:
                           properties:
                             id:
                               type: string
-                              description: Status Page Incident ID
                               example: a1b2c3d4
+                              description: Status Page Incident ID
                             title:
                               type: string
-                              description: a title for the incident
                               example: API is inaccessible
+                              description: a title for the incident
                             impact:
                               type:
                                 - string
@@ -1349,24 +1358,24 @@ paths:
                                 - DEGRADED_PERFORMANCE
                                 - NO_IMPACT
                                 - MAINTENANCE
-                              description: Impact of the incident
                               example: MAJOR_OUTAGE
+                              description: Impact of the incident
                             started:
                               type: string
-                              description: When the incident started
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the incident started
                             ended:
                               type: string
-                              description: When the incident was resolved
                               example: "2021-02-01T00:00:00.000Z"
+                              description: When the incident was resolved
                             created_at:
                               type: string
-                              description: When the incident was created
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the incident was created
                             updated_at:
                               type: string
-                              description: When the incident was last updated
                               example: "2021-02-01T00:00:00.000Z"
+                              description: When the incident was last updated
                           required:
                             - id
                             - title
@@ -1381,12 +1390,12 @@ paths:
                           properties:
                             id:
                               type: string
-                              description: Status Page Incident ID
                               example: a1b2c3d4
+                              description: Status Page Incident ID
                             title:
                               type: string
-                              description: a title for the incident
                               example: API is inaccessible
+                              description: a title for the incident
                             impact:
                               type:
                                 - string
@@ -1397,33 +1406,33 @@ paths:
                                 - DEGRADED_PERFORMANCE
                                 - NO_IMPACT
                                 - MAINTENANCE
-                              description: Impact of the incident
                               example: MAJOR_OUTAGE
+                              description: Impact of the incident
                             started:
                               type: string
-                              description: When the incident started
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the incident started
                             ended:
                               type: string
-                              description: When the incident was resolved
                               example: "2021-02-01T00:00:00.000Z"
+                              description: When the incident was resolved
                             created_at:
                               type: string
-                              description: When the incident was created
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the incident was created
                             updated_at:
                               type: string
-                              description: When the incident was last updated
                               example: "2021-02-01T00:00:00.000Z"
+                              description: When the incident was last updated
                             start_date:
                               type: string
-                              description: When the scheduled maintenance is expected to start
                               example: "2021-01-01T00:00:00.000Z"
+                              description: When the scheduled maintenance is expected to start
                             duration_minutes:
                               type: integer
                               minimum: 1
-                              description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
                               example: 60
+                              description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
                           required:
                             - id
                             - title
@@ -1442,8 +1451,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1498,18 +1507,18 @@ paths:
               properties:
                 name:
                   type: string
-                  description: Name of the Status Page
                   example: My Example SaaS
+                  description: Name of the Status Page
                 subdomain:
                   type: string
                   pattern: ^\w(?:[\w-]{0,61}\w)?$
-                  description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                   example: status
+                  description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                 custom_domain:
                   type: string
                   format: uri
-                  description: The custom domain your status page is hosted at.
                   example: https://status.yourdomain.com
+                  description: The custom domain your status page is hosted at.
                 password:
                   type: string
                   description: The password that will be required to view your status page
@@ -1529,22 +1538,22 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page ID
                         example: a1b2c3d4
+                        description: Status Page ID
                       name:
                         type: string
-                        description: Name of the Status Page
                         example: My Example SaaS
+                        description: Name of the Status Page
                       subdomain:
                         type: string
                         pattern: ^\w(?:[\w-]{0,61}\w)?$
-                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                         example: status
+                        description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
                         type: string
                         format: uri
-                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                         example: https://status.yourdomain.com
+                        description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                     required:
                       - id
                       - name
@@ -1552,8 +1561,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1601,17 +1610,19 @@ paths:
         - schema:
             type: string
             default: "1"
-            description: Page number of paginated results.
             example: 1
+            description: Page number of paginated results.
           required: false
+          description: Page number of paginated results.
           name: page
           in: query
         - schema:
             type: string
             default: "20"
-            description: Number of items per page.
             example: 20
+            description: Number of items per page.
           required: false
+          description: Number of items per page.
           name: per_page
           in: query
       responses:
@@ -1629,22 +1640,22 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Status Page ID
                           example: a1b2c3d4
+                          description: Status Page ID
                         name:
                           type: string
-                          description: Name of the Status Page
                           example: My Example SaaS
+                          description: Name of the Status Page
                         subdomain:
                           type: string
                           pattern: ^\w(?:[\w-]{0,61}\w)?$
-                          description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                           example: status
+                          description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                         custom_domain:
                           type: string
                           format: uri
-                          description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                           example: https://status.yourdomain.com
+                          description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
                       required:
                         - id
                         - name
@@ -1655,29 +1666,29 @@ paths:
                       page:
                         type: number
                         default: 1
-                        description: Page number of paginated results.
                         example: 1
+                        description: Page number of paginated results.
                       per_page:
                         type: number
                         default: 20
-                        description: Number of items per page.
                         example: 20
+                        description: Number of items per page.
                       count:
                         type: number
-                        description: Number of items on the current page.
                         example: 1
+                        description: Number of items on the current page.
                       total_count:
                         type: number
-                        description: Total number of items.
                         example: 1
+                        description: Total number of items.
                     required:
                       - count
                       - total_count
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1727,9 +1738,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
       requestBody:
@@ -1741,8 +1753,8 @@ paths:
                 name:
                   type: string
                   minLength: 1
-                  description: a name for the component
                   example: Website
+                  description: a name for the component
                 status:
                   type: string
                   enum:
@@ -1753,18 +1765,18 @@ paths:
                     - NO_IMPACT
                     - MAINTENANCE
                   default: OPERATIONAL
-                  description: Status of the component
                   example: MAJOR_OUTAGE
+                  description: Status of the component
                 display_uptime:
                   type: boolean
                   default: true
-                  description: Show this component's uptime and historical incidents on the status page.
                   example: true
+                  description: Show this component's uptime and historical incidents on the status page.
                 display_metrics:
                   type: boolean
                   default: true
-                  description: Show this component's response time metrics on the status page.
                   example: true
+                  description: Show this component's response time metrics on the status page.
               required:
                 - name
       responses:
@@ -1780,12 +1792,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Component ID
                         example: a1b2c3d4
+                        description: Status Page Component ID
                       name:
                         type: string
-                        description: a name for the component
                         example: Website
+                        description: a name for the component
                       status:
                         type:
                           - string
@@ -1797,30 +1809,30 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Status of the component
                         example: MAJOR_OUTAGE
+                        description: Status of the component
                       display_uptime:
                         type: boolean
                         default: true
-                        description: Show this component's uptime and historical incidents on the status page.
                         example: true
+                        description: Show this component's uptime and historical incidents on the status page.
                       display_metrics:
                         type: boolean
                         default: true
-                        description: Show this component's response time metrics on the status page.
                         example: true
+                        description: Show this component's response time metrics on the status page.
                       created_at:
                         type: string
-                        description: When the component was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the component was created
                       updated_at:
                         type: string
-                        description: When the component was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the component was last updated
                       group_id:
                         type: string
-                        description: Status Page Group ID
                         example: a1b2c3d4
+                        description: Status Page Group ID
                     required:
                       - id
                       - name
@@ -1833,8 +1845,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -1882,25 +1894,28 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             default: "1"
-            description: Page number of paginated results.
             example: 1
+            description: Page number of paginated results.
           required: false
+          description: Page number of paginated results.
           name: page
           in: query
         - schema:
             type: string
             default: "20"
-            description: Number of items per page.
             example: 20
+            description: Number of items per page.
           required: false
+          description: Number of items per page.
           name: per_page
           in: query
       responses:
@@ -1918,12 +1933,12 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Status Page Component ID
                           example: a1b2c3d4
+                          description: Status Page Component ID
                         name:
                           type: string
-                          description: a name for the component
                           example: Website
+                          description: a name for the component
                         status:
                           type:
                             - string
@@ -1935,30 +1950,30 @@ paths:
                             - DEGRADED_PERFORMANCE
                             - NO_IMPACT
                             - MAINTENANCE
-                          description: Status of the component
                           example: MAJOR_OUTAGE
+                          description: Status of the component
                         display_uptime:
                           type: boolean
                           default: true
-                          description: Show this component's uptime and historical incidents on the status page.
                           example: true
+                          description: Show this component's uptime and historical incidents on the status page.
                         display_metrics:
                           type: boolean
                           default: true
-                          description: Show this component's response time metrics on the status page.
                           example: true
+                          description: Show this component's response time metrics on the status page.
                         created_at:
                           type: string
-                          description: When the component was created
                           example: "2021-01-01T00:00:00.000Z"
+                          description: When the component was created
                         updated_at:
                           type: string
-                          description: When the component was last updated
                           example: "2021-02-01T00:00:00.000Z"
+                          description: When the component was last updated
                         group_id:
                           type: string
-                          description: Status Page Group ID
                           example: a1b2c3d4
+                          description: Status Page Group ID
                       required:
                         - id
                         - name
@@ -1974,29 +1989,29 @@ paths:
                       page:
                         type: number
                         default: 1
-                        description: Page number of paginated results.
                         example: 1
+                        description: Page number of paginated results.
                       per_page:
                         type: number
                         default: 20
-                        description: Number of items per page.
                         example: 20
+                        description: Number of items per page.
                       count:
                         type: number
-                        description: Number of items on the current page.
                         example: 1
+                        description: Number of items on the current page.
                       total_count:
                         type: number
-                        description: Total number of items.
                         example: 1
+                        description: Total number of items.
                     required:
                       - count
                       - total_count
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2046,17 +2061,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Component ID
             example: a1b2c3d4
+            description: Status Page Component ID
           required: true
+          description: Status Page Component ID
           name: status_page_component_id
           in: path
       responses:
@@ -2072,12 +2089,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Component ID
                         example: a1b2c3d4
+                        description: Status Page Component ID
                       name:
                         type: string
-                        description: a name for the component
                         example: Website
+                        description: a name for the component
                       status:
                         type:
                           - string
@@ -2089,30 +2106,30 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Status of the component
                         example: MAJOR_OUTAGE
+                        description: Status of the component
                       display_uptime:
                         type: boolean
                         default: true
-                        description: Show this component's uptime and historical incidents on the status page.
                         example: true
+                        description: Show this component's uptime and historical incidents on the status page.
                       display_metrics:
                         type: boolean
                         default: true
-                        description: Show this component's response time metrics on the status page.
                         example: true
+                        description: Show this component's response time metrics on the status page.
                       created_at:
                         type: string
-                        description: When the component was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the component was created
                       updated_at:
                         type: string
-                        description: When the component was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the component was last updated
                       group_id:
                         type: string
-                        description: Status Page Group ID
                         example: a1b2c3d4
+                        description: Status Page Group ID
                     required:
                       - id
                       - name
@@ -2125,8 +2142,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2174,17 +2191,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Component ID
             example: a1b2c3d4
+            description: Status Page Component ID
           required: true
+          description: Status Page Component ID
           name: status_page_component_id
           in: path
       requestBody:
@@ -2196,8 +2215,8 @@ paths:
                 name:
                   type: string
                   minLength: 1
-                  description: a name for the component
                   example: Website
+                  description: a name for the component
                 status:
                   type: string
                   enum:
@@ -2208,18 +2227,18 @@ paths:
                     - NO_IMPACT
                     - MAINTENANCE
                   default: OPERATIONAL
-                  description: Status of the component
                   example: MAJOR_OUTAGE
+                  description: Status of the component
                 display_uptime:
                   type: boolean
                   default: true
-                  description: Show this component's uptime and historical incidents on the status page.
                   example: true
+                  description: Show this component's uptime and historical incidents on the status page.
                 display_metrics:
                   type: boolean
                   default: true
-                  description: Show this component's response time metrics on the status page.
                   example: true
+                  description: Show this component's response time metrics on the status page.
               required:
                 - name
       responses:
@@ -2235,12 +2254,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Component ID
                         example: a1b2c3d4
+                        description: Status Page Component ID
                       name:
                         type: string
-                        description: a name for the component
                         example: Website
+                        description: a name for the component
                       status:
                         type:
                           - string
@@ -2252,30 +2271,30 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Status of the component
                         example: MAJOR_OUTAGE
+                        description: Status of the component
                       display_uptime:
                         type: boolean
                         default: true
-                        description: Show this component's uptime and historical incidents on the status page.
                         example: true
+                        description: Show this component's uptime and historical incidents on the status page.
                       display_metrics:
                         type: boolean
                         default: true
-                        description: Show this component's response time metrics on the status page.
                         example: true
+                        description: Show this component's response time metrics on the status page.
                       created_at:
                         type: string
-                        description: When the component was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the component was created
                       updated_at:
                         type: string
-                        description: When the component was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the component was last updated
                       group_id:
                         type: string
-                        description: Status Page Group ID
                         example: a1b2c3d4
+                        description: Status Page Group ID
                     required:
                       - id
                       - name
@@ -2288,8 +2307,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2337,17 +2356,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Component ID
             example: a1b2c3d4
+            description: Status Page Component ID
           required: true
+          description: Status Page Component ID
           name: status_page_component_id
           in: path
       responses:
@@ -2363,15 +2384,15 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Component ID
                         example: a1b2c3d4
+                        description: Status Page Component ID
                     required:
                       - id
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2420,9 +2441,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
       requestBody:
@@ -2433,12 +2455,12 @@ paths:
               properties:
                 title:
                   type: string
-                  description: a title for the incident
                   example: API is inaccessible
+                  description: a title for the incident
                 description:
                   type: string
-                  description: a description of the incident
                   example: We are currently investigating the issue
+                  description: a description of the incident
                 status:
                   type: string
                   enum:
@@ -2447,8 +2469,8 @@ paths:
                     - MONITORING
                     - RESOLVED
                     - UPDATE
-                  description: The current status of the incident
                   example: INVESTIGATING
+                  description: The current status of the incident
                 impact:
                   type:
                     - string
@@ -2459,8 +2481,8 @@ paths:
                     - DEGRADED_PERFORMANCE
                     - NO_IMPACT
                     - MAINTENANCE
-                  description: Impact of the incident
                   example: MAJOR_OUTAGE
+                  description: Impact of the incident
                 components:
                   type: object
                   additionalProperties:
@@ -2471,8 +2493,8 @@ paths:
                       - DEGRADED_PERFORMANCE
                       - NO_IMPACT
                       - MAINTENANCE
-                    description: Impact of the incident on the component
                     example: MAJOR_OUTAGE
+                    description: Impact of the incident on the component
               required:
                 - title
                 - description
@@ -2492,12 +2514,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Incident ID
                         example: a1b2c3d4
+                        description: Status Page Incident ID
                       title:
                         type: string
-                        description: a title for the incident
                         example: API is inaccessible
+                        description: a title for the incident
                       impact:
                         type:
                           - string
@@ -2508,24 +2530,24 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Impact of the incident
                         example: MAJOR_OUTAGE
+                        description: Impact of the incident
                       started:
                         type: string
-                        description: When the incident started
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
                       ended:
                         type: string
-                        description: When the incident was resolved
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
                       created_at:
                         type: string
-                        description: When the incident was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
                       updated_at:
                         type: string
-                        description: When the incident was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
                     required:
                       - id
                       - title
@@ -2536,8 +2558,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2585,25 +2607,28 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             default: "1"
-            description: Page number of paginated results.
             example: 1
+            description: Page number of paginated results.
           required: false
+          description: Page number of paginated results.
           name: page
           in: query
         - schema:
             type: string
             default: "20"
-            description: Number of items per page.
             example: 20
+            description: Number of items per page.
           required: false
+          description: Number of items per page.
           name: per_page
           in: query
       responses:
@@ -2621,12 +2646,12 @@ paths:
                       properties:
                         id:
                           type: string
-                          description: Status Page Incident ID
                           example: a1b2c3d4
+                          description: Status Page Incident ID
                         title:
                           type: string
-                          description: a title for the incident
                           example: API is inaccessible
+                          description: a title for the incident
                         impact:
                           type:
                             - string
@@ -2637,24 +2662,24 @@ paths:
                             - DEGRADED_PERFORMANCE
                             - NO_IMPACT
                             - MAINTENANCE
-                          description: Impact of the incident
                           example: MAJOR_OUTAGE
+                          description: Impact of the incident
                         started:
                           type: string
-                          description: When the incident started
                           example: "2021-01-01T00:00:00.000Z"
+                          description: When the incident started
                         ended:
                           type: string
-                          description: When the incident was resolved
                           example: "2021-02-01T00:00:00.000Z"
+                          description: When the incident was resolved
                         created_at:
                           type: string
-                          description: When the incident was created
                           example: "2021-01-01T00:00:00.000Z"
+                          description: When the incident was created
                         updated_at:
                           type: string
-                          description: When the incident was last updated
                           example: "2021-02-01T00:00:00.000Z"
+                          description: When the incident was last updated
                       required:
                         - id
                         - title
@@ -2668,29 +2693,29 @@ paths:
                       page:
                         type: number
                         default: 1
-                        description: Page number of paginated results.
                         example: 1
+                        description: Page number of paginated results.
                       per_page:
                         type: number
                         default: 20
-                        description: Number of items per page.
                         example: 20
+                        description: Number of items per page.
                       count:
                         type: number
-                        description: Number of items on the current page.
                         example: 1
+                        description: Number of items on the current page.
                       total_count:
                         type: number
-                        description: Total number of items.
                         example: 1
+                        description: Total number of items.
                     required:
                       - count
                       - total_count
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2740,17 +2765,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Incident ID
             example: a1b2c3d4
+            description: Status Page Incident ID
           required: true
+          description: Status Page Incident ID
           name: status_page_incident_id
           in: path
       responses:
@@ -2766,12 +2793,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Incident ID
                         example: a1b2c3d4
+                        description: Status Page Incident ID
                       title:
                         type: string
-                        description: a title for the incident
                         example: API is inaccessible
+                        description: a title for the incident
                       impact:
                         type:
                           - string
@@ -2782,24 +2809,24 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Impact of the incident
                         example: MAJOR_OUTAGE
+                        description: Impact of the incident
                       started:
                         type: string
-                        description: When the incident started
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
                       ended:
                         type: string
-                        description: When the incident was resolved
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
                       created_at:
                         type: string
-                        description: When the incident was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
                       updated_at:
                         type: string
-                        description: When the incident was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
                     required:
                       - id
                       - title
@@ -2810,8 +2837,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -2859,17 +2886,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Incident ID
             example: a1b2c3d4
+            description: Status Page Incident ID
           required: true
+          description: Status Page Incident ID
           name: status_page_incident_id
           in: path
       requestBody:
@@ -2880,8 +2909,8 @@ paths:
               properties:
                 title:
                   type: string
-                  description: a title for the incident
                   example: API is inaccessible
+                  description: a title for the incident
                 impact:
                   type:
                     - string
@@ -2892,8 +2921,8 @@ paths:
                     - DEGRADED_PERFORMANCE
                     - NO_IMPACT
                     - MAINTENANCE
-                  description: Impact of the incident
                   example: MAJOR_OUTAGE
+                  description: Impact of the incident
                 components:
                   type: object
                   additionalProperties:
@@ -2904,8 +2933,8 @@ paths:
                       - DEGRADED_PERFORMANCE
                       - NO_IMPACT
                       - MAINTENANCE
-                    description: Impact of the incident on the component
                     example: MAJOR_OUTAGE
+                    description: Impact of the incident on the component
               required:
                 - title
                 - impact
@@ -2923,12 +2952,12 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Incident ID
                         example: a1b2c3d4
+                        description: Status Page Incident ID
                       title:
                         type: string
-                        description: a title for the incident
                         example: API is inaccessible
+                        description: a title for the incident
                       impact:
                         type:
                           - string
@@ -2939,24 +2968,24 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - NO_IMPACT
                           - MAINTENANCE
-                        description: Impact of the incident
                         example: MAJOR_OUTAGE
+                        description: Impact of the incident
                       started:
                         type: string
-                        description: When the incident started
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
                       ended:
                         type: string
-                        description: When the incident was resolved
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
                       created_at:
                         type: string
-                        description: When the incident was created
                         example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
                       updated_at:
                         type: string
-                        description: When the incident was last updated
                         example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
                     required:
                       - id
                       - title
@@ -2967,8 +2996,8 @@ paths:
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -3016,17 +3045,19 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Status Page ID
             example: a1b2c3d4
+            description: Status Page ID
           required: true
+          description: Status Page ID
           name: status_page_id
           in: path
         - schema:
             type: string
             minLength: 8
-            description: Status Page Incident ID
             example: a1b2c3d4
+            description: Status Page Incident ID
           required: true
+          description: Status Page Incident ID
           name: status_page_incident_id
           in: path
       responses:
@@ -3042,15 +3073,15 @@ paths:
                     properties:
                       id:
                         type: string
-                        description: Status Page Incident ID
                         example: a1b2c3d4
+                        description: Status Page Incident ID
                     required:
                       - id
                   success:
                     type: boolean
                     default: true
-                    description: Whether the API call was successful
                     example: true
+                    description: Whether the API call was successful
                   errors:
                     type: array
                     items:
@@ -3097,9 +3128,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Heartbeat ID
             example: a1b2c3d4
+            description: Heartbeat ID
           required: true
+          description: Heartbeat ID
           name: heartbeat_id
           in: path
       responses:
@@ -3115,9 +3147,10 @@ paths:
         - schema:
             type: string
             minLength: 8
-            description: Heartbeat ID
             example: a1b2c3d4
+            description: Heartbeat ID
           required: true
+          description: Heartbeat ID
           name: heartbeat_id
           in: path
       responses:
