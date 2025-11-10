@@ -261,10 +261,19 @@ paths:
                           format: uri
                           example: https://example.com
                           description: URL to check
+                        check_type:
+                          type: string
+                          enum:
+                            - UPTIME
+                            - BROWSER
+                          example: UPTIME
+                          description: Indicates whether the check is a regular uptime check, or a browser check.
+                        last_queued:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: Last time the check was queued
                         status:
-                          type:
-                            - string
-                            - "null"
+                          type: string
                           enum:
                             - UP
                             - DOWN
@@ -276,25 +285,13 @@ paths:
                             - VERIFYING
                           example: UP
                           description: Current status of the check based on the latest uptime event
-                        last_queued:
-                          type: string
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: Last time the check was queued
-                        headers:
-                          type: object
-                          additionalProperties:
-                            type: string
-                            example: My Value
-                            description: Header value
-                          example:
-                            X-My-Header: My Value
-                          description: Headers to send with the request
                       required:
                         - id
                         - name
                         - url
-                        - status
+                        - check_type
                         - last_queued
+                        - status
                   result_info:
                     type: object
                     properties:
@@ -371,6 +368,7 @@ paths:
       security:
         - api_token: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -394,12 +392,54 @@ paths:
                   minimum: 30
                   example: 60
                   description: Interval in seconds between checks
-                number_of_fails_before_alert:
+                reminder_alert_interval_minutes:
                   type: integer
-                  minimum: 1
-                  default: 2
-                  example: 2
-                  description: Number of failing checks before an alert is sent
+                  minimum: -1
+                  default: 1440
+                  example: 1440
+                  description: Interval in minutes between reminders (-1 for never)
+                test_regions:
+                  type: array
+                  items:
+                    type: string
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                confirmation_period_seconds:
+                  type: integer
+                  minimum: 0
+                  default: 60
+                  example: 60
+                  description: Confirmation period in seconds
+                recovery_period_seconds:
+                  type: integer
+                  minimum: 0
+                  default: 180
+                  example: 180
+                  description: Recovery period in seconds
+                timeout:
+                  type: integer
+                  minimum: 1000
+                  default: 10000
+                  example: 10000
+                  description: Timeout in milliseconds
                 type:
                   type: string
                   enum:
@@ -446,9 +486,54 @@ paths:
                   example: true
                   description: Whether to follow redirects
                 assertions:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - JSON_BODY
+                          - TEXT_BODY
+                          - RESPONSE_HEADERS
+                        example: JSON_BODY
+                        description: Type of assertion
+                      property:
+                        type: string
+                        example: $.data.name
+                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                      comparison:
+                        type: string
+                        enum:
+                          - EQUALS
+                          - NOT_EQUALS
+                          - GREATER_THAN
+                          - LESS_THAN
+                          - "NULL"
+                          - NOT_NULL
+                          - EMPTY
+                          - NOT_EMPTY
+                          - CONTAINS
+                          - NOT_CONTAINS
+                          - "FALSE"
+                          - "TRUE"
+                        example: EQUALS
+                        description: Comparison operator
+                      expected:
+                        type: string
+                        example: John Doe
+                        description: Expected value
+                    required:
+                      - type
+                      - property
+                      - comparison
+                      - expected
+                  example:
+                    - type: JSON_BODY
+                      property: $.data.name
+                      comparison: EQUALS
+                      expected: John Doe
+                  description: Assertions to run on the response
                 verify_ssl:
                   type: boolean
                   default: false
@@ -462,6 +547,13 @@ paths:
                   type: string
                   example: password
                   description: Password to use for URLs behind HTTP Basic Auth
+                version:
+                  type: string
+                  enum:
+                    - NODE14_PUPPETEER
+                    - NODE20_PLAYWRIGHT
+                  example: NODE20_PLAYWRIGHT
+                  description: Version of the Browser Check
               required:
                 - name
                 - url
@@ -505,10 +597,19 @@ paths:
                         format: uri
                         example: https://example.com
                         description: URL to check
+                      check_type:
+                        type: string
+                        enum:
+                          - UPTIME
+                          - BROWSER
+                        example: UPTIME
+                        description: Indicates whether the check is a regular uptime check, or a browser check.
+                      last_queued:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       status:
-                        type:
-                          - string
-                          - "null"
+                        type: string
                         enum:
                           - UP
                           - DOWN
@@ -520,25 +621,13 @@ paths:
                           - VERIFYING
                         example: UP
                         description: Current status of the check based on the latest uptime event
-                      last_queued:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time the check was queued
-                      headers:
-                        type: object
-                        additionalProperties:
-                          type: string
-                          example: My Value
-                          description: Header value
-                        example:
-                          X-My-Header: My Value
-                        description: Headers to send with the request
                     required:
                       - id
                       - name
                       - url
-                      - status
+                      - check_type
                       - last_queued
+                      - status
                   success:
                     type: boolean
                     default: true
@@ -624,10 +713,19 @@ paths:
                         format: uri
                         example: https://example.com
                         description: URL to check
+                      check_type:
+                        type: string
+                        enum:
+                          - UPTIME
+                          - BROWSER
+                        example: UPTIME
+                        description: Indicates whether the check is a regular uptime check, or a browser check.
+                      last_queued:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       status:
-                        type:
-                          - string
-                          - "null"
+                        type: string
                         enum:
                           - UP
                           - DOWN
@@ -639,25 +737,13 @@ paths:
                           - VERIFYING
                         example: UP
                         description: Current status of the check based on the latest uptime event
-                      last_queued:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time the check was queued
-                      headers:
-                        type: object
-                        additionalProperties:
-                          type: string
-                          example: My Value
-                          description: Header value
-                        example:
-                          X-My-Header: My Value
-                        description: Headers to send with the request
                     required:
                       - id
                       - name
                       - url
-                      - status
+                      - check_type
                       - last_queued
+                      - status
                   success:
                     type: boolean
                     default: true
@@ -796,22 +882,177 @@ paths:
           name: check_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
+                name:
+                  type: string
+                  example: My landing page
+                  description: Name of the check
+                url:
+                  type: string
+                  format: uri
+                  example: https://example.com
+                  description: URL to check
+                text_to_search_for:
+                  type: string
+                  example: Example Domain
+                  description: Text to search for in the response
+                test_interval:
+                  type: integer
+                  minimum: 30
+                  example: 60
+                  description: Interval in seconds between checks
+                type:
+                  type: string
+                  enum:
+                    - UPTIME_CHECK
+                    - BROWSER_CHECK
+                  example: UPTIME_CHECK
+                  description: Type of check
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  example: LOW
+                  description: Alert Priority
                 headers:
                   type: object
                   additionalProperties:
-                    type:
-                      - string
-                      - "null"
+                    type: string
                     example: My Value
-                    description: Header value. Set to null to remove the header.
+                    description: Header value
                   example:
                     X-My-Header: My Value
                   description: Headers to send with the request
+                method:
+                  type: string
+                  enum:
+                    - GET
+                    - HEAD
+                    - POST
+                    - PUT
+                    - PATCH
+                    - DELETE
+                  example: GET
+                  description: HTTP Method
+                body:
+                  type: string
+                  example: Hello World
+                follow_redirects:
+                  type: boolean
+                  example: true
+                  description: Whether to follow redirects
+                assertions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - JSON_BODY
+                          - TEXT_BODY
+                          - RESPONSE_HEADERS
+                        example: JSON_BODY
+                        description: Type of assertion
+                      property:
+                        type: string
+                        example: $.data.name
+                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                      comparison:
+                        type: string
+                        enum:
+                          - EQUALS
+                          - NOT_EQUALS
+                          - GREATER_THAN
+                          - LESS_THAN
+                          - "NULL"
+                          - NOT_NULL
+                          - EMPTY
+                          - NOT_EMPTY
+                          - CONTAINS
+                          - NOT_CONTAINS
+                          - "FALSE"
+                          - "TRUE"
+                        example: EQUALS
+                        description: Comparison operator
+                      expected:
+                        type: string
+                        example: John Doe
+                        description: Expected value
+                    required:
+                      - type
+                      - property
+                      - comparison
+                      - expected
+                verify_ssl:
+                  type: boolean
+                  example: false
+                  description: Whether to fail a check if SSL verification fails
+                auth_username:
+                  type: string
+                  example: username
+                  description: Username to use for URLs behind HTTP Basic Auth
+                auth_password:
+                  type: string
+                  example: password
+                  description: Password to use for URLs behind HTTP Basic Auth
+                timeout:
+                  type: integer
+                  minimum: 1000
+                  example: 10000
+                  description: Timeout in milliseconds
+                version:
+                  type: string
+                  enum:
+                    - NODE14_PUPPETEER
+                    - NODE20_PLAYWRIGHT
+                  example: NODE20_PLAYWRIGHT
+                  description: Version of the Browser Check
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  example: 1440
+                  description: Interval in minutes between reminders (-1 for never)
+                confirmation_period_seconds:
+                  type: integer
+                  minimum: 0
+                  example: 60
+                  description: Confirmation period in seconds
+                recovery_period_seconds:
+                  type: integer
+                  minimum: 0
+                  example: 180
+                  description: Recovery period in seconds
+                test_regions:
+                  type: array
+                  items:
+                    type: string
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
                 paused:
                   type: boolean
                   example: false
@@ -852,10 +1093,19 @@ paths:
                         format: uri
                         example: https://example.com
                         description: URL to check
+                      check_type:
+                        type: string
+                        enum:
+                          - UPTIME
+                          - BROWSER
+                        example: UPTIME
+                        description: Indicates whether the check is a regular uptime check, or a browser check.
+                      last_queued:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time the check was queued
                       status:
-                        type:
-                          - string
-                          - "null"
+                        type: string
                         enum:
                           - UP
                           - DOWN
@@ -867,25 +1117,13 @@ paths:
                           - VERIFYING
                         example: UP
                         description: Current status of the check based on the latest uptime event
-                      last_queued:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time the check was queued
-                      headers:
-                        type: object
-                        additionalProperties:
-                          type: string
-                          example: My Value
-                          description: Header value
-                        example:
-                          X-My-Header: My Value
-                        description: Headers to send with the request
                     required:
                       - id
                       - name
                       - url
-                      - status
+                      - check_type
                       - last_queued
+                      - status
                   success:
                     type: boolean
                     default: true
@@ -1037,6 +1275,7 @@ paths:
           name: status_page_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1500,6 +1739,7 @@ paths:
       security:
         - api_token: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1745,6 +1985,7 @@ paths:
           name: status_page_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -2207,6 +2448,7 @@ paths:
           name: status_page_component_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -2448,6 +2690,7 @@ paths:
           name: status_page_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -2902,6 +3145,7 @@ paths:
           name: status_page_incident_id
           in: path
       requestBody:
+        required: true
         content:
           application/json:
             schema:
