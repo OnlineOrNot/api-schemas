@@ -550,7 +550,6 @@ paths:
                 version:
                   type: string
                   enum:
-                    - NODE14_PUPPETEER
                     - NODE20_PLAYWRIGHT
                   example: NODE20_PLAYWRIGHT
                   description: Version of the Browser Check
@@ -1010,7 +1009,6 @@ paths:
                 version:
                   type: string
                   enum:
-                    - NODE14_PUPPETEER
                     - NODE20_PLAYWRIGHT
                   example: NODE20_PLAYWRIGHT
                   description: Version of the Browser Check
