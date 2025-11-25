@@ -496,6 +496,7 @@ paths:
                           - JSON_BODY
                           - TEXT_BODY
                           - RESPONSE_HEADERS
+                          - HTML_BODY
                         example: JSON_BODY
                         description: Type of assertion
                       property:
@@ -533,6 +534,10 @@ paths:
                       property: $.data.name
                       comparison: EQUALS
                       expected: John Doe
+                    - type: HTML_BODY
+                      property: meta[name="description"]
+                      comparison: NOT_EMPTY
+                      expected: ""
                   description: Assertions to run on the response
                 verify_ssl:
                   type: boolean
@@ -957,6 +962,7 @@ paths:
                           - JSON_BODY
                           - TEXT_BODY
                           - RESPONSE_HEADERS
+                          - HTML_BODY
                         example: JSON_BODY
                         description: Type of assertion
                       property:
