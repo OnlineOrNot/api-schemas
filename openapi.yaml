@@ -3406,4 +3406,999 @@ paths:
           description: Accepts an incoming heartbeat and returns nothing
         "500":
           description: Internal Server Error
+  /v1/heartbeats:
+    get:
+      tags:
+        - Heartbeats
+      description: List all heartbeats
+      summary: Retrieve a paginated list of all heartbeat monitors
+      operationId: listHeartbeats
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of OnlineOrNot Heartbeats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Heartbeat ID
+                        name:
+                          type: string
+                          example: Daily backup job
+                          description: Name of the heartbeat monitor
+                        status:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - UP
+                            - DOWN
+                            - PENDING
+                            - PAUSED
+                            - MUTED
+                          example: UP
+                          description: Current status of the heartbeat
+                        last_seen:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: Last time a heartbeat ping was received
+                        report_period:
+                          type:
+                            - number
+                            - "null"
+                          example: 3600
+                          description: Expected interval in seconds between heartbeat pings
+                        report_period_cron:
+                          type:
+                            - string
+                            - "null"
+                          example: 0 0 * * *
+                          description: Cron expression for expected heartbeat schedule
+                        timezone:
+                          type:
+                            - string
+                            - "null"
+                          example: America/New_York
+                          description: Timezone for cron schedule
+                        grace_period:
+                          type: number
+                          example: 300
+                          description: Grace period in seconds before alerting
+                        reminder_alert_interval_minutes:
+                          type: number
+                          example: 1440
+                          description: Interval in minutes between reminder alerts
+                        alert_priority:
+                          type: string
+                          enum:
+                            - LOW
+                            - HIGH
+                          example: LOW
+                          description: Alert priority level
+                        created_at:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the heartbeat was created
+                        updated_at:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the heartbeat was last updated
+                      required:
+                        - id
+                        - name
+                        - status
+                        - last_seen
+                        - report_period
+                        - report_period_cron
+                        - timezone
+                        - grace_period
+                        - reminder_alert_interval_minutes
+                        - alert_priority
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Heartbeats
+      description: Create a heartbeat
+      summary: Create a new heartbeat monitor for cron jobs or scheduled tasks
+      operationId: createHeartbeat
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Daily backup job
+                  description: Name of the heartbeat monitor
+                report_period:
+                  type: integer
+                  minimum: 1
+                  example: 3600
+                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
+                report_period_cron:
+                  type: string
+                  example: 0 0 * * *
+                  description: Cron expression for expected heartbeat schedule
+                timezone:
+                  type: string
+                  example: America/New_York
+                  description: Timezone for cron schedule
+                grace_period:
+                  type: integer
+                  minimum: 1
+                  example: 300
+                  description: Grace period in seconds to wait after missed heartbeat before alerting
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  default: 1440
+                  example: 1440
+                  description: Interval in minutes between reminder alerts (-1 for never)
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of user IDs to alert
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Slack integration IDs to alert
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of webhook integration IDs to alert
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of incident.io integration IDs to alert
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Microsoft Teams integration IDs to alert
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  default: LOW
+                  example: LOW
+                  description: Alert priority level
+              required:
+                - name
+                - grace_period
+            examples:
+              simple:
+                summary: Simple interval heartbeat
+                value:
+                  name: Daily backup job
+                  report_period: 86400
+                  grace_period: 300
+              cron:
+                summary: Cron-based heartbeat
+                value:
+                  name: Hourly sync task
+                  report_period_cron: 0 * * * *
+                  timezone: America/New_York
+                  grace_period: 600
+                  alert_priority: HIGH
+      responses:
+        "200":
+          description: Create a new OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/heartbeats/{heartbeat_id}:
+    get:
+      tags:
+        - Heartbeats
+      description: Retrieve a heartbeat
+      summary: Look up detailed information about a specific heartbeat monitor
+      operationId: getHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      responses:
+        "200":
+          description: Retrieve the specified OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Heartbeats
+      description: Modify a heartbeat
+      summary: Modify the configuration of an existing heartbeat monitor
+      operationId: updateHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Daily backup job
+                  description: Name of the heartbeat monitor
+                report_period:
+                  type:
+                    - integer
+                    - "null"
+                  minimum: 1
+                  example: 3600
+                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
+                report_period_cron:
+                  type:
+                    - string
+                    - "null"
+                  example: 0 0 * * *
+                  description: Cron expression for expected heartbeat schedule
+                timezone:
+                  type:
+                    - string
+                    - "null"
+                  example: America/New_York
+                  description: Timezone for cron schedule
+                grace_period:
+                  type: integer
+                  minimum: 1
+                  example: 300
+                  description: Grace period in seconds to wait after missed heartbeat before alerting
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  example: 1440
+                  description: Interval in minutes between reminder alerts (-1 for never)
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of user IDs to alert
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Slack integration IDs to alert
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of webhook integration IDs to alert
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of incident.io integration IDs to alert
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Microsoft Teams integration IDs to alert
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  example: LOW
+                  description: Alert priority level
+                paused:
+                  type: boolean
+                  example: false
+                  description: Whether the heartbeat is paused
+                muted:
+                  type: boolean
+                  example: false
+                  description: Whether the heartbeat is muted (continues monitoring but suppresses alerts)
+            examples:
+              updateSchedule:
+                summary: Update heartbeat schedule
+                value:
+                  report_period: 7200
+                  grace_period: 600
+              pause:
+                summary: Pause heartbeat monitoring
+                value:
+                  paused: true
+              mute:
+                summary: Mute heartbeat alerts
+                value:
+                  muted: true
+      responses:
+        "200":
+          description: Modify an OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Heartbeats
+      description: Delete a heartbeat
+      summary: Permanently delete a heartbeat monitor
+      operationId: deleteHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted OnlineOrNot Heartbeat's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
 webhooks: {}
