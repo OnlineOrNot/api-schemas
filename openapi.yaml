@@ -15,7 +15,144 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-  schemas: {}
+  schemas:
+    OrgUser:
+      type: object
+      properties:
+        id:
+          type: string
+          example: abc123
+          description: The unique identifier of the user
+        firstName:
+          type:
+            - string
+            - "null"
+          example: Jane
+          description: The user's first name
+        lastName:
+          type:
+            - string
+            - "null"
+          example: Doe
+          description: The user's last name
+        email:
+          type:
+            - string
+            - "null"
+          example: jane@example.com
+          description: The user's email address
+        image:
+          type:
+            - string
+            - "null"
+          example: https://example.com/avatar.jpg
+          description: URL to the user's avatar image
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          example: STANDARD
+          description: The role of the user in the organisation
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - image
+        - role
+    Invitation:
+      type: object
+      properties:
+        id:
+          type: string
+          example: inv123
+          description: The unique identifier of the invitation
+        email:
+          type: string
+          example: newuser@example.com
+          description: The email address the invitation was sent to
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          example: STANDARD
+          description: The role of the user in the organisation
+        createdAt:
+          type: string
+          example: "2024-01-15T10:30:00Z"
+          description: When the invitation was created
+      required:
+        - id
+        - email
+        - role
+        - createdAt
+    PeopleListResult:
+      type: object
+      properties:
+        organisationName:
+          type: string
+          example: Acme Corp
+          description: The name of the organisation
+        currentUserRole:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          example: STANDARD
+          description: The current user's role in the organisation
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgUser'
+          description: List of users in the organisation
+        invitations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invitation'
+          description: List of pending invitations
+      required:
+        - organisationName
+        - currentUserRole
+        - users
+        - invitations
+    InviteUserResult:
+      type: object
+      properties:
+        id:
+          type: string
+          example: inv123
+          description: The unique identifier of the created invitation
+      required:
+        - id
+    InviteUserInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: newuser@example.com
+          description: The email address to send the invitation to
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          default: STANDARD
+          example: STANDARD
+          description: The role to assign to the invited user
+      required:
+        - email
+    RemoveUserResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+          description: Whether the user was successfully removed
+      required:
+        - success
   parameters: {}
 paths:
   /v1/tokens/verify:
@@ -4399,6 +4536,230 @@ paths:
                   - success
                   - errors
                   - messages
+        "500":
+          description: Internal Server Error
+  /v1/people:
+    get:
+      tags:
+        - People
+      description: List all users and pending invitations in your organisation
+      summary: Get all team members and pending invites for your organisation
+      operationId: listPeople
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Returns a list of users and pending invitations in the organisation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/PeopleListResult'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "500":
+          description: Internal Server Error
+  /v1/people/invite:
+    post:
+      tags:
+        - People
+      description: Invite a new user to your organisation
+      summary: Send an invitation email to add a new team member
+      operationId: inviteUser
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteUserInput'
+            examples:
+              standardUser:
+                summary: Invite a standard user
+                value:
+                  email: newuser@example.com
+                  role: STANDARD
+              adminUser:
+                summary: Invite an admin user
+                value:
+                  email: admin@example.com
+                  role: ADMIN
+      responses:
+        "200":
+          description: Returns the created invitation ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/InviteUserResult'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid email or user already invited/exists
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden - Plan limit reached
+        "500":
+          description: Internal Server Error
+  /v1/people/{user_id}:
+    delete:
+      tags:
+        - People
+      description: Remove a user from your organisation
+      summary: Remove a team member from your organisation
+      operationId: removeUser
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            example: abc123def
+          required: true
+          name: user_id
+          in: path
+          description: The unique identifier of the user
+      responses:
+        "200":
+          description: Returns success status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/RemoveUserResult'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid user ID or cannot remove yourself
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden - Insufficient permissions
+        "404":
+          description: Not Found - User not in organisation
         "500":
           description: Internal Server Error
 webhooks: {}
