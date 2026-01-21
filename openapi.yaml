@@ -155,11 +155,11 @@ components:
         - success
   parameters: {}
 paths:
-  /https://oonchk.com/{heartbeat_id}:
+  /{heartbeat_id}:
     get:
       tags:
         - Heartbeats
-      summary: 'Send a heartbeat ping from your scripts or cron jobs to signal that it has completed. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
+      summary: 'Send a heartbeat ping (GET). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
       description: Send a heartbeat (GET)
       operationId: pingHeartbeatGet
       servers:
@@ -183,7 +183,7 @@ paths:
     post:
       tags:
         - Heartbeats
-      summary: 'Send a heartbeat ping from your scripts or cron jobs to signal that it has completed. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
+      summary: 'Send a heartbeat ping (POST). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
       description: Send a heartbeat (POST)
       operationId: pingHeartbeat
       servers:
