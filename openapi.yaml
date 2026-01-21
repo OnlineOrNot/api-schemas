@@ -15,144 +15,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-  schemas:
-    OrgUser:
-      type: object
-      properties:
-        id:
-          type: string
-          example: abc123
-          description: The unique identifier of the user
-        firstName:
-          type:
-            - string
-            - "null"
-          example: Jane
-          description: The user's first name
-        lastName:
-          type:
-            - string
-            - "null"
-          example: Doe
-          description: The user's last name
-        email:
-          type:
-            - string
-            - "null"
-          example: jane@example.com
-          description: The user's email address
-        image:
-          type:
-            - string
-            - "null"
-          example: https://example.com/avatar.jpg
-          description: URL to the user's avatar image
-        role:
-          type: string
-          enum:
-            - ADMIN
-            - STANDARD
-          example: STANDARD
-          description: The role of the user in the organisation
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
-        - image
-        - role
-    Invitation:
-      type: object
-      properties:
-        id:
-          type: string
-          example: inv123
-          description: The unique identifier of the invitation
-        email:
-          type: string
-          example: newuser@example.com
-          description: The email address the invitation was sent to
-        role:
-          type: string
-          enum:
-            - ADMIN
-            - STANDARD
-          example: STANDARD
-          description: The role of the user in the organisation
-        createdAt:
-          type: string
-          example: "2024-01-15T10:30:00Z"
-          description: When the invitation was created
-      required:
-        - id
-        - email
-        - role
-        - createdAt
-    PeopleListResult:
-      type: object
-      properties:
-        organisationName:
-          type: string
-          example: Acme Corp
-          description: The name of the organisation
-        currentUserRole:
-          type: string
-          enum:
-            - ADMIN
-            - STANDARD
-          example: STANDARD
-          description: The current user's role in the organisation
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrgUser'
-          description: List of users in the organisation
-        invitations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Invitation'
-          description: List of pending invitations
-      required:
-        - organisationName
-        - currentUserRole
-        - users
-        - invitations
-    InviteUserResult:
-      type: object
-      properties:
-        id:
-          type: string
-          example: inv123
-          description: The unique identifier of the created invitation
-      required:
-        - id
-    InviteUserInput:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          example: newuser@example.com
-          description: The email address to send the invitation to
-        role:
-          type: string
-          enum:
-            - ADMIN
-            - STANDARD
-          default: STANDARD
-          example: STANDARD
-          description: The role to assign to the invited user
-      required:
-        - email
-    RemoveUserResult:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-          description: Whether the user was successfully removed
-      required:
-        - success
+  schemas: {}
   parameters: {}
 paths:
   /{heartbeat_id}:
@@ -4721,8 +4584,8 @@ paths:
     post:
       tags:
         - Maintenance Windows
-      description: Create a new maintenance window with associated checks and heartbeats
-      summary: Create a new maintenance window
+      summary: Create a new maintenance window with associated checks and heartbeats
+      description: Create a new maintenance window
       operationId: createMaintenanceWindow
       security:
         - api_token: []
@@ -4947,7 +4810,7 @@ paths:
     get:
       tags:
         - Maintenance Windows
-      description: Get a single maintenance window by ID
+      description: Get a maintenance window by ID
       summary: Retrieve a maintenance window with associated checks and heartbeats
       operationId: getMaintenanceWindow
       security:
@@ -5091,8 +4954,8 @@ paths:
     patch:
       tags:
         - Maintenance Windows
-      description: Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
-      summary: Update a maintenance window
+      summary: Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
+      description: Update a maintenance window
       operationId: updateMaintenanceWindow
       security:
         - api_token: []
@@ -5324,8 +5187,8 @@ paths:
     delete:
       tags:
         - Maintenance Windows
-      description: Delete a maintenance window and all its associations with checks and heartbeats
-      summary: Delete a maintenance window
+      summary: Delete a maintenance window and all its associations with checks and heartbeats
+      description: Delete a maintenance window
       operationId: deleteMaintenanceWindow
       security:
         - api_token: []
@@ -5402,25 +5265,113 @@ paths:
           description: Not Found - Maintenance window does not exist or belongs to different organization
         "500":
           description: Internal Server Error
-  /v1/people:
+  /v1/users:
     get:
       tags:
         - People
-      description: List all people
-      summary: Retrieve all users and pending invitations in your organisation
-      operationId: listPeople
+      description: List all users
+      summary: Retrieve a paginated list of all users in your organisation
+      operationId: listUsers
       security:
         - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
       responses:
         "200":
-          description: Returns a list of users and pending invitations in the organisation
+          description: Returns a list of users in the organisation
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/PeopleListResult'
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: abc123
+                          description: The unique identifier of the user
+                        first_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Jane
+                          description: The user's first name
+                        last_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Doe
+                          description: The user's last name
+                        email:
+                          type:
+                            - string
+                            - "null"
+                          example: jane@example.com
+                          description: The user's email address
+                        image:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/avatar.jpg
+                          description: URL to the user's avatar image
+                        role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - STANDARD
+                          example: STANDARD
+                          description: The role of the user in the organisation
+                      required:
+                        - id
+                        - first_name
+                        - last_name
+                        - email
+                        - image
+                        - role
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
                   success:
                     type: boolean
                     default: true
@@ -5458,6 +5409,7 @@ paths:
                     example: []
                 required:
                   - result
+                  - result_info
                   - success
                   - errors
                   - messages
@@ -5465,95 +5417,11 @@ paths:
           description: Unauthenticated
         "500":
           description: Internal Server Error
-  /v1/people/invite:
-    post:
-      tags:
-        - People
-      description: Invite a user
-      summary: Send an invitation email to add a new team member to your organisation
-      operationId: inviteUser
-      security:
-        - api_token: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InviteUserInput'
-            examples:
-              standardUser:
-                summary: Invite a standard user
-                value:
-                  email: newuser@example.com
-                  role: STANDARD
-              adminUser:
-                summary: Invite an admin user
-                value:
-                  email: admin@example.com
-                  role: ADMIN
-      responses:
-        "200":
-          description: Returns the created invitation ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    $ref: '#/components/schemas/InviteUserResult'
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "400":
-          description: Bad Request - Invalid email or user already invited/exists
-        "401":
-          description: Unauthenticated
-        "403":
-          description: Forbidden - Plan limit reached
-        "500":
-          description: Internal Server Error
-  /v1/people/{user_id}:
+  /v1/users/{user_id}:
     delete:
       tags:
         - People
-      description: Remove a user
+      description: Remove a user from the organisation
       summary: Remove a team member from your organisation
       operationId: removeUser
       security:
@@ -5569,14 +5437,21 @@ paths:
           in: path
       responses:
         "200":
-          description: Returns success status
+          description: Returns the ID of the removed user
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/RemoveUserResult'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: ID of the removed user
+                    required:
+                      - id
                   success:
                     type: boolean
                     default: true
@@ -5625,6 +5500,264 @@ paths:
           description: Forbidden - Insufficient permissions
         "404":
           description: Not Found - User not in organisation
+        "500":
+          description: Internal Server Error
+  /v1/invitations:
+    get:
+      tags:
+        - People
+      description: List all invitations
+      summary: Retrieve a paginated list of all pending invitations in your organisation
+      operationId: listInvitations
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of pending invitations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: inv123
+                          description: The unique identifier of the invitation
+                        email:
+                          type: string
+                          example: newuser@example.com
+                          description: The email address the invitation was sent to
+                        role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - STANDARD
+                          example: STANDARD
+                          description: The role of the user in the organisation
+                        created_at:
+                          type: string
+                          example: "2024-01-15T10:30:00Z"
+                          description: When the invitation was created
+                      required:
+                        - id
+                        - email
+                        - role
+                        - created_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - People
+      description: Create an invitation
+      summary: Send an invitation email to add a new team member to your organisation
+      operationId: createInvitation
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: newuser@example.com
+                  description: The email address to send the invitation to
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - STANDARD
+                  default: STANDARD
+                  example: STANDARD
+                  description: The role to assign to the invited user
+              required:
+                - email
+            examples:
+              standardUser:
+                summary: Invite a standard user
+                value:
+                  email: newuser@example.com
+                  role: STANDARD
+              adminUser:
+                summary: Invite an admin user
+                value:
+                  email: admin@example.com
+                  role: ADMIN
+      responses:
+        "200":
+          description: Returns the created invitation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: inv123
+                        description: The unique identifier of the invitation
+                      email:
+                        type: string
+                        example: newuser@example.com
+                        description: The email address the invitation was sent to
+                      role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - STANDARD
+                        example: STANDARD
+                        description: The role of the user in the organisation
+                      created_at:
+                        type: string
+                        example: "2024-01-15T10:30:00Z"
+                        description: When the invitation was created
+                    required:
+                      - id
+                      - email
+                      - role
+                      - created_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid email or user already invited/exists
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden - Plan limit reached
         "500":
           description: Internal Server Error
 webhooks: {}
