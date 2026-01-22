@@ -1261,14 +1261,71 @@ paths:
                         example: status
                         description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         format: uri
                         example: https://status.yourdomain.com
                         description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                      status:
+                        type: string
+                        enum:
+                          - ALL_SYSTEMS_OPERATIONAL
+                          - PARTIALLY_DEGRADED_SERVICE
+                          - MINOR_SERVICE_OUTAGE
+                          - MAJOR_SYSTEM_OUTAGE
+                          - SERVICE_UNDER_MAINTENANCE
+                        example: ALL_SYSTEMS_OPERATIONAL
+                        description: The current overall status of the status page
+                      favicon_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/favicon.ico
+                        description: URL to the favicon for the status page
+                      logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo.png
+                        description: URL to the logo for the status page
+                      dark_logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo-dark.png
+                        description: URL to the dark mode logo for the status page
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Real-time status updates for My Example SaaS
+                        description: A description of the status page
+                      hide_from_search_engines:
+                        type: boolean
+                        example: false
+                        description: Whether the status page is hidden from search engines
+                      has_password:
+                        type: boolean
+                        example: false
+                        description: Whether the status page requires a password to view
+                      allowed_ips:
+                        type:
+                          - array
+                          - "null"
+                        items:
+                          type: string
+                        example:
+                          - 192.168.1.1
+                          - 10.0.0.0/8
+                        description: List of IP addresses or CIDR ranges allowed to access this status page
                     required:
                       - id
                       - name
                       - subdomain
+                      - status
+                      - hide_from_search_engines
+                      - has_password
                   success:
                     type: boolean
                     default: true
@@ -1349,8 +1406,26 @@ paths:
                   example: https://status.yourdomain.com
                   description: The custom domain your status page is hosted at.
                 password:
+                  type:
+                    - string
+                    - "null"
+                  description: The password required to view your status page. If omitted, keeps existing password. If null or empty string, removes password protection. If non-empty string, sets new password.
+                description:
                   type: string
-                  description: The password that will be required to view your status page
+                  example: Real-time status updates for My Example SaaS
+                  description: A description of your status page
+                hide_from_search_engines:
+                  type: boolean
+                  example: false
+                  description: Whether to hide the status page from search engines
+                allowed_ips:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - 192.168.1.1
+                    - 10.0.0.0/8
+                  description: List of IP addresses or CIDR ranges allowed to access this status page
               required:
                 - name
                 - subdomain
@@ -1379,14 +1454,71 @@ paths:
                         example: status
                         description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         format: uri
                         example: https://status.yourdomain.com
                         description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                      status:
+                        type: string
+                        enum:
+                          - ALL_SYSTEMS_OPERATIONAL
+                          - PARTIALLY_DEGRADED_SERVICE
+                          - MINOR_SERVICE_OUTAGE
+                          - MAJOR_SYSTEM_OUTAGE
+                          - SERVICE_UNDER_MAINTENANCE
+                        example: ALL_SYSTEMS_OPERATIONAL
+                        description: The current overall status of the status page
+                      favicon_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/favicon.ico
+                        description: URL to the favicon for the status page
+                      logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo.png
+                        description: URL to the logo for the status page
+                      dark_logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo-dark.png
+                        description: URL to the dark mode logo for the status page
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Real-time status updates for My Example SaaS
+                        description: A description of the status page
+                      hide_from_search_engines:
+                        type: boolean
+                        example: false
+                        description: Whether the status page is hidden from search engines
+                      has_password:
+                        type: boolean
+                        example: false
+                        description: Whether the status page requires a password to view
+                      allowed_ips:
+                        type:
+                          - array
+                          - "null"
+                        items:
+                          type: string
+                        example:
+                          - 192.168.1.1
+                          - 10.0.0.0/8
+                        description: List of IP addresses or CIDR ranges allowed to access this status page
                     required:
                       - id
                       - name
                       - subdomain
+                      - status
+                      - hide_from_search_engines
+                      - has_password
                   success:
                     type: boolean
                     default: true
@@ -1562,14 +1694,71 @@ paths:
                             example: status
                             description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                           custom_domain:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             format: uri
                             example: https://status.yourdomain.com
                             description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                          status:
+                            type: string
+                            enum:
+                              - ALL_SYSTEMS_OPERATIONAL
+                              - PARTIALLY_DEGRADED_SERVICE
+                              - MINOR_SERVICE_OUTAGE
+                              - MAJOR_SYSTEM_OUTAGE
+                              - SERVICE_UNDER_MAINTENANCE
+                            example: ALL_SYSTEMS_OPERATIONAL
+                            description: The current overall status of the status page
+                          favicon_url:
+                            type:
+                              - string
+                              - "null"
+                            example: https://example.com/favicon.ico
+                            description: URL to the favicon for the status page
+                          logo_url:
+                            type:
+                              - string
+                              - "null"
+                            example: https://example.com/logo.png
+                            description: URL to the logo for the status page
+                          dark_logo_url:
+                            type:
+                              - string
+                              - "null"
+                            example: https://example.com/logo-dark.png
+                            description: URL to the dark mode logo for the status page
+                          description:
+                            type:
+                              - string
+                              - "null"
+                            example: Real-time status updates for My Example SaaS
+                            description: A description of the status page
+                          hide_from_search_engines:
+                            type: boolean
+                            example: false
+                            description: Whether the status page is hidden from search engines
+                          has_password:
+                            type: boolean
+                            example: false
+                            description: Whether the status page requires a password to view
+                          allowed_ips:
+                            type:
+                              - array
+                              - "null"
+                            items:
+                              type: string
+                            example:
+                              - 192.168.1.1
+                              - 10.0.0.0/8
+                            description: List of IP addresses or CIDR ranges allowed to access this status page
                         required:
                           - id
                           - name
                           - subdomain
+                          - status
+                          - hide_from_search_engines
+                          - has_password
                       components:
                         type: array
                         items:
@@ -1813,8 +2002,26 @@ paths:
                   example: https://status.yourdomain.com
                   description: The custom domain your status page is hosted at.
                 password:
+                  type:
+                    - string
+                    - "null"
+                  description: The password required to view your status page. If omitted, keeps existing password. If null or empty string, removes password protection. If non-empty string, sets new password.
+                description:
                   type: string
-                  description: The password that will be required to view your status page
+                  example: Real-time status updates for My Example SaaS
+                  description: A description of your status page
+                hide_from_search_engines:
+                  type: boolean
+                  example: false
+                  description: Whether to hide the status page from search engines
+                allowed_ips:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - 192.168.1.1
+                    - 10.0.0.0/8
+                  description: List of IP addresses or CIDR ranges allowed to access this status page
               required:
                 - name
                 - subdomain
@@ -1843,14 +2050,71 @@ paths:
                         example: status
                         description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                       custom_domain:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         format: uri
                         example: https://status.yourdomain.com
                         description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                      status:
+                        type: string
+                        enum:
+                          - ALL_SYSTEMS_OPERATIONAL
+                          - PARTIALLY_DEGRADED_SERVICE
+                          - MINOR_SERVICE_OUTAGE
+                          - MAJOR_SYSTEM_OUTAGE
+                          - SERVICE_UNDER_MAINTENANCE
+                        example: ALL_SYSTEMS_OPERATIONAL
+                        description: The current overall status of the status page
+                      favicon_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/favicon.ico
+                        description: URL to the favicon for the status page
+                      logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo.png
+                        description: URL to the logo for the status page
+                      dark_logo_url:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/logo-dark.png
+                        description: URL to the dark mode logo for the status page
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Real-time status updates for My Example SaaS
+                        description: A description of the status page
+                      hide_from_search_engines:
+                        type: boolean
+                        example: false
+                        description: Whether the status page is hidden from search engines
+                      has_password:
+                        type: boolean
+                        example: false
+                        description: Whether the status page requires a password to view
+                      allowed_ips:
+                        type:
+                          - array
+                          - "null"
+                        items:
+                          type: string
+                        example:
+                          - 192.168.1.1
+                          - 10.0.0.0/8
+                        description: List of IP addresses or CIDR ranges allowed to access this status page
                     required:
                       - id
                       - name
                       - subdomain
+                      - status
+                      - hide_from_search_engines
+                      - has_password
                   success:
                     type: boolean
                     default: true
@@ -1945,14 +2209,71 @@ paths:
                           example: status
                           description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
                         custom_domain:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                           format: uri
                           example: https://status.yourdomain.com
                           description: The custom domain your status page is hosted at. For example "https://status.yourdomain.com"
+                        status:
+                          type: string
+                          enum:
+                            - ALL_SYSTEMS_OPERATIONAL
+                            - PARTIALLY_DEGRADED_SERVICE
+                            - MINOR_SERVICE_OUTAGE
+                            - MAJOR_SYSTEM_OUTAGE
+                            - SERVICE_UNDER_MAINTENANCE
+                          example: ALL_SYSTEMS_OPERATIONAL
+                          description: The current overall status of the status page
+                        favicon_url:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/favicon.ico
+                          description: URL to the favicon for the status page
+                        logo_url:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/logo.png
+                          description: URL to the logo for the status page
+                        dark_logo_url:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/logo-dark.png
+                          description: URL to the dark mode logo for the status page
+                        description:
+                          type:
+                            - string
+                            - "null"
+                          example: Real-time status updates for My Example SaaS
+                          description: A description of the status page
+                        hide_from_search_engines:
+                          type: boolean
+                          example: false
+                          description: Whether the status page is hidden from search engines
+                        has_password:
+                          type: boolean
+                          example: false
+                          description: Whether the status page requires a password to view
+                        allowed_ips:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type: string
+                          example:
+                            - 192.168.1.1
+                            - 10.0.0.0/8
+                          description: List of IP addresses or CIDR ranges allowed to access this status page
                       required:
                         - id
                         - name
                         - subdomain
+                        - status
+                        - hide_from_search_engines
+                        - has_password
                   result_info:
                     type: object
                     properties:
