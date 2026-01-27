@@ -627,7 +627,7 @@ paths:
                   test_interval: 30
                   alert_priority: HIGH
       responses:
-        "200":
+        "201":
           description: Create a new OnlineOrNot Check
           content:
             application/json:
@@ -1807,6 +1807,10 @@ paths:
                               type: string
                               example: a1b2c3d4
                               description: Status Page Group ID
+                            is_external_component:
+                              type: boolean
+                              example: false
+                              description: Whether this component is synced from an external status page
                           required:
                             - id
                             - name
@@ -2026,7 +2030,7 @@ paths:
                 - name
                 - subdomain
       responses:
-        "200":
+        "201":
           description: Create a new OnlineOrNot Status Page
           content:
             application/json:
@@ -2395,7 +2399,7 @@ paths:
               required:
                 - name
       responses:
-        "200":
+        "201":
           description: Returns the newly created status page component
           content:
             application/json:
@@ -2448,6 +2452,10 @@ paths:
                         type: string
                         example: a1b2c3d4
                         description: Status Page Group ID
+                      is_external_component:
+                        type: boolean
+                        example: false
+                        description: Whether this component is synced from an external status page
                     required:
                       - id
                       - name
@@ -2589,6 +2597,10 @@ paths:
                           type: string
                           example: a1b2c3d4
                           description: Status Page Group ID
+                        is_external_component:
+                          type: boolean
+                          example: false
+                          description: Whether this component is synced from an external status page
                       required:
                         - id
                         - name
@@ -2745,6 +2757,10 @@ paths:
                         type: string
                         example: a1b2c3d4
                         description: Status Page Group ID
+                      is_external_component:
+                        type: boolean
+                        example: false
+                        description: Whether this component is synced from an external status page
                     required:
                       - id
                       - name
@@ -2796,7 +2812,7 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
-    post:
+    patch:
       tags:
         - Status Page Components
       description: Update a component
@@ -2842,21 +2858,40 @@ paths:
                     - DEGRADED_PERFORMANCE
                     - NO_IMPACT
                     - MAINTENANCE
-                  default: OPERATIONAL
                   example: MAJOR_OUTAGE
                   description: Status of the component
                 display_uptime:
                   type: boolean
-                  default: true
                   example: true
                   description: Show this component's uptime and historical incidents on the status page.
                 display_metrics:
                   type: boolean
-                  default: true
                   example: true
                   description: Show this component's response time metrics on the status page.
-              required:
-                - name
+                group_id:
+                  type:
+                    - string
+                    - "null"
+                  example: a1b2c3d4
+                  description: Component group ID to associate this component with. Set to null to remove from group.
+                check_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - abc123
+                    - def456
+                  description: Array of uptime check IDs to associate with this component
+                heartbeat_id:
+                  type:
+                    - string
+                    - "null"
+                  example: hb123456
+                  description: Heartbeat ID to associate with this component. Set to null to remove.
+                override_status:
+                  type: boolean
+                  example: false
+                  description: Override the automatic status from external status page. When true, status can be manually set.
       responses:
         "200":
           description: Returns the updated status page component
@@ -2911,6 +2946,10 @@ paths:
                         type: string
                         example: a1b2c3d4
                         description: Status Page Group ID
+                      is_external_component:
+                        type: boolean
+                        example: false
+                        description: Whether this component is synced from an external status page
                     required:
                       - id
                       - name
@@ -3046,6 +3085,883 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/status_pages/{status_page_id}/components/sort-order:
+    put:
+      tags:
+        - Status Page Components
+      description: Update the sort order of ungrouped components
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                component_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - a1b2c3d4
+                    - e5f6g7h8
+                  description: Ordered list of ungrouped component IDs
+              required:
+                - component_ids
+      responses:
+        "200":
+          description: Sort order updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Sort order updated successfully
+                        description: Success message
+                    required:
+                      - message
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/groups:
+    get:
+      tags:
+        - Status Page Component Groups
+      description: List all component groups
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of component groups for a status page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Status Page Component Group ID
+                        name:
+                          type: string
+                          example: Core Services
+                          description: Name of the component group
+                        description:
+                          type:
+                            - string
+                            - "null"
+                          example: Our core infrastructure services
+                          description: Description of the component group
+                        sort_order:
+                          type: number
+                          example: 1
+                          description: Sort order of the group
+                        created_at:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the component group was created
+                        updated_at:
+                          type: string
+                          example: "2021-02-01T00:00:00.000Z"
+                          description: When the component group was last updated
+                      required:
+                        - id
+                        - name
+                        - sort_order
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Status Page Component Groups
+      description: Create a component group
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: Core Services
+                  description: Name of the component group
+                description:
+                  type: string
+                  example: Our core infrastructure services
+                  description: Description of the component group
+              required:
+                - name
+      responses:
+        "201":
+          description: Returns the newly created component group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component Group ID
+                      name:
+                        type: string
+                        example: Core Services
+                        description: Name of the component group
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Our core infrastructure services
+                        description: Description of the component group
+                      sort_order:
+                        type: number
+                        example: 1
+                        description: Sort order of the group
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the component group was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the component group was last updated
+                    required:
+                      - id
+                      - name
+                      - sort_order
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/groups/{group_id}:
+    get:
+      tags:
+        - Status Page Component Groups
+      description: Retrieve a component group
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Component Group ID
+          required: true
+          description: Status Page Component Group ID
+          name: group_id
+          in: path
+      responses:
+        "200":
+          description: Returns a component group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component Group ID
+                      name:
+                        type: string
+                        example: Core Services
+                        description: Name of the component group
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Our core infrastructure services
+                        description: Description of the component group
+                      sort_order:
+                        type: number
+                        example: 1
+                        description: Sort order of the group
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the component group was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the component group was last updated
+                    required:
+                      - id
+                      - name
+                      - sort_order
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Status Page Component Groups
+      description: Update a component group
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Component Group ID
+          required: true
+          description: Status Page Component Group ID
+          name: group_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: Core Services
+                  description: Name of the component group
+                description:
+                  type:
+                    - string
+                    - "null"
+                  example: Our core infrastructure services
+                  description: Description of the component group
+      responses:
+        "200":
+          description: Returns the updated component group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component Group ID
+                      name:
+                        type: string
+                        example: Core Services
+                        description: Name of the component group
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Our core infrastructure services
+                        description: Description of the component group
+                      sort_order:
+                        type: number
+                        example: 1
+                        description: Sort order of the group
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the component group was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the component group was last updated
+                    required:
+                      - id
+                      - name
+                      - sort_order
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Status Page Component Groups
+      description: Delete a component group
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Component Group ID
+          required: true
+          description: Status Page Component Group ID
+          name: group_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted group's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component Group ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/groups/sort-order:
+    put:
+      tags:
+        - Status Page Component Groups
+      description: Update the sort order of component groups
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - a1b2c3d4
+                    - e5f6g7h8
+                  description: Ordered list of component group IDs
+              required:
+                - group_ids
+      responses:
+        "200":
+          description: Sort order updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Sort order updated successfully
+                        description: Success message
+                    required:
+                      - message
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/groups/{group_id}/sort-order:
+    put:
+      tags:
+        - Status Page Component Groups
+      description: Update the sort order of components within a group
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Component Group ID
+          required: true
+          description: Status Page Component Group ID
+          name: group_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                component_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - a1b2c3d4
+                    - e5f6g7h8
+                  description: Ordered list of component IDs within the group
+              required:
+                - component_ids
+      responses:
+        "200":
+          description: Sort order updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Sort order updated successfully
+                        description: Success message
+                    required:
+                      - message
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}/incidents:
     post:
       tags:
@@ -3119,8 +4035,8 @@ paths:
                 - impact
                 - components
       responses:
-        "200":
-          description: Returns the newly created status page component
+        "201":
+          description: Returns the newly created status page incident
           content:
             application/json:
               schema:
@@ -4024,7 +4940,7 @@ paths:
                   grace_period: 600
                   alert_priority: HIGH
       responses:
-        "200":
+        "201":
           description: Create a new OnlineOrNot Heartbeat
           content:
             application/json:
@@ -5002,7 +5918,7 @@ paths:
                   heartbeats:
                     - ghi789
       responses:
-        "200":
+        "201":
           description: Returns the created maintenance window
           content:
             application/json:
@@ -5999,7 +6915,7 @@ paths:
                   email: admin@example.com
                   role: ADMIN
       responses:
-        "200":
+        "201":
           description: Returns the created invitation
           content:
             application/json:
