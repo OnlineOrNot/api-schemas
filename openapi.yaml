@@ -3963,6 +3963,146 @@ paths:
         "500":
           description: Internal Server Error
   /v1/status_pages/{status_page_id}/subscribers:
+    get:
+      tags:
+        - Status Page Subscribers
+      description: List all subscribers
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of subscribers for a status page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4e5f6
+                          description: Status Page Subscriber ID
+                        email_address:
+                          type: string
+                          format: email
+                          example: user@example.com
+                          description: Email address of the subscriber
+                        confirmed:
+                          type: boolean
+                          example: false
+                          description: Whether the subscriber has confirmed their email
+                        created_at:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the subscriber was created
+                      required:
+                        - id
+                        - email_address
+                        - confirmed
+                        - created_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized - status page not in user's organisation
+        "500":
+          description: Internal Server Error
     post:
       tags:
         - Status Page Subscribers
