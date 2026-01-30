@@ -4308,173 +4308,6 @@ paths:
         "500":
           description: Internal Server Error
   /v1/status_pages/{status_page_id}/incidents:
-    post:
-      tags:
-        - Status Page Incidents
-      description: Create an incident
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: a1b2c3d4
-            description: Status Page ID
-          required: true
-          description: Status Page ID
-          name: status_page_id
-          in: path
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: API is inaccessible
-                  description: a title for the incident
-                description:
-                  type: string
-                  example: We are currently investigating the issue
-                  description: a description of the incident
-                status:
-                  type: string
-                  enum:
-                    - INVESTIGATING
-                    - IDENTIFIED
-                    - MONITORING
-                    - RESOLVED
-                    - UPDATE
-                  example: INVESTIGATING
-                  description: The current status of the incident
-                impact:
-                  type:
-                    - string
-                    - "null"
-                  enum:
-                    - MAJOR_OUTAGE
-                    - PARTIAL_OUTAGE
-                    - DEGRADED_PERFORMANCE
-                    - NO_IMPACT
-                    - MAINTENANCE
-                  example: MAJOR_OUTAGE
-                  description: Impact of the incident
-                components:
-                  type: object
-                  additionalProperties:
-                    type: string
-                    enum:
-                      - MAJOR_OUTAGE
-                      - PARTIAL_OUTAGE
-                      - DEGRADED_PERFORMANCE
-                      - NO_IMPACT
-                      - MAINTENANCE
-                    example: MAJOR_OUTAGE
-                    description: Impact of the incident on the component
-              required:
-                - title
-                - description
-                - status
-                - impact
-                - components
-      responses:
-        "201":
-          description: Returns the newly created status page incident
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Status Page Incident ID
-                      title:
-                        type: string
-                        example: API is inaccessible
-                        description: a title for the incident
-                      impact:
-                        type:
-                          - string
-                          - "null"
-                        enum:
-                          - MAJOR_OUTAGE
-                          - PARTIAL_OUTAGE
-                          - DEGRADED_PERFORMANCE
-                          - NO_IMPACT
-                          - MAINTENANCE
-                        example: MAJOR_OUTAGE
-                        description: Impact of the incident
-                      started:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the incident started
-                      ended:
-                        type: string
-                        example: "2021-02-01T00:00:00.000Z"
-                        description: When the incident was resolved
-                      created_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the incident was created
-                      updated_at:
-                        type: string
-                        example: "2021-02-01T00:00:00.000Z"
-                        description: When the incident was last updated
-                    required:
-                      - id
-                      - title
-                      - impact
-                      - started
-                      - created_at
-                      - updated_at
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
     get:
       tags:
         - Status Page Incidents
@@ -4558,6 +4391,66 @@ paths:
                           type: string
                           example: "2021-02-01T00:00:00.000Z"
                           description: When the incident was last updated
+                        latest_update:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: upd123
+                              description: Latest update ID
+                            status:
+                              type: string
+                              enum:
+                                - INVESTIGATING
+                                - IDENTIFIED
+                                - MONITORING
+                                - RESOLVED
+                                - UPDATE
+                                - SCHEDULED
+                                - IN_PROGRESS
+                                - VERIFYING
+                                - COMPLETED
+                              example: INVESTIGATING
+                              description: Status of the latest update
+                            date_happened:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When the latest update occurred
+                          required:
+                            - id
+                            - status
+                            - date_happened
+                          description: Latest update summary
+                        scheduled_maintenance:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: sm123
+                              description: Scheduled maintenance ID
+                            start_date:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When the maintenance starts
+                            duration_minutes:
+                              type: number
+                              example: 60
+                              description: Duration in minutes
+                            notify_subscribers_at_start:
+                              type: boolean
+                              example: true
+                              description: Notify subscribers when maintenance starts
+                            notify_subscribers_at_end:
+                              type: boolean
+                              example: true
+                              description: Notify subscribers when maintenance ends
+                          required:
+                            - id
+                            - start_date
+                            - duration_minutes
+                            - notify_subscribers_at_start
+                            - notify_subscribers_at_end
+                          description: Scheduled maintenance info
                       required:
                         - id
                         - title
@@ -4627,6 +4520,333 @@ paths:
                 required:
                   - result
                   - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Status Page Incidents
+      description: Create an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: API is inaccessible
+                  description: a title for the incident
+                description:
+                  type: string
+                  example: We are currently investigating the issue
+                  description: a description of the incident
+                status:
+                  type: string
+                  enum:
+                    - INVESTIGATING
+                    - IDENTIFIED
+                    - MONITORING
+                    - RESOLVED
+                    - UPDATE
+                  example: INVESTIGATING
+                  description: The current status of the incident
+                components:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component ID
+                      status:
+                        type: string
+                        enum:
+                          - OPERATIONAL
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - MAINTENANCE
+                          - NO_IMPACT
+                        example: MAJOR_OUTAGE
+                        description: New status for the component
+                    required:
+                      - id
+                      - status
+                  description: Components affected by this incident with their status
+                notify_subscribers:
+                  type: boolean
+                  default: true
+                  example: true
+                  description: Whether to notify status page subscribers
+              required:
+                - title
+                - description
+                - status
+      responses:
+        "201":
+          description: Returns the newly created status page incident
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Incident ID
+                      title:
+                        type: string
+                        example: API is inaccessible
+                        description: a title for the incident
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        example: MAJOR_OUTAGE
+                        description: Impact of the incident
+                      started:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
+                      ended:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
+                      latest_update:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: upd123
+                            description: Latest update ID
+                          status:
+                            type: string
+                            enum:
+                              - INVESTIGATING
+                              - IDENTIFIED
+                              - MONITORING
+                              - RESOLVED
+                              - UPDATE
+                              - SCHEDULED
+                              - IN_PROGRESS
+                              - VERIFYING
+                              - COMPLETED
+                            example: INVESTIGATING
+                            description: Status of the latest update
+                          date_happened:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the latest update occurred
+                        required:
+                          - id
+                          - status
+                          - date_happened
+                        description: Latest update summary
+                      scheduled_maintenance:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: sm123
+                            description: Scheduled maintenance ID
+                          start_date:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the maintenance starts
+                          duration_minutes:
+                            type: number
+                            example: 60
+                            description: Duration in minutes
+                          notify_subscribers_at_start:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          notify_subscribers_at_end:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        required:
+                          - id
+                          - start_date
+                          - duration_minutes
+                          - notify_subscribers_at_start
+                          - notify_subscribers_at_end
+                        description: Scheduled maintenance info
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the incident
+                      updates:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: e5f6g7h8
+                              description: Incident Update ID
+                            incident_id:
+                              type: string
+                              example: a1b2c3d4
+                              description: Parent incident ID
+                            status:
+                              type: string
+                              enum:
+                                - INVESTIGATING
+                                - IDENTIFIED
+                                - MONITORING
+                                - RESOLVED
+                                - UPDATE
+                                - SCHEDULED
+                                - IN_PROGRESS
+                                - VERIFYING
+                                - COMPLETED
+                              example: INVESTIGATING
+                              description: Status of this update
+                            description:
+                              type: string
+                              example: We are investigating reports of connectivity issues
+                              description: Update message
+                            date_happened:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update occurred
+                            created_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was created
+                            updated_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was last modified
+                            components:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: comp123
+                                    description: Component ID
+                                  name:
+                                    type: string
+                                    example: API Server
+                                    description: Component name
+                                  old_status:
+                                    type:
+                                      - string
+                                      - "null"
+                                    example: OPERATIONAL
+                                    description: Previous component status
+                                  new_status:
+                                    type: string
+                                    example: MAJOR_OUTAGE
+                                    description: New component status
+                                required:
+                                  - id
+                                  - name
+                                  - old_status
+                                  - new_status
+                              description: Component status changes in this update
+                          required:
+                            - id
+                            - incident_id
+                            - status
+                            - description
+                            - date_happened
+                            - created_at
+                            - updated_at
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
                   - success
                   - errors
                   - messages
@@ -4705,6 +4925,163 @@ paths:
                         type: string
                         example: "2021-02-01T00:00:00.000Z"
                         description: When the incident was last updated
+                      latest_update:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: upd123
+                            description: Latest update ID
+                          status:
+                            type: string
+                            enum:
+                              - INVESTIGATING
+                              - IDENTIFIED
+                              - MONITORING
+                              - RESOLVED
+                              - UPDATE
+                              - SCHEDULED
+                              - IN_PROGRESS
+                              - VERIFYING
+                              - COMPLETED
+                            example: INVESTIGATING
+                            description: Status of the latest update
+                          date_happened:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the latest update occurred
+                        required:
+                          - id
+                          - status
+                          - date_happened
+                        description: Latest update summary
+                      scheduled_maintenance:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: sm123
+                            description: Scheduled maintenance ID
+                          start_date:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the maintenance starts
+                          duration_minutes:
+                            type: number
+                            example: 60
+                            description: Duration in minutes
+                          notify_subscribers_at_start:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          notify_subscribers_at_end:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        required:
+                          - id
+                          - start_date
+                          - duration_minutes
+                          - notify_subscribers_at_start
+                          - notify_subscribers_at_end
+                        description: Scheduled maintenance info
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the incident
+                      updates:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: e5f6g7h8
+                              description: Incident Update ID
+                            incident_id:
+                              type: string
+                              example: a1b2c3d4
+                              description: Parent incident ID
+                            status:
+                              type: string
+                              enum:
+                                - INVESTIGATING
+                                - IDENTIFIED
+                                - MONITORING
+                                - RESOLVED
+                                - UPDATE
+                                - SCHEDULED
+                                - IN_PROGRESS
+                                - VERIFYING
+                                - COMPLETED
+                              example: INVESTIGATING
+                              description: Status of this update
+                            description:
+                              type: string
+                              example: We are investigating reports of connectivity issues
+                              description: Update message
+                            date_happened:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update occurred
+                            created_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was created
+                            updated_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was last modified
+                            components:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: comp123
+                                    description: Component ID
+                                  name:
+                                    type: string
+                                    example: API Server
+                                    description: Component name
+                                  old_status:
+                                    type:
+                                      - string
+                                      - "null"
+                                    example: OPERATIONAL
+                                    description: Previous component status
+                                  new_status:
+                                    type: string
+                                    example: MAJOR_OUTAGE
+                                    description: New component status
+                                required:
+                                  - id
+                                  - name
+                                  - old_status
+                                  - new_status
+                              description: Component status changes in this update
+                          required:
+                            - id
+                            - incident_id
+                            - status
+                            - description
+                            - date_happened
+                            - created_at
+                            - updated_at
                     required:
                       - id
                       - title
@@ -4754,7 +5131,7 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
-    post:
+    patch:
       tags:
         - Status Page Incidents
       description: Update an incident
@@ -4802,22 +5179,9 @@ paths:
                     - MAINTENANCE
                   example: MAJOR_OUTAGE
                   description: Impact of the incident
-                components:
-                  type: object
-                  additionalProperties:
-                    type: string
-                    enum:
-                      - MAJOR_OUTAGE
-                      - PARTIAL_OUTAGE
-                      - DEGRADED_PERFORMANCE
-                      - NO_IMPACT
-                      - MAINTENANCE
-                    example: MAJOR_OUTAGE
-                    description: Impact of the incident on the component
               required:
                 - title
                 - impact
-                - components
       responses:
         "200":
           description: Returns the updated status page incident
@@ -4865,6 +5229,163 @@ paths:
                         type: string
                         example: "2021-02-01T00:00:00.000Z"
                         description: When the incident was last updated
+                      latest_update:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: upd123
+                            description: Latest update ID
+                          status:
+                            type: string
+                            enum:
+                              - INVESTIGATING
+                              - IDENTIFIED
+                              - MONITORING
+                              - RESOLVED
+                              - UPDATE
+                              - SCHEDULED
+                              - IN_PROGRESS
+                              - VERIFYING
+                              - COMPLETED
+                            example: INVESTIGATING
+                            description: Status of the latest update
+                          date_happened:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the latest update occurred
+                        required:
+                          - id
+                          - status
+                          - date_happened
+                        description: Latest update summary
+                      scheduled_maintenance:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: sm123
+                            description: Scheduled maintenance ID
+                          start_date:
+                            type: string
+                            example: "2021-01-01T00:00:00.000Z"
+                            description: When the maintenance starts
+                          duration_minutes:
+                            type: number
+                            example: 60
+                            description: Duration in minutes
+                          notify_subscribers_at_start:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          notify_subscribers_at_end:
+                            type: boolean
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        required:
+                          - id
+                          - start_date
+                          - duration_minutes
+                          - notify_subscribers_at_start
+                          - notify_subscribers_at_end
+                        description: Scheduled maintenance info
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the incident
+                      updates:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: e5f6g7h8
+                              description: Incident Update ID
+                            incident_id:
+                              type: string
+                              example: a1b2c3d4
+                              description: Parent incident ID
+                            status:
+                              type: string
+                              enum:
+                                - INVESTIGATING
+                                - IDENTIFIED
+                                - MONITORING
+                                - RESOLVED
+                                - UPDATE
+                                - SCHEDULED
+                                - IN_PROGRESS
+                                - VERIFYING
+                                - COMPLETED
+                              example: INVESTIGATING
+                              description: Status of this update
+                            description:
+                              type: string
+                              example: We are investigating reports of connectivity issues
+                              description: Update message
+                            date_happened:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update occurred
+                            created_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was created
+                            updated_at:
+                              type: string
+                              example: "2021-01-01T00:00:00.000Z"
+                              description: When this update was last modified
+                            components:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: comp123
+                                    description: Component ID
+                                  name:
+                                    type: string
+                                    example: API Server
+                                    description: Component name
+                                  old_status:
+                                    type:
+                                      - string
+                                      - "null"
+                                    example: OPERATIONAL
+                                    description: Previous component status
+                                  new_status:
+                                    type: string
+                                    example: MAJOR_OUTAGE
+                                    description: New component status
+                                required:
+                                  - id
+                                  - name
+                                  - old_status
+                                  - new_status
+                              description: Component status changes in this update
+                          required:
+                            - id
+                            - incident_id
+                            - status
+                            - description
+                            - date_happened
+                            - created_at
+                            - updated_at
                     required:
                       - id
                       - title
@@ -4996,6 +5517,898 @@ paths:
                   - success
                   - errors
                   - messages
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/incidents/{status_page_incident_id}/updates:
+    get:
+      tags:
+        - Status Page Incident Updates
+      description: List all updates for an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Incident ID
+          required: true
+          description: Status Page Incident ID
+          name: status_page_incident_id
+          in: path
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of updates for the incident
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: e5f6g7h8
+                          description: Incident Update ID
+                        incident_id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Parent incident ID
+                        status:
+                          type: string
+                          enum:
+                            - INVESTIGATING
+                            - IDENTIFIED
+                            - MONITORING
+                            - RESOLVED
+                            - UPDATE
+                            - SCHEDULED
+                            - IN_PROGRESS
+                            - VERIFYING
+                            - COMPLETED
+                          example: INVESTIGATING
+                          description: Status of this update
+                        description:
+                          type: string
+                          example: We are investigating reports of connectivity issues
+                          description: Update message
+                        date_happened:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When this update occurred
+                        created_at:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When this update was created
+                        updated_at:
+                          type: string
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When this update was last modified
+                        components:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: comp123
+                                description: Component ID
+                              name:
+                                type: string
+                                example: API Server
+                                description: Component name
+                              old_status:
+                                type:
+                                  - string
+                                  - "null"
+                                example: OPERATIONAL
+                                description: Previous component status
+                              new_status:
+                                type: string
+                                example: MAJOR_OUTAGE
+                                description: New component status
+                            required:
+                              - id
+                              - name
+                              - old_status
+                              - new_status
+                          description: Component status changes in this update
+                      required:
+                        - id
+                        - incident_id
+                        - status
+                        - description
+                        - date_happened
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Status Page Incident Updates
+      description: Create a new update for an incident
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Incident ID
+          required: true
+          description: Status Page Incident ID
+          name: status_page_incident_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - INVESTIGATING
+                    - IDENTIFIED
+                    - MONITORING
+                    - RESOLVED
+                    - UPDATE
+                    - SCHEDULED
+                    - IN_PROGRESS
+                    - VERIFYING
+                    - COMPLETED
+                  example: INVESTIGATING
+                  description: Status for this update
+                description:
+                  type: string
+                  minLength: 1
+                  example: We are investigating reports of connectivity issues
+                  description: Update message
+                notify_subscribers:
+                  type: boolean
+                  default: true
+                  example: true
+                  description: Whether to notify status page subscribers
+                components_affected:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Component ID
+                      status:
+                        type: string
+                        enum:
+                          - OPERATIONAL
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - MAINTENANCE
+                          - NO_IMPACT
+                        example: MAJOR_OUTAGE
+                        description: New status for the component
+                    required:
+                      - id
+                      - status
+                  description: Components affected by this update with their new status
+                date_happened:
+                  type: string
+                  example: "2021-01-01T00:00:00.000Z"
+                  description: When this update occurred (defaults to now)
+              required:
+                - status
+                - description
+      responses:
+        "201":
+          description: Returns the newly created incident update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: e5f6g7h8
+                        description: Incident Update ID
+                      incident_id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Parent incident ID
+                      status:
+                        type: string
+                        enum:
+                          - INVESTIGATING
+                          - IDENTIFIED
+                          - MONITORING
+                          - RESOLVED
+                          - UPDATE
+                          - SCHEDULED
+                          - IN_PROGRESS
+                          - VERIFYING
+                          - COMPLETED
+                        example: INVESTIGATING
+                        description: Status of this update
+                      description:
+                        type: string
+                        example: We are investigating reports of connectivity issues
+                        description: Update message
+                      date_happened:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update occurred
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was created
+                      updated_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was last modified
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                            old_status:
+                              type:
+                                - string
+                                - "null"
+                              example: OPERATIONAL
+                              description: Previous component status
+                            new_status:
+                              type: string
+                              example: MAJOR_OUTAGE
+                              description: New component status
+                          required:
+                            - id
+                            - name
+                            - old_status
+                            - new_status
+                        description: Component status changes in this update
+                    required:
+                      - id
+                      - incident_id
+                      - status
+                      - description
+                      - date_happened
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/incidents/{status_page_incident_id}/updates/{incident_update_id}:
+    get:
+      tags:
+        - Status Page Incident Updates
+      description: Retrieve a single incident update
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Incident ID
+          required: true
+          description: Status Page Incident ID
+          name: status_page_incident_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: e5f6g7h8
+            description: Incident Update ID
+          required: true
+          description: Incident Update ID
+          name: incident_update_id
+          in: path
+      responses:
+        "200":
+          description: Returns the incident update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: e5f6g7h8
+                        description: Incident Update ID
+                      incident_id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Parent incident ID
+                      status:
+                        type: string
+                        enum:
+                          - INVESTIGATING
+                          - IDENTIFIED
+                          - MONITORING
+                          - RESOLVED
+                          - UPDATE
+                          - SCHEDULED
+                          - IN_PROGRESS
+                          - VERIFYING
+                          - COMPLETED
+                        example: INVESTIGATING
+                        description: Status of this update
+                      description:
+                        type: string
+                        example: We are investigating reports of connectivity issues
+                        description: Update message
+                      date_happened:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update occurred
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was created
+                      updated_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was last modified
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                            old_status:
+                              type:
+                                - string
+                                - "null"
+                              example: OPERATIONAL
+                              description: Previous component status
+                            new_status:
+                              type: string
+                              example: MAJOR_OUTAGE
+                              description: New component status
+                          required:
+                            - id
+                            - name
+                            - old_status
+                            - new_status
+                        description: Component status changes in this update
+                    required:
+                      - id
+                      - incident_id
+                      - status
+                      - description
+                      - date_happened
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Status Page Incident Updates
+      description: Update an existing incident update
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Incident ID
+          required: true
+          description: Status Page Incident ID
+          name: status_page_incident_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: e5f6g7h8
+            description: Incident Update ID
+          required: true
+          description: Incident Update ID
+          name: incident_update_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - INVESTIGATING
+                    - IDENTIFIED
+                    - MONITORING
+                    - RESOLVED
+                    - UPDATE
+                    - SCHEDULED
+                    - IN_PROGRESS
+                    - VERIFYING
+                    - COMPLETED
+                  example: IDENTIFIED
+                  description: Updated status
+                description:
+                  type: string
+                  minLength: 1
+                  example: The issue has been identified
+                  description: Updated message
+                date_happened:
+                  type: string
+                  example: "2021-01-01T00:00:00.000Z"
+                  description: Updated timestamp
+      responses:
+        "200":
+          description: Returns the updated incident update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: e5f6g7h8
+                        description: Incident Update ID
+                      incident_id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Parent incident ID
+                      status:
+                        type: string
+                        enum:
+                          - INVESTIGATING
+                          - IDENTIFIED
+                          - MONITORING
+                          - RESOLVED
+                          - UPDATE
+                          - SCHEDULED
+                          - IN_PROGRESS
+                          - VERIFYING
+                          - COMPLETED
+                        example: INVESTIGATING
+                        description: Status of this update
+                      description:
+                        type: string
+                        example: We are investigating reports of connectivity issues
+                        description: Update message
+                      date_happened:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update occurred
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was created
+                      updated_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When this update was last modified
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                            old_status:
+                              type:
+                                - string
+                                - "null"
+                              example: OPERATIONAL
+                              description: Previous component status
+                            new_status:
+                              type: string
+                              example: MAJOR_OUTAGE
+                              description: New component status
+                          required:
+                            - id
+                            - name
+                            - old_status
+                            - new_status
+                        description: Component status changes in this update
+                    required:
+                      - id
+                      - incident_id
+                      - status
+                      - description
+                      - date_happened
+                      - created_at
+                      - updated_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Status Page Incident Updates
+      description: Delete an incident update
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page Incident ID
+          required: true
+          description: Status Page Incident ID
+          name: status_page_incident_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: e5f6g7h8
+            description: Incident Update ID
+          required: true
+          description: Incident Update ID
+          name: incident_update_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted incident update's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: e5f6g7h8
+                        description: Incident Update ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Unauthorized
+        "404":
+          description: Not Found
         "500":
           description: Internal Server Error
   /v1/heartbeats:
