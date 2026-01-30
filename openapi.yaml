@@ -1918,6 +1918,43 @@ paths:
                               minimum: 1
                               example: 60
                               description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
+                            notifications:
+                              type: object
+                              properties:
+                                an_hour_before:
+                                  type: boolean
+                                  default: false
+                                  example: false
+                                  description: Notify subscribers one hour before maintenance starts
+                                at_start:
+                                  type: boolean
+                                  default: true
+                                  example: true
+                                  description: Notify subscribers when maintenance starts
+                                at_end:
+                                  type: boolean
+                                  default: true
+                                  example: true
+                                  description: Notify subscribers when maintenance ends
+                              description: Subscriber notification settings
+                            components:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    example: comp123
+                                    description: Component ID
+                                  name:
+                                    type: string
+                                    example: API Server
+                                    description: Component name
+                                required:
+                                  - id
+                                  - name
+                                description: Component associated with the scheduled maintenance
+                              description: Components affected by this maintenance
                           required:
                             - id
                             - title
@@ -6409,6 +6446,681 @@ paths:
           description: Unauthorized
         "404":
           description: Not Found
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/scheduled_maintenance:
+    post:
+      tags:
+        - Status Page Scheduled Maintenance
+      description: Schedule maintenance for a status page
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  example: Database upgrade
+                  description: Title of the scheduled maintenance
+                description:
+                  type: string
+                  minLength: 1
+                  example: Upgrading to PostgreSQL 16
+                  description: Description of the scheduled maintenance
+                start_date:
+                  type: string
+                  format: date-time
+                  example: "2024-03-01T02:00:00.000Z"
+                  description: When the scheduled maintenance is expected to start (ISO 8601)
+                duration_minutes:
+                  type: integer
+                  minimum: 1
+                  example: 60
+                  description: How long (in minutes) the maintenance is expected to last
+                components_affected:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - comp_abc123
+                    - comp_def456
+                  description: Component IDs affected by this maintenance
+                notifications:
+                  type: object
+                  properties:
+                    an_hour_before:
+                      type: boolean
+                      default: false
+                      example: false
+                      description: Notify subscribers one hour before maintenance starts
+                    at_start:
+                      type: boolean
+                      default: true
+                      example: true
+                      description: Notify subscribers when maintenance starts
+                    at_end:
+                      type: boolean
+                      default: true
+                      example: true
+                      description: Notify subscribers when maintenance ends
+                  description: Notification settings for subscribers
+              required:
+                - title
+                - description
+                - start_date
+                - duration_minutes
+      responses:
+        "201":
+          description: Returns the newly created scheduled maintenance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Incident ID
+                      title:
+                        type: string
+                        example: API is inaccessible
+                        description: a title for the incident
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        example: MAJOR_OUTAGE
+                        description: Impact of the incident
+                      started:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
+                      ended:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
+                      start_date:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the scheduled maintenance is expected to start
+                      duration_minutes:
+                        type: integer
+                        minimum: 1
+                        example: 60
+                        description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
+                      notifications:
+                        type: object
+                        properties:
+                          an_hour_before:
+                            type: boolean
+                            default: false
+                            example: false
+                            description: Notify subscribers one hour before maintenance starts
+                          at_start:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          at_end:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        description: Subscriber notification settings
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the scheduled maintenance
+                        description: Components affected by this maintenance
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                      - created_at
+                      - updated_at
+                      - start_date
+                      - duration_minutes
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - validation error
+        "500":
+          description: Internal Server Error
+  /v1/status_pages/{status_page_id}/scheduled_maintenance/{scheduled_maintenance_id}:
+    get:
+      tags:
+        - Status Page Scheduled Maintenance
+      description: Retrieve a scheduled maintenance
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: sm1b2c3d4
+            description: Scheduled Maintenance ID
+          required: true
+          description: Scheduled Maintenance ID
+          name: scheduled_maintenance_id
+          in: path
+      responses:
+        "200":
+          description: Returns the scheduled maintenance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Incident ID
+                      title:
+                        type: string
+                        example: API is inaccessible
+                        description: a title for the incident
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        example: MAJOR_OUTAGE
+                        description: Impact of the incident
+                      started:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
+                      ended:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
+                      start_date:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the scheduled maintenance is expected to start
+                      duration_minutes:
+                        type: integer
+                        minimum: 1
+                        example: 60
+                        description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
+                      notifications:
+                        type: object
+                        properties:
+                          an_hour_before:
+                            type: boolean
+                            default: false
+                            example: false
+                            description: Notify subscribers one hour before maintenance starts
+                          at_start:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          at_end:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        description: Subscriber notification settings
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the scheduled maintenance
+                        description: Components affected by this maintenance
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                      - created_at
+                      - updated_at
+                      - start_date
+                      - duration_minutes
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "404":
+          description: Not found
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Status Page Scheduled Maintenance
+      description: Update a scheduled maintenance (only before it has started)
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: sm1b2c3d4
+            description: Scheduled Maintenance ID
+          required: true
+          description: Scheduled Maintenance ID
+          name: scheduled_maintenance_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  example: Database upgrade v2
+                  description: Updated title
+                start_date:
+                  type: string
+                  format: date-time
+                  example: "2024-03-02T02:00:00.000Z"
+                  description: Updated start date (ISO 8601)
+                duration_minutes:
+                  type: integer
+                  minimum: 1
+                  example: 120
+                  description: Updated duration in minutes
+      responses:
+        "200":
+          description: Returns the updated scheduled maintenance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Status Page Incident ID
+                      title:
+                        type: string
+                        example: API is inaccessible
+                        description: a title for the incident
+                      impact:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - MAJOR_OUTAGE
+                          - PARTIAL_OUTAGE
+                          - DEGRADED_PERFORMANCE
+                          - NO_IMPACT
+                          - MAINTENANCE
+                        example: MAJOR_OUTAGE
+                        description: Impact of the incident
+                      started:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident started
+                      ended:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was resolved
+                      created_at:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the incident was created
+                      updated_at:
+                        type: string
+                        example: "2021-02-01T00:00:00.000Z"
+                        description: When the incident was last updated
+                      start_date:
+                        type: string
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the scheduled maintenance is expected to start
+                      duration_minutes:
+                        type: integer
+                        minimum: 1
+                        example: 60
+                        description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
+                      notifications:
+                        type: object
+                        properties:
+                          an_hour_before:
+                            type: boolean
+                            default: false
+                            example: false
+                            description: Notify subscribers one hour before maintenance starts
+                          at_start:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance starts
+                          at_end:
+                            type: boolean
+                            default: true
+                            example: true
+                            description: Notify subscribers when maintenance ends
+                        description: Subscriber notification settings
+                      components:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: comp123
+                              description: Component ID
+                            name:
+                              type: string
+                              example: API Server
+                              description: Component name
+                          required:
+                            - id
+                            - name
+                          description: Component associated with the scheduled maintenance
+                        description: Components affected by this maintenance
+                    required:
+                      - id
+                      - title
+                      - impact
+                      - started
+                      - created_at
+                      - updated_at
+                      - start_date
+                      - duration_minutes
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - cannot update after maintenance has started
+        "404":
+          description: Not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Status Page Scheduled Maintenance
+      description: Delete a scheduled maintenance
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Status Page ID
+          required: true
+          description: Status Page ID
+          name: status_page_id
+          in: path
+        - schema:
+            type: string
+            minLength: 8
+            example: sm1b2c3d4
+            description: Scheduled Maintenance ID
+          required: true
+          description: Scheduled Maintenance ID
+          name: scheduled_maintenance_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted scheduled maintenance's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: sm1b2c3d4
+                        description: Deleted scheduled maintenance ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "404":
+          description: Not found
         "500":
           description: Internal Server Error
   /v1/heartbeats:
