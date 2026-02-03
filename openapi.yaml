@@ -1219,6 +1219,2350 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/heartbeats:
+    get:
+      tags:
+        - Heartbeats
+      description: List all heartbeats
+      summary: Retrieve a paginated list of all heartbeat monitors
+      operationId: listHeartbeats
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of OnlineOrNot Heartbeats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Heartbeat ID
+                        name:
+                          type: string
+                          example: Daily backup job
+                          description: Name of the heartbeat monitor
+                        status:
+                          type:
+                            - string
+                            - "null"
+                          enum:
+                            - UP
+                            - DOWN
+                            - PENDING
+                            - PAUSED
+                            - MUTED
+                          example: UP
+                          description: Current status of the heartbeat
+                        last_seen:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: Last time a heartbeat ping was received
+                        report_period:
+                          type:
+                            - number
+                            - "null"
+                          example: 3600
+                          description: Expected interval in seconds between heartbeat pings
+                        report_period_cron:
+                          type:
+                            - string
+                            - "null"
+                          example: 0 0 * * *
+                          description: Cron expression for expected heartbeat schedule
+                        timezone:
+                          type:
+                            - string
+                            - "null"
+                          example: America/New_York
+                          description: Timezone for cron schedule
+                        grace_period:
+                          type: number
+                          example: 300
+                          description: Grace period in seconds before alerting
+                        reminder_alert_interval_minutes:
+                          type: number
+                          example: 1440
+                          description: Interval in minutes between reminder alerts
+                        alert_priority:
+                          type: string
+                          enum:
+                            - LOW
+                            - HIGH
+                          example: LOW
+                          description: Alert priority level
+                        created_at:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the heartbeat was created
+                        updated_at:
+                          type:
+                            - string
+                            - "null"
+                          example: "2021-01-01T00:00:00.000Z"
+                          description: When the heartbeat was last updated
+                      required:
+                        - id
+                        - name
+                        - status
+                        - last_seen
+                        - report_period
+                        - report_period_cron
+                        - timezone
+                        - grace_period
+                        - reminder_alert_interval_minutes
+                        - alert_priority
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Heartbeats
+      description: Create a heartbeat
+      summary: Create a new heartbeat monitor for cron jobs or scheduled tasks
+      operationId: createHeartbeat
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Daily backup job
+                  description: Name of the heartbeat monitor
+                report_period:
+                  type: integer
+                  minimum: 1
+                  example: 3600
+                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
+                report_period_cron:
+                  type: string
+                  example: 0 0 * * *
+                  description: Cron expression for expected heartbeat schedule
+                timezone:
+                  type: string
+                  example: America/New_York
+                  description: Timezone for cron schedule
+                grace_period:
+                  type: integer
+                  minimum: 1
+                  example: 300
+                  description: Grace period in seconds to wait after missed heartbeat before alerting
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  default: 1440
+                  example: 1440
+                  description: Interval in minutes between reminder alerts (-1 for never)
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of user IDs to alert
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Slack integration IDs to alert
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of webhook integration IDs to alert
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of incident.io integration IDs to alert
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Microsoft Teams integration IDs to alert
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  default: LOW
+                  example: LOW
+                  description: Alert priority level
+              required:
+                - name
+                - grace_period
+            examples:
+              simple:
+                summary: Simple interval heartbeat
+                value:
+                  name: Daily backup job
+                  report_period: 86400
+                  grace_period: 300
+              cron:
+                summary: Cron-based heartbeat
+                value:
+                  name: Hourly sync task
+                  report_period_cron: 0 * * * *
+                  timezone: America/New_York
+                  grace_period: 600
+                  alert_priority: HIGH
+      responses:
+        "201":
+          description: Create a new OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/heartbeats/{heartbeat_id}:
+    get:
+      tags:
+        - Heartbeats
+      description: Retrieve a heartbeat
+      summary: Look up detailed information about a specific heartbeat monitor
+      operationId: getHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      responses:
+        "200":
+          description: Retrieve the specified OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Heartbeats
+      description: Modify a heartbeat
+      summary: Modify the configuration of an existing heartbeat monitor
+      operationId: updateHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Daily backup job
+                  description: Name of the heartbeat monitor
+                report_period:
+                  type:
+                    - integer
+                    - "null"
+                  minimum: 1
+                  example: 3600
+                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
+                report_period_cron:
+                  type:
+                    - string
+                    - "null"
+                  example: 0 0 * * *
+                  description: Cron expression for expected heartbeat schedule
+                timezone:
+                  type:
+                    - string
+                    - "null"
+                  example: America/New_York
+                  description: Timezone for cron schedule
+                grace_period:
+                  type: integer
+                  minimum: 1
+                  example: 300
+                  description: Grace period in seconds to wait after missed heartbeat before alerting
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  example: 1440
+                  description: Interval in minutes between reminder alerts (-1 for never)
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of user IDs to alert
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Slack integration IDs to alert
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of webhook integration IDs to alert
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of incident.io integration IDs to alert
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Microsoft Teams integration IDs to alert
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  example: LOW
+                  description: Alert priority level
+                paused:
+                  type: boolean
+                  example: false
+                  description: Whether the heartbeat is paused
+                muted:
+                  type: boolean
+                  example: false
+                  description: Whether the heartbeat is muted (continues monitoring but suppresses alerts)
+            examples:
+              updateSchedule:
+                summary: Update heartbeat schedule
+                value:
+                  report_period: 7200
+                  grace_period: 600
+              pause:
+                summary: Pause heartbeat monitoring
+                value:
+                  paused: true
+              mute:
+                summary: Mute heartbeat alerts
+                value:
+                  muted: true
+      responses:
+        "200":
+          description: Modify an OnlineOrNot Heartbeat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      name:
+                        type: string
+                        example: Daily backup job
+                        description: Name of the heartbeat monitor
+                      status:
+                        type:
+                          - string
+                          - "null"
+                        enum:
+                          - UP
+                          - DOWN
+                          - PENDING
+                          - PAUSED
+                          - MUTED
+                        example: UP
+                        description: Current status of the heartbeat
+                      last_seen:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: Last time a heartbeat ping was received
+                      report_period:
+                        type:
+                          - number
+                          - "null"
+                        example: 3600
+                        description: Expected interval in seconds between heartbeat pings
+                      report_period_cron:
+                        type:
+                          - string
+                          - "null"
+                        example: 0 0 * * *
+                        description: Cron expression for expected heartbeat schedule
+                      timezone:
+                        type:
+                          - string
+                          - "null"
+                        example: America/New_York
+                        description: Timezone for cron schedule
+                      grace_period:
+                        type: number
+                        example: 300
+                        description: Grace period in seconds before alerting
+                      reminder_alert_interval_minutes:
+                        type: number
+                        example: 1440
+                        description: Interval in minutes between reminder alerts
+                      alert_priority:
+                        type: string
+                        enum:
+                          - LOW
+                          - HIGH
+                        example: LOW
+                        description: Alert priority level
+                      created_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was created
+                      updated_at:
+                        type:
+                          - string
+                          - "null"
+                        example: "2021-01-01T00:00:00.000Z"
+                        description: When the heartbeat was last updated
+                      user_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of user IDs subscribed to alerts
+                      slack_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Slack integration IDs subscribed to alerts
+                      webhook_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of webhook integration IDs subscribed to alerts
+                      incident_io_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of incident.io integration IDs subscribed to alerts
+                      microsoft_teams_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Microsoft Teams integration IDs subscribed to alerts
+                    required:
+                      - id
+                      - name
+                      - status
+                      - last_seen
+                      - report_period
+                      - report_period_cron
+                      - timezone
+                      - grace_period
+                      - reminder_alert_interval_minutes
+                      - alert_priority
+                      - created_at
+                      - updated_at
+                      - user_alerts
+                      - slack_alerts
+                      - webhook_alerts
+                      - incident_io_alerts
+                      - microsoft_teams_alerts
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Heartbeats
+      description: Delete a heartbeat
+      summary: Permanently delete a heartbeat monitor
+      operationId: deleteHeartbeat
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted OnlineOrNot Heartbeat's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/maintenance-windows:
+    get:
+      tags:
+        - Maintenance Windows
+      description: List all maintenance windows
+      summary: Retrieve a paginated list of all maintenance windows
+      operationId: listMaintenanceWindows
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+        - schema:
+            type: string
+            example: weekly
+            description: Search term to filter maintenance windows by name
+          required: false
+          description: Search term to filter maintenance windows by name
+          name: search
+          in: query
+      responses:
+        "200":
+          description: Returns a list of maintenance windows
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: abc123def456
+                          description: Maintenance Window ID
+                        name:
+                          type: string
+                          example: Weekly Maintenance
+                          description: Name of the maintenance window
+                        start_date:
+                          type: string
+                          example: 09:00
+                          description: Start time of the maintenance window (HH:MM format)
+                        duration_minutes:
+                          type: number
+                          example: 60
+                          description: Duration of the maintenance window in minutes
+                        timezone:
+                          type: string
+                          example: America/New_York
+                          description: Timezone for the maintenance window
+                        days_of_week:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                              - SUNDAY
+                              - MONDAY
+                              - TUESDAY
+                              - WEDNESDAY
+                              - THURSDAY
+                              - FRIDAY
+                              - SATURDAY
+                          example:
+                            - MONDAY
+                            - WEDNESDAY
+                            - FRIDAY
+                          description: Days of the week when the maintenance window is active
+                        status:
+                          type: string
+                          enum:
+                            - ENABLED
+                            - DISABLED
+                          example: ENABLED
+                          description: Whether the maintenance window is enabled or disabled
+                      required:
+                        - id
+                        - name
+                        - start_date
+                        - duration_minutes
+                        - timezone
+                        - days_of_week
+                        - status
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized - Invalid or missing API token
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Maintenance Windows
+      summary: Create a new maintenance window with associated checks and heartbeats
+      description: Create a new maintenance window
+      operationId: createMaintenanceWindow
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: Weekly Maintenance
+                  description: Name of the maintenance window
+                start_date:
+                  type: string
+                  example: 09:00
+                  description: Start time of the maintenance window (HH:MM format)
+                duration_minutes:
+                  type: integer
+                  exclusiveMinimum: 0
+                  example: 60
+                  description: Duration of the maintenance window in minutes
+                timezone:
+                  type: string
+                  example: America/New_York
+                  description: Timezone for the maintenance window
+                days_of_week:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - SUNDAY
+                      - MONDAY
+                      - TUESDAY
+                      - WEDNESDAY
+                      - THURSDAY
+                      - FRIDAY
+                      - SATURDAY
+                  minItems: 1
+                  example:
+                    - MONDAY
+                    - WEDNESDAY
+                    - FRIDAY
+                  description: Days of the week when the maintenance window is active
+                checks:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  example:
+                    - abc123
+                    - def456
+                  description: Array of uptime check IDs to associate with this maintenance window
+                heartbeats:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  example:
+                    - ghi789
+                  description: Array of heartbeat IDs to associate with this maintenance window
+              required:
+                - name
+                - start_date
+                - duration_minutes
+                - timezone
+                - days_of_week
+            examples:
+              simple:
+                summary: Weekly maintenance window
+                value:
+                  name: Weekly Server Maintenance
+                  start_date: 03:00
+                  duration_minutes: 60
+                  timezone: America/New_York
+                  days_of_week:
+                    - SUNDAY
+              withAssociations:
+                summary: With checks and heartbeats
+                value:
+                  name: Database Maintenance
+                  start_date: 02:00
+                  duration_minutes: 120
+                  timezone: UTC
+                  days_of_week:
+                    - SATURDAY
+                    - SUNDAY
+                  checks:
+                    - abc123
+                    - def456
+                  heartbeats:
+                    - ghi789
+      responses:
+        "201":
+          description: Returns the created maintenance window
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123def456
+                        description: Maintenance Window ID
+                      name:
+                        type: string
+                        example: Weekly Maintenance
+                        description: Name of the maintenance window
+                      start_date:
+                        type: string
+                        example: 09:00
+                        description: Start time of the maintenance window (HH:MM format)
+                      duration_minutes:
+                        type: number
+                        example: 60
+                        description: Duration of the maintenance window in minutes
+                      timezone:
+                        type: string
+                        example: America/New_York
+                        description: Timezone for the maintenance window
+                      days_of_week:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - SUNDAY
+                            - MONDAY
+                            - TUESDAY
+                            - WEDNESDAY
+                            - THURSDAY
+                            - FRIDAY
+                            - SATURDAY
+                        example:
+                          - MONDAY
+                          - WEDNESDAY
+                          - FRIDAY
+                        description: Days of the week when the maintenance window is active
+                      status:
+                        type: string
+                        enum:
+                          - ENABLED
+                          - DISABLED
+                        example: ENABLED
+                        description: Whether the maintenance window is enabled or disabled
+                      checks:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - abc123
+                          - def456
+                        description: IDs of uptime checks associated with this maintenance window
+                      heartbeats:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - ghi789
+                        description: IDs of heartbeats associated with this maintenance window
+                    required:
+                      - id
+                      - name
+                      - start_date
+                      - duration_minutes
+                      - timezone
+                      - days_of_week
+                      - status
+                      - checks
+                      - heartbeats
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid input (e.g., invalid check/heartbeat IDs, empty name)
+        "401":
+          description: Unauthorized - Invalid or missing API token
+        "500":
+          description: Internal Server Error
+  /v1/maintenance-windows/{maintenance_window_id}:
+    get:
+      tags:
+        - Maintenance Windows
+      description: Get a maintenance window by ID
+      summary: Retrieve a maintenance window with associated checks and heartbeats
+      operationId: getMaintenanceWindow
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: abc123def456
+            description: Maintenance Window ID
+          required: true
+          description: Maintenance Window ID
+          name: maintenance_window_id
+          in: path
+      responses:
+        "200":
+          description: Returns a maintenance window with associated check and heartbeat IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123def456
+                        description: Maintenance Window ID
+                      name:
+                        type: string
+                        example: Weekly Maintenance
+                        description: Name of the maintenance window
+                      start_date:
+                        type: string
+                        example: 09:00
+                        description: Start time of the maintenance window (HH:MM format)
+                      duration_minutes:
+                        type: number
+                        example: 60
+                        description: Duration of the maintenance window in minutes
+                      timezone:
+                        type: string
+                        example: America/New_York
+                        description: Timezone for the maintenance window
+                      days_of_week:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - SUNDAY
+                            - MONDAY
+                            - TUESDAY
+                            - WEDNESDAY
+                            - THURSDAY
+                            - FRIDAY
+                            - SATURDAY
+                        example:
+                          - MONDAY
+                          - WEDNESDAY
+                          - FRIDAY
+                        description: Days of the week when the maintenance window is active
+                      status:
+                        type: string
+                        enum:
+                          - ENABLED
+                          - DISABLED
+                        example: ENABLED
+                        description: Whether the maintenance window is enabled or disabled
+                      checks:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - abc123
+                          - def456
+                        description: IDs of uptime checks associated with this maintenance window
+                      heartbeats:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - ghi789
+                        description: IDs of heartbeats associated with this maintenance window
+                    required:
+                      - id
+                      - name
+                      - start_date
+                      - duration_minutes
+                      - timezone
+                      - days_of_week
+                      - status
+                      - checks
+                      - heartbeats
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized - Invalid or missing API token
+        "404":
+          description: Not Found - Maintenance window does not exist or belongs to different organization
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Maintenance Windows
+      summary: Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
+      description: Update a maintenance window
+      operationId: updateMaintenanceWindow
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: abc123def456
+            description: Maintenance Window ID
+          required: true
+          description: Maintenance Window ID
+          name: maintenance_window_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  example: Weekly Maintenance
+                  description: Name of the maintenance window
+                start_date:
+                  type: string
+                  example: 09:00
+                  description: Start time of the maintenance window (HH:MM format)
+                duration_minutes:
+                  type: integer
+                  exclusiveMinimum: 0
+                  example: 60
+                  description: Duration of the maintenance window in minutes
+                timezone:
+                  type: string
+                  example: America/New_York
+                  description: Timezone for the maintenance window
+                days_of_week:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - SUNDAY
+                      - MONDAY
+                      - TUESDAY
+                      - WEDNESDAY
+                      - THURSDAY
+                      - FRIDAY
+                      - SATURDAY
+                  minItems: 1
+                  example:
+                    - MONDAY
+                    - WEDNESDAY
+                    - FRIDAY
+                  description: Days of the week when the maintenance window is active
+                status:
+                  type: string
+                  enum:
+                    - ENABLED
+                    - DISABLED
+                  example: ENABLED
+                  description: Whether the maintenance window is enabled or disabled
+                checks:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - abc123
+                    - def456
+                  description: Array of uptime check IDs to associate (replaces existing associations)
+                heartbeats:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - ghi789
+                  description: Array of heartbeat IDs to associate (replaces existing associations)
+            examples:
+              updateName:
+                summary: Update name only
+                value:
+                  name: Updated Maintenance Window
+              toggleStatus:
+                summary: Disable maintenance window
+                value:
+                  status: DISABLED
+              updateSchedule:
+                summary: Update schedule
+                value:
+                  start_date: 04:00
+                  duration_minutes: 90
+                  days_of_week:
+                    - SATURDAY
+              updateAssociations:
+                summary: Replace check/heartbeat associations
+                value:
+                  checks:
+                    - newcheck123
+                  heartbeats: []
+      responses:
+        "200":
+          description: Returns the updated maintenance window
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123def456
+                        description: Maintenance Window ID
+                      name:
+                        type: string
+                        example: Weekly Maintenance
+                        description: Name of the maintenance window
+                      start_date:
+                        type: string
+                        example: 09:00
+                        description: Start time of the maintenance window (HH:MM format)
+                      duration_minutes:
+                        type: number
+                        example: 60
+                        description: Duration of the maintenance window in minutes
+                      timezone:
+                        type: string
+                        example: America/New_York
+                        description: Timezone for the maintenance window
+                      days_of_week:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - SUNDAY
+                            - MONDAY
+                            - TUESDAY
+                            - WEDNESDAY
+                            - THURSDAY
+                            - FRIDAY
+                            - SATURDAY
+                        example:
+                          - MONDAY
+                          - WEDNESDAY
+                          - FRIDAY
+                        description: Days of the week when the maintenance window is active
+                      status:
+                        type: string
+                        enum:
+                          - ENABLED
+                          - DISABLED
+                        example: ENABLED
+                        description: Whether the maintenance window is enabled or disabled
+                      checks:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - abc123
+                          - def456
+                        description: IDs of uptime checks associated with this maintenance window
+                      heartbeats:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - ghi789
+                        description: IDs of heartbeats associated with this maintenance window
+                    required:
+                      - id
+                      - name
+                      - start_date
+                      - duration_minutes
+                      - timezone
+                      - days_of_week
+                      - status
+                      - checks
+                      - heartbeats
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid input (e.g., invalid check/heartbeat IDs, no fields to update)
+        "401":
+          description: Unauthorized - Invalid or missing API token
+        "404":
+          description: Not Found - Maintenance window does not exist or belongs to different organization
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Maintenance Windows
+      summary: Delete a maintenance window and all its associations with checks and heartbeats
+      description: Delete a maintenance window
+      operationId: deleteMaintenanceWindow
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: abc123def456
+            description: Maintenance Window ID
+          required: true
+          description: Maintenance Window ID
+          name: maintenance_window_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted maintenance window ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123def456
+                        description: ID of the deleted maintenance window
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized - Invalid or missing API token
+        "404":
+          description: Not Found - Maintenance window does not exist or belongs to different organization
+        "500":
+          description: Internal Server Error
+  /v1/users:
+    get:
+      tags:
+        - People
+      description: List all users
+      summary: Retrieve a paginated list of all users in your organisation
+      operationId: listUsers
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of users in the organisation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: abc123
+                          description: The unique identifier of the user
+                        first_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Jane
+                          description: The user's first name
+                        last_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Doe
+                          description: The user's last name
+                        email:
+                          type:
+                            - string
+                            - "null"
+                          example: jane@example.com
+                          description: The user's email address
+                        image:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/avatar.jpg
+                          description: URL to the user's avatar image
+                        role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - STANDARD
+                          example: STANDARD
+                          description: The role of the user in the organisation
+                      required:
+                        - id
+                        - first_name
+                        - last_name
+                        - email
+                        - image
+                        - role
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "500":
+          description: Internal Server Error
+  /v1/users/{user_id}:
+    delete:
+      tags:
+        - People
+      description: Remove a user from the organisation
+      summary: Remove a team member from your organisation
+      operationId: removeUser
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            example: abc123def
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      responses:
+        "200":
+          description: Returns the ID of the removed user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: ID of the removed user
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid user ID or cannot remove yourself
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden - Insufficient permissions
+        "404":
+          description: Not Found - User not in organisation
+        "500":
+          description: Internal Server Error
+  /v1/invitations:
+    get:
+      tags:
+        - People
+      description: List all invitations
+      summary: Retrieve a paginated list of all pending invitations in your organisation
+      operationId: listInvitations
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of pending invitations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: inv123
+                          description: The unique identifier of the invitation
+                        email:
+                          type: string
+                          example: newuser@example.com
+                          description: The email address the invitation was sent to
+                        role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - STANDARD
+                          example: STANDARD
+                          description: The role of the user in the organisation
+                        created_at:
+                          type: string
+                          example: "2024-01-15T10:30:00Z"
+                          description: When the invitation was created
+                      required:
+                        - id
+                        - email
+                        - role
+                        - created_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - People
+      description: Create an invitation
+      summary: Send an invitation email to add a new team member to your organisation
+      operationId: createInvitation
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: newuser@example.com
+                  description: The email address to send the invitation to
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - STANDARD
+                  default: STANDARD
+                  example: STANDARD
+                  description: The role to assign to the invited user
+              required:
+                - email
+            examples:
+              standardUser:
+                summary: Invite a standard user
+                value:
+                  email: newuser@example.com
+                  role: STANDARD
+              adminUser:
+                summary: Invite an admin user
+                value:
+                  email: admin@example.com
+                  role: ADMIN
+      responses:
+        "201":
+          description: Returns the created invitation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: inv123
+                        description: The unique identifier of the invitation
+                      email:
+                        type: string
+                        example: newuser@example.com
+                        description: The email address the invitation was sent to
+                      role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - STANDARD
+                        example: STANDARD
+                        description: The role of the user in the organisation
+                      created_at:
+                        type: string
+                        example: "2024-01-15T10:30:00Z"
+                        description: When the invitation was created
+                    required:
+                      - id
+                      - email
+                      - role
+                      - created_at
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid email or user already invited/exists
+        "401":
+          description: Unauthenticated
+        "403":
+          description: Forbidden - Plan limit reached
+        "500":
+          description: Internal Server Error
   /v1/status_pages/{status_page_id}:
     get:
       tags:
@@ -7121,2350 +9465,6 @@ paths:
                   - messages
         "404":
           description: Not found
-        "500":
-          description: Internal Server Error
-  /v1/heartbeats:
-    get:
-      tags:
-        - Heartbeats
-      description: List all heartbeats
-      summary: Retrieve a paginated list of all heartbeat monitors
-      operationId: listHeartbeats
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            default: "1"
-            example: 1
-            description: Page number of paginated results.
-          required: false
-          description: Page number of paginated results.
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            example: 20
-            description: Number of items per page.
-          required: false
-          description: Number of items per page.
-          name: per_page
-          in: query
-      responses:
-        "200":
-          description: Returns a list of OnlineOrNot Heartbeats
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: a1b2c3d4
-                          description: Heartbeat ID
-                        name:
-                          type: string
-                          example: Daily backup job
-                          description: Name of the heartbeat monitor
-                        status:
-                          type:
-                            - string
-                            - "null"
-                          enum:
-                            - UP
-                            - DOWN
-                            - PENDING
-                            - PAUSED
-                            - MUTED
-                          example: UP
-                          description: Current status of the heartbeat
-                        last_seen:
-                          type:
-                            - string
-                            - "null"
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: Last time a heartbeat ping was received
-                        report_period:
-                          type:
-                            - number
-                            - "null"
-                          example: 3600
-                          description: Expected interval in seconds between heartbeat pings
-                        report_period_cron:
-                          type:
-                            - string
-                            - "null"
-                          example: 0 0 * * *
-                          description: Cron expression for expected heartbeat schedule
-                        timezone:
-                          type:
-                            - string
-                            - "null"
-                          example: America/New_York
-                          description: Timezone for cron schedule
-                        grace_period:
-                          type: number
-                          example: 300
-                          description: Grace period in seconds before alerting
-                        reminder_alert_interval_minutes:
-                          type: number
-                          example: 1440
-                          description: Interval in minutes between reminder alerts
-                        alert_priority:
-                          type: string
-                          enum:
-                            - LOW
-                            - HIGH
-                          example: LOW
-                          description: Alert priority level
-                        created_at:
-                          type:
-                            - string
-                            - "null"
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When the heartbeat was created
-                        updated_at:
-                          type:
-                            - string
-                            - "null"
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When the heartbeat was last updated
-                      required:
-                        - id
-                        - name
-                        - status
-                        - last_seen
-                        - report_period
-                        - report_period_cron
-                        - timezone
-                        - grace_period
-                        - reminder_alert_interval_minutes
-                        - alert_priority
-                        - created_at
-                        - updated_at
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        example: 1
-                        description: Page number of paginated results.
-                      per_page:
-                        type: number
-                        default: 20
-                        example: 20
-                        description: Number of items per page.
-                      count:
-                        type: number
-                        example: 1
-                        description: Number of items on the current page.
-                      total_count:
-                        type: number
-                        example: 1
-                        description: Total number of items.
-                    required:
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-    post:
-      tags:
-        - Heartbeats
-      description: Create a heartbeat
-      summary: Create a new heartbeat monitor for cron jobs or scheduled tasks
-      operationId: createHeartbeat
-      security:
-        - api_token: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Daily backup job
-                  description: Name of the heartbeat monitor
-                report_period:
-                  type: integer
-                  minimum: 1
-                  example: 3600
-                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
-                report_period_cron:
-                  type: string
-                  example: 0 0 * * *
-                  description: Cron expression for expected heartbeat schedule
-                timezone:
-                  type: string
-                  example: America/New_York
-                  description: Timezone for cron schedule
-                grace_period:
-                  type: integer
-                  minimum: 1
-                  example: 300
-                  description: Grace period in seconds to wait after missed heartbeat before alerting
-                reminder_alert_interval_minutes:
-                  type: integer
-                  minimum: -1
-                  default: 1440
-                  example: 1440
-                  description: Interval in minutes between reminder alerts (-1 for never)
-                user_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of user IDs to alert
-                slack_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of Slack integration IDs to alert
-                webhook_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of webhook integration IDs to alert
-                incident_io_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of incident.io integration IDs to alert
-                microsoft_teams_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of Microsoft Teams integration IDs to alert
-                alert_priority:
-                  type: string
-                  enum:
-                    - LOW
-                    - HIGH
-                  default: LOW
-                  example: LOW
-                  description: Alert priority level
-              required:
-                - name
-                - grace_period
-            examples:
-              simple:
-                summary: Simple interval heartbeat
-                value:
-                  name: Daily backup job
-                  report_period: 86400
-                  grace_period: 300
-              cron:
-                summary: Cron-based heartbeat
-                value:
-                  name: Hourly sync task
-                  report_period_cron: 0 * * * *
-                  timezone: America/New_York
-                  grace_period: 600
-                  alert_priority: HIGH
-      responses:
-        "201":
-          description: Create a new OnlineOrNot Heartbeat
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Heartbeat ID
-                      name:
-                        type: string
-                        example: Daily backup job
-                        description: Name of the heartbeat monitor
-                      status:
-                        type:
-                          - string
-                          - "null"
-                        enum:
-                          - UP
-                          - DOWN
-                          - PENDING
-                          - PAUSED
-                          - MUTED
-                        example: UP
-                        description: Current status of the heartbeat
-                      last_seen:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time a heartbeat ping was received
-                      report_period:
-                        type:
-                          - number
-                          - "null"
-                        example: 3600
-                        description: Expected interval in seconds between heartbeat pings
-                      report_period_cron:
-                        type:
-                          - string
-                          - "null"
-                        example: 0 0 * * *
-                        description: Cron expression for expected heartbeat schedule
-                      timezone:
-                        type:
-                          - string
-                          - "null"
-                        example: America/New_York
-                        description: Timezone for cron schedule
-                      grace_period:
-                        type: number
-                        example: 300
-                        description: Grace period in seconds before alerting
-                      reminder_alert_interval_minutes:
-                        type: number
-                        example: 1440
-                        description: Interval in minutes between reminder alerts
-                      alert_priority:
-                        type: string
-                        enum:
-                          - LOW
-                          - HIGH
-                        example: LOW
-                        description: Alert priority level
-                      created_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was created
-                      updated_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was last updated
-                      user_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of user IDs subscribed to alerts
-                      slack_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Slack integration IDs subscribed to alerts
-                      webhook_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of webhook integration IDs subscribed to alerts
-                      incident_io_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of incident.io integration IDs subscribed to alerts
-                      microsoft_teams_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Microsoft Teams integration IDs subscribed to alerts
-                    required:
-                      - id
-                      - name
-                      - status
-                      - last_seen
-                      - report_period
-                      - report_period_cron
-                      - timezone
-                      - grace_period
-                      - reminder_alert_interval_minutes
-                      - alert_priority
-                      - created_at
-                      - updated_at
-                      - user_alerts
-                      - slack_alerts
-                      - webhook_alerts
-                      - incident_io_alerts
-                      - microsoft_teams_alerts
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-  /v1/heartbeats/{heartbeat_id}:
-    get:
-      tags:
-        - Heartbeats
-      description: Retrieve a heartbeat
-      summary: Look up detailed information about a specific heartbeat monitor
-      operationId: getHeartbeat
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: a1b2c3d4
-            description: Heartbeat ID
-          required: true
-          description: Heartbeat ID
-          name: heartbeat_id
-          in: path
-      responses:
-        "200":
-          description: Retrieve the specified OnlineOrNot Heartbeat
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Heartbeat ID
-                      name:
-                        type: string
-                        example: Daily backup job
-                        description: Name of the heartbeat monitor
-                      status:
-                        type:
-                          - string
-                          - "null"
-                        enum:
-                          - UP
-                          - DOWN
-                          - PENDING
-                          - PAUSED
-                          - MUTED
-                        example: UP
-                        description: Current status of the heartbeat
-                      last_seen:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time a heartbeat ping was received
-                      report_period:
-                        type:
-                          - number
-                          - "null"
-                        example: 3600
-                        description: Expected interval in seconds between heartbeat pings
-                      report_period_cron:
-                        type:
-                          - string
-                          - "null"
-                        example: 0 0 * * *
-                        description: Cron expression for expected heartbeat schedule
-                      timezone:
-                        type:
-                          - string
-                          - "null"
-                        example: America/New_York
-                        description: Timezone for cron schedule
-                      grace_period:
-                        type: number
-                        example: 300
-                        description: Grace period in seconds before alerting
-                      reminder_alert_interval_minutes:
-                        type: number
-                        example: 1440
-                        description: Interval in minutes between reminder alerts
-                      alert_priority:
-                        type: string
-                        enum:
-                          - LOW
-                          - HIGH
-                        example: LOW
-                        description: Alert priority level
-                      created_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was created
-                      updated_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was last updated
-                      user_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of user IDs subscribed to alerts
-                      slack_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Slack integration IDs subscribed to alerts
-                      webhook_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of webhook integration IDs subscribed to alerts
-                      incident_io_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of incident.io integration IDs subscribed to alerts
-                      microsoft_teams_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Microsoft Teams integration IDs subscribed to alerts
-                    required:
-                      - id
-                      - name
-                      - status
-                      - last_seen
-                      - report_period
-                      - report_period_cron
-                      - timezone
-                      - grace_period
-                      - reminder_alert_interval_minutes
-                      - alert_priority
-                      - created_at
-                      - updated_at
-                      - user_alerts
-                      - slack_alerts
-                      - webhook_alerts
-                      - incident_io_alerts
-                      - microsoft_teams_alerts
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-    patch:
-      tags:
-        - Heartbeats
-      description: Modify a heartbeat
-      summary: Modify the configuration of an existing heartbeat monitor
-      operationId: updateHeartbeat
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: a1b2c3d4
-            description: Heartbeat ID
-          required: true
-          description: Heartbeat ID
-          name: heartbeat_id
-          in: path
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Daily backup job
-                  description: Name of the heartbeat monitor
-                report_period:
-                  type:
-                    - integer
-                    - "null"
-                  minimum: 1
-                  example: 3600
-                  description: Expected interval in seconds between heartbeat pings (for simple schedule)
-                report_period_cron:
-                  type:
-                    - string
-                    - "null"
-                  example: 0 0 * * *
-                  description: Cron expression for expected heartbeat schedule
-                timezone:
-                  type:
-                    - string
-                    - "null"
-                  example: America/New_York
-                  description: Timezone for cron schedule
-                grace_period:
-                  type: integer
-                  minimum: 1
-                  example: 300
-                  description: Grace period in seconds to wait after missed heartbeat before alerting
-                reminder_alert_interval_minutes:
-                  type: integer
-                  minimum: -1
-                  example: 1440
-                  description: Interval in minutes between reminder alerts (-1 for never)
-                user_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of user IDs to alert
-                slack_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of Slack integration IDs to alert
-                webhook_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of webhook integration IDs to alert
-                incident_io_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of incident.io integration IDs to alert
-                microsoft_teams_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: Array of Microsoft Teams integration IDs to alert
-                alert_priority:
-                  type: string
-                  enum:
-                    - LOW
-                    - HIGH
-                  example: LOW
-                  description: Alert priority level
-                paused:
-                  type: boolean
-                  example: false
-                  description: Whether the heartbeat is paused
-                muted:
-                  type: boolean
-                  example: false
-                  description: Whether the heartbeat is muted (continues monitoring but suppresses alerts)
-            examples:
-              updateSchedule:
-                summary: Update heartbeat schedule
-                value:
-                  report_period: 7200
-                  grace_period: 600
-              pause:
-                summary: Pause heartbeat monitoring
-                value:
-                  paused: true
-              mute:
-                summary: Mute heartbeat alerts
-                value:
-                  muted: true
-      responses:
-        "200":
-          description: Modify an OnlineOrNot Heartbeat
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Heartbeat ID
-                      name:
-                        type: string
-                        example: Daily backup job
-                        description: Name of the heartbeat monitor
-                      status:
-                        type:
-                          - string
-                          - "null"
-                        enum:
-                          - UP
-                          - DOWN
-                          - PENDING
-                          - PAUSED
-                          - MUTED
-                        example: UP
-                        description: Current status of the heartbeat
-                      last_seen:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: Last time a heartbeat ping was received
-                      report_period:
-                        type:
-                          - number
-                          - "null"
-                        example: 3600
-                        description: Expected interval in seconds between heartbeat pings
-                      report_period_cron:
-                        type:
-                          - string
-                          - "null"
-                        example: 0 0 * * *
-                        description: Cron expression for expected heartbeat schedule
-                      timezone:
-                        type:
-                          - string
-                          - "null"
-                        example: America/New_York
-                        description: Timezone for cron schedule
-                      grace_period:
-                        type: number
-                        example: 300
-                        description: Grace period in seconds before alerting
-                      reminder_alert_interval_minutes:
-                        type: number
-                        example: 1440
-                        description: Interval in minutes between reminder alerts
-                      alert_priority:
-                        type: string
-                        enum:
-                          - LOW
-                          - HIGH
-                        example: LOW
-                        description: Alert priority level
-                      created_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was created
-                      updated_at:
-                        type:
-                          - string
-                          - "null"
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the heartbeat was last updated
-                      user_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of user IDs subscribed to alerts
-                      slack_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Slack integration IDs subscribed to alerts
-                      webhook_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of webhook integration IDs subscribed to alerts
-                      incident_io_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of incident.io integration IDs subscribed to alerts
-                      microsoft_teams_alerts:
-                        type: array
-                        items:
-                          type: string
-                        description: Array of Microsoft Teams integration IDs subscribed to alerts
-                    required:
-                      - id
-                      - name
-                      - status
-                      - last_seen
-                      - report_period
-                      - report_period_cron
-                      - timezone
-                      - grace_period
-                      - reminder_alert_interval_minutes
-                      - alert_priority
-                      - created_at
-                      - updated_at
-                      - user_alerts
-                      - slack_alerts
-                      - webhook_alerts
-                      - incident_io_alerts
-                      - microsoft_teams_alerts
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-    delete:
-      tags:
-        - Heartbeats
-      description: Delete a heartbeat
-      summary: Permanently delete a heartbeat monitor
-      operationId: deleteHeartbeat
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: a1b2c3d4
-            description: Heartbeat ID
-          required: true
-          description: Heartbeat ID
-          name: heartbeat_id
-          in: path
-      responses:
-        "200":
-          description: Returns the deleted OnlineOrNot Heartbeat's ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Heartbeat ID
-                    required:
-                      - id
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "500":
-          description: Internal Server Error
-  /v1/maintenance-windows:
-    get:
-      tags:
-        - Maintenance Windows
-      description: List all maintenance windows
-      summary: Retrieve a paginated list of all maintenance windows
-      operationId: listMaintenanceWindows
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            default: "1"
-            example: 1
-            description: Page number of paginated results.
-          required: false
-          description: Page number of paginated results.
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            example: 20
-            description: Number of items per page.
-          required: false
-          description: Number of items per page.
-          name: per_page
-          in: query
-        - schema:
-            type: string
-            example: weekly
-            description: Search term to filter maintenance windows by name
-          required: false
-          description: Search term to filter maintenance windows by name
-          name: search
-          in: query
-      responses:
-        "200":
-          description: Returns a list of maintenance windows
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: abc123def456
-                          description: Maintenance Window ID
-                        name:
-                          type: string
-                          example: Weekly Maintenance
-                          description: Name of the maintenance window
-                        start_date:
-                          type: string
-                          example: 09:00
-                          description: Start time of the maintenance window (HH:MM format)
-                        duration_minutes:
-                          type: number
-                          example: 60
-                          description: Duration of the maintenance window in minutes
-                        timezone:
-                          type: string
-                          example: America/New_York
-                          description: Timezone for the maintenance window
-                        days_of_week:
-                          type: array
-                          items:
-                            type: string
-                            enum:
-                              - SUNDAY
-                              - MONDAY
-                              - TUESDAY
-                              - WEDNESDAY
-                              - THURSDAY
-                              - FRIDAY
-                              - SATURDAY
-                          example:
-                            - MONDAY
-                            - WEDNESDAY
-                            - FRIDAY
-                          description: Days of the week when the maintenance window is active
-                        status:
-                          type: string
-                          enum:
-                            - ENABLED
-                            - DISABLED
-                          example: ENABLED
-                          description: Whether the maintenance window is enabled or disabled
-                      required:
-                        - id
-                        - name
-                        - start_date
-                        - duration_minutes
-                        - timezone
-                        - days_of_week
-                        - status
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        example: 1
-                        description: Page number of paginated results.
-                      per_page:
-                        type: number
-                        default: 20
-                        example: 20
-                        description: Number of items per page.
-                      count:
-                        type: number
-                        example: 1
-                        description: Number of items on the current page.
-                      total_count:
-                        type: number
-                        example: 1
-                        description: Total number of items.
-                    required:
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
-                  - success
-                  - errors
-                  - messages
-        "401":
-          description: Unauthorized - Invalid or missing API token
-        "500":
-          description: Internal Server Error
-    post:
-      tags:
-        - Maintenance Windows
-      summary: Create a new maintenance window with associated checks and heartbeats
-      description: Create a new maintenance window
-      operationId: createMaintenanceWindow
-      security:
-        - api_token: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  minLength: 1
-                  example: Weekly Maintenance
-                  description: Name of the maintenance window
-                start_date:
-                  type: string
-                  example: 09:00
-                  description: Start time of the maintenance window (HH:MM format)
-                duration_minutes:
-                  type: integer
-                  exclusiveMinimum: 0
-                  example: 60
-                  description: Duration of the maintenance window in minutes
-                timezone:
-                  type: string
-                  example: America/New_York
-                  description: Timezone for the maintenance window
-                days_of_week:
-                  type: array
-                  items:
-                    type: string
-                    enum:
-                      - SUNDAY
-                      - MONDAY
-                      - TUESDAY
-                      - WEDNESDAY
-                      - THURSDAY
-                      - FRIDAY
-                      - SATURDAY
-                  minItems: 1
-                  example:
-                    - MONDAY
-                    - WEDNESDAY
-                    - FRIDAY
-                  description: Days of the week when the maintenance window is active
-                checks:
-                  type: array
-                  items:
-                    type: string
-                  default: []
-                  example:
-                    - abc123
-                    - def456
-                  description: Array of uptime check IDs to associate with this maintenance window
-                heartbeats:
-                  type: array
-                  items:
-                    type: string
-                  default: []
-                  example:
-                    - ghi789
-                  description: Array of heartbeat IDs to associate with this maintenance window
-              required:
-                - name
-                - start_date
-                - duration_minutes
-                - timezone
-                - days_of_week
-            examples:
-              simple:
-                summary: Weekly maintenance window
-                value:
-                  name: Weekly Server Maintenance
-                  start_date: 03:00
-                  duration_minutes: 60
-                  timezone: America/New_York
-                  days_of_week:
-                    - SUNDAY
-              withAssociations:
-                summary: With checks and heartbeats
-                value:
-                  name: Database Maintenance
-                  start_date: 02:00
-                  duration_minutes: 120
-                  timezone: UTC
-                  days_of_week:
-                    - SATURDAY
-                    - SUNDAY
-                  checks:
-                    - abc123
-                    - def456
-                  heartbeats:
-                    - ghi789
-      responses:
-        "201":
-          description: Returns the created maintenance window
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: abc123def456
-                        description: Maintenance Window ID
-                      name:
-                        type: string
-                        example: Weekly Maintenance
-                        description: Name of the maintenance window
-                      start_date:
-                        type: string
-                        example: 09:00
-                        description: Start time of the maintenance window (HH:MM format)
-                      duration_minutes:
-                        type: number
-                        example: 60
-                        description: Duration of the maintenance window in minutes
-                      timezone:
-                        type: string
-                        example: America/New_York
-                        description: Timezone for the maintenance window
-                      days_of_week:
-                        type: array
-                        items:
-                          type: string
-                          enum:
-                            - SUNDAY
-                            - MONDAY
-                            - TUESDAY
-                            - WEDNESDAY
-                            - THURSDAY
-                            - FRIDAY
-                            - SATURDAY
-                        example:
-                          - MONDAY
-                          - WEDNESDAY
-                          - FRIDAY
-                        description: Days of the week when the maintenance window is active
-                      status:
-                        type: string
-                        enum:
-                          - ENABLED
-                          - DISABLED
-                        example: ENABLED
-                        description: Whether the maintenance window is enabled or disabled
-                      checks:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - abc123
-                          - def456
-                        description: IDs of uptime checks associated with this maintenance window
-                      heartbeats:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - ghi789
-                        description: IDs of heartbeats associated with this maintenance window
-                    required:
-                      - id
-                      - name
-                      - start_date
-                      - duration_minutes
-                      - timezone
-                      - days_of_week
-                      - status
-                      - checks
-                      - heartbeats
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "400":
-          description: Bad Request - Invalid input (e.g., invalid check/heartbeat IDs, empty name)
-        "401":
-          description: Unauthorized - Invalid or missing API token
-        "500":
-          description: Internal Server Error
-  /v1/maintenance-windows/{maintenance_window_id}:
-    get:
-      tags:
-        - Maintenance Windows
-      description: Get a maintenance window by ID
-      summary: Retrieve a maintenance window with associated checks and heartbeats
-      operationId: getMaintenanceWindow
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: abc123def456
-            description: Maintenance Window ID
-          required: true
-          description: Maintenance Window ID
-          name: maintenance_window_id
-          in: path
-      responses:
-        "200":
-          description: Returns a maintenance window with associated check and heartbeat IDs
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: abc123def456
-                        description: Maintenance Window ID
-                      name:
-                        type: string
-                        example: Weekly Maintenance
-                        description: Name of the maintenance window
-                      start_date:
-                        type: string
-                        example: 09:00
-                        description: Start time of the maintenance window (HH:MM format)
-                      duration_minutes:
-                        type: number
-                        example: 60
-                        description: Duration of the maintenance window in minutes
-                      timezone:
-                        type: string
-                        example: America/New_York
-                        description: Timezone for the maintenance window
-                      days_of_week:
-                        type: array
-                        items:
-                          type: string
-                          enum:
-                            - SUNDAY
-                            - MONDAY
-                            - TUESDAY
-                            - WEDNESDAY
-                            - THURSDAY
-                            - FRIDAY
-                            - SATURDAY
-                        example:
-                          - MONDAY
-                          - WEDNESDAY
-                          - FRIDAY
-                        description: Days of the week when the maintenance window is active
-                      status:
-                        type: string
-                        enum:
-                          - ENABLED
-                          - DISABLED
-                        example: ENABLED
-                        description: Whether the maintenance window is enabled or disabled
-                      checks:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - abc123
-                          - def456
-                        description: IDs of uptime checks associated with this maintenance window
-                      heartbeats:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - ghi789
-                        description: IDs of heartbeats associated with this maintenance window
-                    required:
-                      - id
-                      - name
-                      - start_date
-                      - duration_minutes
-                      - timezone
-                      - days_of_week
-                      - status
-                      - checks
-                      - heartbeats
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "401":
-          description: Unauthorized - Invalid or missing API token
-        "404":
-          description: Not Found - Maintenance window does not exist or belongs to different organization
-        "500":
-          description: Internal Server Error
-    patch:
-      tags:
-        - Maintenance Windows
-      summary: Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
-      description: Update a maintenance window
-      operationId: updateMaintenanceWindow
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: abc123def456
-            description: Maintenance Window ID
-          required: true
-          description: Maintenance Window ID
-          name: maintenance_window_id
-          in: path
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  minLength: 1
-                  example: Weekly Maintenance
-                  description: Name of the maintenance window
-                start_date:
-                  type: string
-                  example: 09:00
-                  description: Start time of the maintenance window (HH:MM format)
-                duration_minutes:
-                  type: integer
-                  exclusiveMinimum: 0
-                  example: 60
-                  description: Duration of the maintenance window in minutes
-                timezone:
-                  type: string
-                  example: America/New_York
-                  description: Timezone for the maintenance window
-                days_of_week:
-                  type: array
-                  items:
-                    type: string
-                    enum:
-                      - SUNDAY
-                      - MONDAY
-                      - TUESDAY
-                      - WEDNESDAY
-                      - THURSDAY
-                      - FRIDAY
-                      - SATURDAY
-                  minItems: 1
-                  example:
-                    - MONDAY
-                    - WEDNESDAY
-                    - FRIDAY
-                  description: Days of the week when the maintenance window is active
-                status:
-                  type: string
-                  enum:
-                    - ENABLED
-                    - DISABLED
-                  example: ENABLED
-                  description: Whether the maintenance window is enabled or disabled
-                checks:
-                  type: array
-                  items:
-                    type: string
-                  example:
-                    - abc123
-                    - def456
-                  description: Array of uptime check IDs to associate (replaces existing associations)
-                heartbeats:
-                  type: array
-                  items:
-                    type: string
-                  example:
-                    - ghi789
-                  description: Array of heartbeat IDs to associate (replaces existing associations)
-            examples:
-              updateName:
-                summary: Update name only
-                value:
-                  name: Updated Maintenance Window
-              toggleStatus:
-                summary: Disable maintenance window
-                value:
-                  status: DISABLED
-              updateSchedule:
-                summary: Update schedule
-                value:
-                  start_date: 04:00
-                  duration_minutes: 90
-                  days_of_week:
-                    - SATURDAY
-              updateAssociations:
-                summary: Replace check/heartbeat associations
-                value:
-                  checks:
-                    - newcheck123
-                  heartbeats: []
-      responses:
-        "200":
-          description: Returns the updated maintenance window
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: abc123def456
-                        description: Maintenance Window ID
-                      name:
-                        type: string
-                        example: Weekly Maintenance
-                        description: Name of the maintenance window
-                      start_date:
-                        type: string
-                        example: 09:00
-                        description: Start time of the maintenance window (HH:MM format)
-                      duration_minutes:
-                        type: number
-                        example: 60
-                        description: Duration of the maintenance window in minutes
-                      timezone:
-                        type: string
-                        example: America/New_York
-                        description: Timezone for the maintenance window
-                      days_of_week:
-                        type: array
-                        items:
-                          type: string
-                          enum:
-                            - SUNDAY
-                            - MONDAY
-                            - TUESDAY
-                            - WEDNESDAY
-                            - THURSDAY
-                            - FRIDAY
-                            - SATURDAY
-                        example:
-                          - MONDAY
-                          - WEDNESDAY
-                          - FRIDAY
-                        description: Days of the week when the maintenance window is active
-                      status:
-                        type: string
-                        enum:
-                          - ENABLED
-                          - DISABLED
-                        example: ENABLED
-                        description: Whether the maintenance window is enabled or disabled
-                      checks:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - abc123
-                          - def456
-                        description: IDs of uptime checks associated with this maintenance window
-                      heartbeats:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - ghi789
-                        description: IDs of heartbeats associated with this maintenance window
-                    required:
-                      - id
-                      - name
-                      - start_date
-                      - duration_minutes
-                      - timezone
-                      - days_of_week
-                      - status
-                      - checks
-                      - heartbeats
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "400":
-          description: Bad Request - Invalid input (e.g., invalid check/heartbeat IDs, no fields to update)
-        "401":
-          description: Unauthorized - Invalid or missing API token
-        "404":
-          description: Not Found - Maintenance window does not exist or belongs to different organization
-        "500":
-          description: Internal Server Error
-    delete:
-      tags:
-        - Maintenance Windows
-      summary: Delete a maintenance window and all its associations with checks and heartbeats
-      description: Delete a maintenance window
-      operationId: deleteMaintenanceWindow
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            minLength: 8
-            example: abc123def456
-            description: Maintenance Window ID
-          required: true
-          description: Maintenance Window ID
-          name: maintenance_window_id
-          in: path
-      responses:
-        "200":
-          description: Returns the deleted maintenance window ID
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: abc123def456
-                        description: ID of the deleted maintenance window
-                    required:
-                      - id
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "401":
-          description: Unauthorized - Invalid or missing API token
-        "404":
-          description: Not Found - Maintenance window does not exist or belongs to different organization
-        "500":
-          description: Internal Server Error
-  /v1/users:
-    get:
-      tags:
-        - People
-      description: List all users
-      summary: Retrieve a paginated list of all users in your organisation
-      operationId: listUsers
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            default: "1"
-            example: 1
-            description: Page number of paginated results.
-          required: false
-          description: Page number of paginated results.
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            example: 20
-            description: Number of items per page.
-          required: false
-          description: Number of items per page.
-          name: per_page
-          in: query
-      responses:
-        "200":
-          description: Returns a list of users in the organisation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: abc123
-                          description: The unique identifier of the user
-                        first_name:
-                          type:
-                            - string
-                            - "null"
-                          example: Jane
-                          description: The user's first name
-                        last_name:
-                          type:
-                            - string
-                            - "null"
-                          example: Doe
-                          description: The user's last name
-                        email:
-                          type:
-                            - string
-                            - "null"
-                          example: jane@example.com
-                          description: The user's email address
-                        image:
-                          type:
-                            - string
-                            - "null"
-                          example: https://example.com/avatar.jpg
-                          description: URL to the user's avatar image
-                        role:
-                          type: string
-                          enum:
-                            - ADMIN
-                            - STANDARD
-                          example: STANDARD
-                          description: The role of the user in the organisation
-                      required:
-                        - id
-                        - first_name
-                        - last_name
-                        - email
-                        - image
-                        - role
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        example: 1
-                        description: Page number of paginated results.
-                      per_page:
-                        type: number
-                        default: 20
-                        example: 20
-                        description: Number of items per page.
-                      count:
-                        type: number
-                        example: 1
-                        description: Number of items on the current page.
-                      total_count:
-                        type: number
-                        example: 1
-                        description: Total number of items.
-                    required:
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
-                  - success
-                  - errors
-                  - messages
-        "401":
-          description: Unauthenticated
-        "500":
-          description: Internal Server Error
-  /v1/users/{user_id}:
-    delete:
-      tags:
-        - People
-      description: Remove a user from the organisation
-      summary: Remove a team member from your organisation
-      operationId: removeUser
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            example: abc123def
-            description: The unique identifier of the user
-          required: true
-          description: The unique identifier of the user
-          name: user_id
-          in: path
-      responses:
-        "200":
-          description: Returns the ID of the removed user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: abc123
-                        description: ID of the removed user
-                    required:
-                      - id
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "400":
-          description: Bad Request - Invalid user ID or cannot remove yourself
-        "401":
-          description: Unauthenticated
-        "403":
-          description: Forbidden - Insufficient permissions
-        "404":
-          description: Not Found - User not in organisation
-        "500":
-          description: Internal Server Error
-  /v1/invitations:
-    get:
-      tags:
-        - People
-      description: List all invitations
-      summary: Retrieve a paginated list of all pending invitations in your organisation
-      operationId: listInvitations
-      security:
-        - api_token: []
-      parameters:
-        - schema:
-            type: string
-            default: "1"
-            example: 1
-            description: Page number of paginated results.
-          required: false
-          description: Page number of paginated results.
-          name: page
-          in: query
-        - schema:
-            type: string
-            default: "20"
-            example: 20
-            description: Number of items per page.
-          required: false
-          description: Number of items per page.
-          name: per_page
-          in: query
-      responses:
-        "200":
-          description: Returns a list of pending invitations
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: inv123
-                          description: The unique identifier of the invitation
-                        email:
-                          type: string
-                          example: newuser@example.com
-                          description: The email address the invitation was sent to
-                        role:
-                          type: string
-                          enum:
-                            - ADMIN
-                            - STANDARD
-                          example: STANDARD
-                          description: The role of the user in the organisation
-                        created_at:
-                          type: string
-                          example: "2024-01-15T10:30:00Z"
-                          description: When the invitation was created
-                      required:
-                        - id
-                        - email
-                        - role
-                        - created_at
-                  result_info:
-                    type: object
-                    properties:
-                      page:
-                        type: number
-                        default: 1
-                        example: 1
-                        description: Page number of paginated results.
-                      per_page:
-                        type: number
-                        default: 20
-                        example: 20
-                        description: Number of items per page.
-                      count:
-                        type: number
-                        example: 1
-                        description: Number of items on the current page.
-                      total_count:
-                        type: number
-                        example: 1
-                        description: Total number of items.
-                    required:
-                      - count
-                      - total_count
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - result_info
-                  - success
-                  - errors
-                  - messages
-        "401":
-          description: Unauthenticated
-        "500":
-          description: Internal Server Error
-    post:
-      tags:
-        - People
-      description: Create an invitation
-      summary: Send an invitation email to add a new team member to your organisation
-      operationId: createInvitation
-      security:
-        - api_token: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: newuser@example.com
-                  description: The email address to send the invitation to
-                role:
-                  type: string
-                  enum:
-                    - ADMIN
-                    - STANDARD
-                  default: STANDARD
-                  example: STANDARD
-                  description: The role to assign to the invited user
-              required:
-                - email
-            examples:
-              standardUser:
-                summary: Invite a standard user
-                value:
-                  email: newuser@example.com
-                  role: STANDARD
-              adminUser:
-                summary: Invite an admin user
-                value:
-                  email: admin@example.com
-                  role: ADMIN
-      responses:
-        "201":
-          description: Returns the created invitation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: inv123
-                        description: The unique identifier of the invitation
-                      email:
-                        type: string
-                        example: newuser@example.com
-                        description: The email address the invitation was sent to
-                      role:
-                        type: string
-                        enum:
-                          - ADMIN
-                          - STANDARD
-                        example: STANDARD
-                        description: The role of the user in the organisation
-                      created_at:
-                        type: string
-                        example: "2024-01-15T10:30:00Z"
-                        description: When the invitation was created
-                    required:
-                      - id
-                      - email
-                      - role
-                      - created_at
-                  success:
-                    type: boolean
-                    default: true
-                    example: true
-                    description: Whether the API call was successful
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                  messages:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: number
-                        message:
-                          type: string
-                        type:
-                          type: string
-                      required:
-                        - code
-                        - message
-                    example: []
-                required:
-                  - result
-                  - success
-                  - errors
-                  - messages
-        "400":
-          description: Bad Request - Invalid email or user already invited/exists
-        "401":
-          description: Unauthenticated
-        "403":
-          description: Forbidden - Plan limit reached
         "500":
           description: Internal Server Error
 webhooks: {}
