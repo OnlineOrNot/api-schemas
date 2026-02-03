@@ -1640,7 +1640,7 @@ paths:
     get:
       tags:
         - Status Pages
-      description: Get a status page's summary of its overall status, components, active incidents, and scheduled maintenance.
+      description: Get a status page's overview.
       parameters:
         - schema:
             type: string
