@@ -256,6 +256,500 @@ paths:
                   - messages
         "500":
           description: Internal Server Error
+  /v1/tokens:
+    get:
+      tags:
+        - Tokens
+      description: List all API tokens
+      summary: Retrieve a paginated list of all API tokens for the organization
+      operationId: listTokens
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of API tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Token ID
+                        name:
+                          type: string
+                          example: My API Token
+                          description: Token name
+                        expiresAfter:
+                          type: string
+                          example: "2025-12-31T23:59:59.000Z"
+                          description: Token expiration date
+                        createdAt:
+                          type: string
+                          example: "2024-01-15T10:30:00.000Z"
+                          description: Token creation date
+                        grants:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              scope:
+                                type: string
+                                enum:
+                                  - UPTIME_CHECKS
+                                  - STATUS_PAGES
+                                  - HEARTBEAT_CHECKS
+                                  - MAINTENANCE_WINDOWS
+                                  - PEOPLE
+                                  - INTEGRATIONS
+                                  - API_TOKENS
+                              permission:
+                                type: string
+                                enum:
+                                  - READ
+                                  - EDIT
+                            required:
+                              - scope
+                              - permission
+                          description: List of grants (scope and permission pairs) assigned to this token
+                      required:
+                        - id
+                        - name
+                        - expiresAfter
+                        - createdAt
+                        - grants
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Tokens
+      description: Create an API token
+      summary: Create a new API token for the organization
+      operationId: createToken
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: My API Token
+                  description: Token name
+                grants:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      scope:
+                        type: string
+                        enum:
+                          - UPTIME_CHECKS
+                          - STATUS_PAGES
+                          - HEARTBEAT_CHECKS
+                          - MAINTENANCE_WINDOWS
+                          - PEOPLE
+                          - INTEGRATIONS
+                          - API_TOKENS
+                      permission:
+                        type: string
+                        enum:
+                          - READ
+                          - EDIT
+                    required:
+                      - scope
+                      - permission
+                  example:
+                    - scope: UPTIME_CHECKS
+                      permission: READ
+                  description: List of grants (scope and permission pairs) for the token
+              required:
+                - name
+                - grants
+            examples:
+              basic:
+                summary: Create token with read permissions
+                value:
+                  name: My API Token
+                  permissions:
+                    - permission: UPTIME_CHECKS
+                      permissionLevel: READ
+              advanced:
+                summary: Create token with multiple permissions
+                value:
+                  name: Full Access Token
+                  permissions:
+                    - permission: UPTIME_CHECKS
+                      permissionLevel: EDIT
+                    - permission: STATUS_PAGES
+                      permissionLevel: EDIT
+      responses:
+        "201":
+          description: Create a new API token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Token ID
+                      name:
+                        type: string
+                        example: My API Token
+                        description: Token name
+                      expiresAfter:
+                        type: string
+                        example: "2025-12-31T23:59:59.000Z"
+                        description: Token expiration date
+                      createdAt:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Token creation date
+                      token:
+                        type: string
+                        example: abc123def456ghi789jkl012mno345pqrs678tuv
+                        description: The actual token string (only shown once on creation)
+                    required:
+                      - id
+                      - name
+                      - expiresAfter
+                      - createdAt
+                      - token
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/tokens/{token_id}:
+    get:
+      tags:
+        - Tokens
+      description: Retrieve an API token
+      summary: Look up detailed information about a specific API token
+      operationId: getToken
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            example: a1b2c3d4
+            description: The token ID
+          required: true
+          description: The token ID
+          name: token_id
+          in: path
+      responses:
+        "200":
+          description: Retrieve the specified API token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Token ID
+                      name:
+                        type: string
+                        example: My API Token
+                        description: Token name
+                      expiresAfter:
+                        type: string
+                        example: "2025-12-31T23:59:59.000Z"
+                        description: Token expiration date
+                      createdAt:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Token creation date
+                      grants:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            scope:
+                              type: string
+                              enum:
+                                - UPTIME_CHECKS
+                                - STATUS_PAGES
+                                - HEARTBEAT_CHECKS
+                                - MAINTENANCE_WINDOWS
+                                - PEOPLE
+                                - INTEGRATIONS
+                                - API_TOKENS
+                            permission:
+                              type: string
+                              enum:
+                                - READ
+                                - EDIT
+                          required:
+                            - scope
+                            - permission
+                        description: List of grants (scope and permission pairs) assigned to this token
+                    required:
+                      - id
+                      - name
+                      - expiresAfter
+                      - createdAt
+                      - grants
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "404":
+          description: Token not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Tokens
+      description: Delete an API token
+      summary: Permanently delete an API token
+      operationId: deleteToken
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            example: a1b2c3d4
+            description: The token ID
+          required: true
+          description: The token ID
+          name: token_id
+          in: path
+      responses:
+        "200":
+          description: Delete the specified API token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      deleted:
+                        type: boolean
+                    required:
+                      - deleted
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "404":
+          description: Token not found
+        "500":
+          description: Internal Server Error
   /v1/checks:
     get:
       tags:
