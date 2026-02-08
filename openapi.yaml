@@ -458,6 +458,13 @@ paths:
                     - scope: UPTIME_CHECKS
                       permission: READ
                   description: List of grants (scope and permission pairs) for the token
+                expiresAt:
+                  type:
+                    - string
+                    - "null"
+                  format: date-time
+                  example: "2025-12-31T23:59:59.000Z"
+                  description: Custom expiration date for the token. If not provided, defaults to 365 days from now. Set to null for no expiration.
               required:
                 - name
                 - grants
