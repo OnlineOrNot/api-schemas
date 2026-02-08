@@ -328,6 +328,7 @@ paths:
                                   - PEOPLE
                                   - INTEGRATIONS
                                   - API_TOKENS
+                                  - WEBHOOKS
                               permission:
                                 type: string
                                 enum:
@@ -444,6 +445,7 @@ paths:
                           - PEOPLE
                           - INTEGRATIONS
                           - API_TOKENS
+                          - WEBHOOKS
                       permission:
                         type: string
                         enum:
@@ -615,6 +617,7 @@ paths:
                                 - PEOPLE
                                 - INTEGRATIONS
                                 - API_TOKENS
+                                - WEBHOOKS
                             permission:
                               type: string
                               enum:
@@ -9959,6 +9962,759 @@ paths:
                   - messages
         "404":
           description: Not found
+        "500":
+          description: Internal Server Error
+  /v1/webhooks:
+    get:
+      tags:
+        - Webhooks
+      description: List all webhooks
+      summary: Retrieve a paginated list of all webhooks for your organization
+      operationId: listWebhooks
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+      responses:
+        "200":
+          description: Returns a list of webhooks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a1b2c3d4
+                          description: Webhook ID
+                        url:
+                          type: string
+                          format: uri
+                          example: https://api.example.com/webhooks/onlineornot
+                          description: Webhook endpoint URL
+                        description:
+                          type:
+                            - string
+                            - "null"
+                          example: Production webhook for incident notifications
+                          description: Optional description of the webhook
+                        events:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                              - status_page.incident.started
+                              - status_page.incident.updated
+                              - status_page.incident.resolved
+                          example:
+                            - status_page.incident.started
+                            - status_page.incident.resolved
+                          description: Event types this webhook subscribes to
+                        created_at:
+                          type: string
+                          example: "2024-01-15T10:30:00.000Z"
+                          description: Webhook creation timestamp
+                        updated_at:
+                          type: string
+                          example: "2024-01-15T10:30:00.000Z"
+                          description: Webhook last update timestamp
+                        status_pages:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: x9y8z7w6
+                                description: Status page ID
+                              name:
+                                type: string
+                                example: My Status Page
+                                description: Status page name
+                            required:
+                              - id
+                              - name
+                          description: Status pages this webhook is associated with
+                      required:
+                        - id
+                        - url
+                        - description
+                        - events
+                        - created_at
+                        - updated_at
+                        - status_pages
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Webhooks
+      description: Create a webhook
+      summary: Create a new webhook to receive event notifications
+      operationId: createWebhook
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: https://api.example.com/webhooks/onlineornot
+                  description: Webhook endpoint URL
+                description:
+                  type: string
+                  example: Production webhook for incident notifications
+                  description: Optional description of the webhook
+                events:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - status_page.incident.started
+                      - status_page.incident.updated
+                      - status_page.incident.resolved
+                  minItems: 1
+                  example:
+                    - status_page.incident.started
+                    - status_page.incident.resolved
+                  description: Event types this webhook should subscribe to
+                status_page_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - x9y8z7w6
+                    - p5q4r3s2
+                  description: IDs of status pages to associate with this webhook
+              required:
+                - url
+                - events
+            examples:
+              basic:
+                summary: Basic webhook for incidents
+                value:
+                  url: https://api.example.com/webhooks/onlineornot
+                  events:
+                    - status_page.incident.started
+                    - status_page.incident.resolved
+              withDescription:
+                summary: Webhook with description and status pages
+                value:
+                  url: https://api.example.com/webhooks/onlineornot
+                  description: Production incident notifications
+                  events:
+                    - status_page.incident.started
+                    - status_page.incident.updated
+                    - status_page.incident.resolved
+                  status_page_ids:
+                    - x9y8z7w6
+      responses:
+        "201":
+          description: Webhook created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Webhook ID
+                      url:
+                        type: string
+                        format: uri
+                        example: https://api.example.com/webhooks/onlineornot
+                        description: Webhook endpoint URL
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Production webhook for incident notifications
+                        description: Optional description of the webhook
+                      events:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - status_page.incident.started
+                            - status_page.incident.updated
+                            - status_page.incident.resolved
+                        example:
+                          - status_page.incident.started
+                          - status_page.incident.resolved
+                        description: Event types this webhook subscribes to
+                      created_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook creation timestamp
+                      updated_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook last update timestamp
+                      status_pages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: x9y8z7w6
+                              description: Status page ID
+                            name:
+                              type: string
+                              example: My Status Page
+                              description: Status page name
+                          required:
+                            - id
+                            - name
+                        description: Status pages this webhook is associated with
+                    required:
+                      - id
+                      - url
+                      - description
+                      - events
+                      - created_at
+                      - updated_at
+                      - status_pages
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden - Webhooks require a paid plan
+        "500":
+          description: Internal Server Error
+  /v1/webhooks/{webhook_id}:
+    get:
+      tags:
+        - Webhooks
+      description: Retrieve a webhook
+      summary: Look up detailed information about a specific webhook
+      operationId: getWebhook
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+      responses:
+        "200":
+          description: Returns the specified webhook
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Webhook ID
+                      url:
+                        type: string
+                        format: uri
+                        example: https://api.example.com/webhooks/onlineornot
+                        description: Webhook endpoint URL
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Production webhook for incident notifications
+                        description: Optional description of the webhook
+                      events:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - status_page.incident.started
+                            - status_page.incident.updated
+                            - status_page.incident.resolved
+                        example:
+                          - status_page.incident.started
+                          - status_page.incident.resolved
+                        description: Event types this webhook subscribes to
+                      created_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook creation timestamp
+                      updated_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook last update timestamp
+                      status_pages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: x9y8z7w6
+                              description: Status page ID
+                            name:
+                              type: string
+                              example: My Status Page
+                              description: Status page name
+                          required:
+                            - id
+                            - name
+                        description: Status pages this webhook is associated with
+                    required:
+                      - id
+                      - url
+                      - description
+                      - events
+                      - created_at
+                      - updated_at
+                      - status_pages
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized
+        "404":
+          description: Webhook not found
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Webhooks
+      description: Modify a webhook
+      summary: Update the configuration of an existing webhook
+      operationId: updateWebhook
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: https://api.example.com/webhooks/onlineornot
+                  description: Webhook endpoint URL
+                description:
+                  type: string
+                  example: Production webhook for incident notifications
+                  description: Optional description of the webhook
+                events:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - status_page.incident.started
+                      - status_page.incident.updated
+                      - status_page.incident.resolved
+                  minItems: 1
+                  example:
+                    - status_page.incident.started
+                    - status_page.incident.resolved
+                  description: Event types this webhook should subscribe to
+                status_page_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - x9y8z7w6
+                    - p5q4r3s2
+                  description: IDs of status pages to associate with this webhook
+            examples:
+              updateUrl:
+                summary: Update webhook URL
+                value:
+                  url: https://api.example.com/webhooks/new-endpoint
+              updateEvents:
+                summary: Update webhook events
+                value:
+                  events:
+                    - status_page.incident.started
+      responses:
+        "200":
+          description: Webhook updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Webhook ID
+                      url:
+                        type: string
+                        format: uri
+                        example: https://api.example.com/webhooks/onlineornot
+                        description: Webhook endpoint URL
+                      description:
+                        type:
+                          - string
+                          - "null"
+                        example: Production webhook for incident notifications
+                        description: Optional description of the webhook
+                      events:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                            - status_page.incident.started
+                            - status_page.incident.updated
+                            - status_page.incident.resolved
+                        example:
+                          - status_page.incident.started
+                          - status_page.incident.resolved
+                        description: Event types this webhook subscribes to
+                      created_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook creation timestamp
+                      updated_at:
+                        type: string
+                        example: "2024-01-15T10:30:00.000Z"
+                        description: Webhook last update timestamp
+                      status_pages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: x9y8z7w6
+                              description: Status page ID
+                            name:
+                              type: string
+                              example: My Status Page
+                              description: Status page name
+                          required:
+                            - id
+                            - name
+                        description: Status pages this webhook is associated with
+                    required:
+                      - id
+                      - url
+                      - description
+                      - events
+                      - created_at
+                      - updated_at
+                      - status_pages
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized
+        "404":
+          description: Webhook not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Webhooks
+      description: Delete a webhook
+      summary: Permanently delete a webhook
+      operationId: deleteWebhook
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted webhook's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: ID of the deleted webhook
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthorized
+        "404":
+          description: Webhook not found
         "500":
           description: Internal Server Error
 webhooks: {}
