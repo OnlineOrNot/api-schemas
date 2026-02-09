@@ -975,6 +975,12 @@ paths:
                   type: array
                   items:
                     type: string
+                  description: IDs of webhooks to associate with this check
+                oncall_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
                 confirmation_period_seconds:
                   type: integer
                   minimum: 0
@@ -1610,6 +1616,12 @@ paths:
                   type: array
                   items:
                     type: string
+                  description: IDs of webhooks to associate with this check
+                oncall_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
                 paused:
                   type: boolean
                   example: false
@@ -1972,7 +1984,12 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Array of webhook integration IDs to alert
+                  description: IDs of webhooks to associate with this heartbeat
+                oncall_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
                 incident_io_alerts:
                   type: array
                   items:
@@ -2105,7 +2122,12 @@ paths:
                         type: array
                         items:
                           type: string
-                        description: Array of webhook integration IDs subscribed to alerts
+                        description: Array of generic webhook IDs subscribed to alerts
+                      oncall_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
                       incident_io_alerts:
                         type: array
                         items:
@@ -2132,6 +2154,7 @@ paths:
                       - user_alerts
                       - slack_alerts
                       - webhook_alerts
+                      - oncall_alerts
                       - incident_io_alerts
                       - microsoft_teams_alerts
                   success:
@@ -2291,7 +2314,12 @@ paths:
                         type: array
                         items:
                           type: string
-                        description: Array of webhook integration IDs subscribed to alerts
+                        description: Array of generic webhook IDs subscribed to alerts
+                      oncall_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
                       incident_io_alerts:
                         type: array
                         items:
@@ -2318,6 +2346,7 @@ paths:
                       - user_alerts
                       - slack_alerts
                       - webhook_alerts
+                      - oncall_alerts
                       - incident_io_alerts
                       - microsoft_teams_alerts
                   success:
@@ -2434,7 +2463,12 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: Array of webhook integration IDs to alert
+                  description: IDs of webhooks to associate with this heartbeat
+                oncall_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
                 incident_io_alerts:
                   type: array
                   items:
@@ -2570,7 +2604,12 @@ paths:
                         type: array
                         items:
                           type: string
-                        description: Array of webhook integration IDs subscribed to alerts
+                        description: Array of generic webhook IDs subscribed to alerts
+                      oncall_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
                       incident_io_alerts:
                         type: array
                         items:
@@ -2597,6 +2636,7 @@ paths:
                       - user_alerts
                       - slack_alerts
                       - webhook_alerts
+                      - oncall_alerts
                       - incident_io_alerts
                       - microsoft_teams_alerts
                   success:
@@ -10035,6 +10075,12 @@ paths:
                               - status_page.incident.started
                               - status_page.incident.updated
                               - status_page.incident.resolved
+                              - uptime.down
+                              - uptime.up
+                              - heartbeat.down
+                              - heartbeat.up
+                            description: Webhook event type
+                            example: status_page.incident.started
                           example:
                             - status_page.incident.started
                             - status_page.incident.resolved
@@ -10064,6 +10110,40 @@ paths:
                               - id
                               - name
                           description: Status pages this webhook is associated with
+                        checks:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: c1d2e3f4
+                                description: Check ID
+                              name:
+                                type: string
+                                example: API Health Check
+                                description: Check name
+                            required:
+                              - id
+                              - name
+                          description: Uptime checks this webhook is associated with
+                        heartbeats:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: h1i2j3k4
+                                description: Heartbeat ID
+                              name:
+                                type: string
+                                example: Daily Backup Job
+                                description: Heartbeat name
+                            required:
+                              - id
+                              - name
+                          description: Heartbeats this webhook is associated with
                       required:
                         - id
                         - url
@@ -10072,6 +10152,8 @@ paths:
                         - created_at
                         - updated_at
                         - status_pages
+                        - checks
+                        - heartbeats
                   result_info:
                     type: object
                     properties:
@@ -10173,6 +10255,12 @@ paths:
                       - status_page.incident.started
                       - status_page.incident.updated
                       - status_page.incident.resolved
+                      - uptime.down
+                      - uptime.up
+                      - heartbeat.down
+                      - heartbeat.up
+                    description: Webhook event type
+                    example: status_page.incident.started
                   minItems: 1
                   example:
                     - status_page.incident.started
@@ -10186,6 +10274,22 @@ paths:
                     - x9y8z7w6
                     - p5q4r3s2
                   description: IDs of status pages to associate with this webhook
+                check_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - c1d2e3f4
+                    - g5h6i7j8
+                  description: IDs of uptime checks to associate with this webhook
+                heartbeat_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - h1i2j3k4
+                    - l5m6n7o8
+                  description: IDs of heartbeats to associate with this webhook
               required:
                 - url
                 - events
@@ -10242,6 +10346,12 @@ paths:
                             - status_page.incident.started
                             - status_page.incident.updated
                             - status_page.incident.resolved
+                            - uptime.down
+                            - uptime.up
+                            - heartbeat.down
+                            - heartbeat.up
+                          description: Webhook event type
+                          example: status_page.incident.started
                         example:
                           - status_page.incident.started
                           - status_page.incident.resolved
@@ -10271,6 +10381,40 @@ paths:
                             - id
                             - name
                         description: Status pages this webhook is associated with
+                      checks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: c1d2e3f4
+                              description: Check ID
+                            name:
+                              type: string
+                              example: API Health Check
+                              description: Check name
+                          required:
+                            - id
+                            - name
+                        description: Uptime checks this webhook is associated with
+                      heartbeats:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: h1i2j3k4
+                              description: Heartbeat ID
+                            name:
+                              type: string
+                              example: Daily Backup Job
+                              description: Heartbeat name
+                          required:
+                            - id
+                            - name
+                        description: Heartbeats this webhook is associated with
                     required:
                       - id
                       - url
@@ -10279,6 +10423,8 @@ paths:
                       - created_at
                       - updated_at
                       - status_pages
+                      - checks
+                      - heartbeats
                   success:
                     type: boolean
                     default: true
@@ -10378,6 +10524,12 @@ paths:
                             - status_page.incident.started
                             - status_page.incident.updated
                             - status_page.incident.resolved
+                            - uptime.down
+                            - uptime.up
+                            - heartbeat.down
+                            - heartbeat.up
+                          description: Webhook event type
+                          example: status_page.incident.started
                         example:
                           - status_page.incident.started
                           - status_page.incident.resolved
@@ -10407,6 +10559,40 @@ paths:
                             - id
                             - name
                         description: Status pages this webhook is associated with
+                      checks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: c1d2e3f4
+                              description: Check ID
+                            name:
+                              type: string
+                              example: API Health Check
+                              description: Check name
+                          required:
+                            - id
+                            - name
+                        description: Uptime checks this webhook is associated with
+                      heartbeats:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: h1i2j3k4
+                              description: Heartbeat ID
+                            name:
+                              type: string
+                              example: Daily Backup Job
+                              description: Heartbeat name
+                          required:
+                            - id
+                            - name
+                        description: Heartbeats this webhook is associated with
                     required:
                       - id
                       - url
@@ -10415,6 +10601,8 @@ paths:
                       - created_at
                       - updated_at
                       - status_pages
+                      - checks
+                      - heartbeats
                   success:
                     type: boolean
                     default: true
@@ -10503,6 +10691,12 @@ paths:
                       - status_page.incident.started
                       - status_page.incident.updated
                       - status_page.incident.resolved
+                      - uptime.down
+                      - uptime.up
+                      - heartbeat.down
+                      - heartbeat.up
+                    description: Webhook event type
+                    example: status_page.incident.started
                   minItems: 1
                   example:
                     - status_page.incident.started
@@ -10516,6 +10710,22 @@ paths:
                     - x9y8z7w6
                     - p5q4r3s2
                   description: IDs of status pages to associate with this webhook
+                check_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - c1d2e3f4
+                    - g5h6i7j8
+                  description: IDs of uptime checks to associate with this webhook
+                heartbeat_ids:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - h1i2j3k4
+                    - l5m6n7o8
+                  description: IDs of heartbeats to associate with this webhook
             examples:
               updateUrl:
                 summary: Update webhook URL
@@ -10560,6 +10770,12 @@ paths:
                             - status_page.incident.started
                             - status_page.incident.updated
                             - status_page.incident.resolved
+                            - uptime.down
+                            - uptime.up
+                            - heartbeat.down
+                            - heartbeat.up
+                          description: Webhook event type
+                          example: status_page.incident.started
                         example:
                           - status_page.incident.started
                           - status_page.incident.resolved
@@ -10589,6 +10805,40 @@ paths:
                             - id
                             - name
                         description: Status pages this webhook is associated with
+                      checks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: c1d2e3f4
+                              description: Check ID
+                            name:
+                              type: string
+                              example: API Health Check
+                              description: Check name
+                          required:
+                            - id
+                            - name
+                        description: Uptime checks this webhook is associated with
+                      heartbeats:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: h1i2j3k4
+                              description: Heartbeat ID
+                            name:
+                              type: string
+                              example: Daily Backup Job
+                              description: Heartbeat name
+                          required:
+                            - id
+                            - name
+                        description: Heartbeats this webhook is associated with
                     required:
                       - id
                       - url
@@ -10597,6 +10847,8 @@ paths:
                       - created_at
                       - updated_at
                       - status_pages
+                      - checks
+                      - heartbeats
                   success:
                     type: boolean
                     default: true
