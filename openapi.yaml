@@ -963,6 +963,10 @@ paths:
                   type: array
                   items:
                     type: string
+                discord_alerts:
+                  type: array
+                  items:
+                    type: string
                 incident_io_alerts:
                   type: array
                   items:
@@ -1604,6 +1608,10 @@ paths:
                   type: array
                   items:
                     type: string
+                discord_alerts:
+                  type: array
+                  items:
+                    type: string
                 incident_io_alerts:
                   type: array
                   items:
@@ -1980,6 +1988,11 @@ paths:
                   items:
                     type: string
                   description: Array of Slack integration IDs to alert
+                discord_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Discord integration IDs to alert
                 webhook_alerts:
                   type: array
                   items:
@@ -2118,6 +2131,11 @@ paths:
                         items:
                           type: string
                         description: Array of Slack integration IDs subscribed to alerts
+                      discord_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Discord integration IDs subscribed to alerts
                       webhook_alerts:
                         type: array
                         items:
@@ -2153,6 +2171,7 @@ paths:
                       - updated_at
                       - user_alerts
                       - slack_alerts
+                      - discord_alerts
                       - webhook_alerts
                       - oncall_alerts
                       - incident_io_alerts
@@ -2310,6 +2329,11 @@ paths:
                         items:
                           type: string
                         description: Array of Slack integration IDs subscribed to alerts
+                      discord_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Discord integration IDs subscribed to alerts
                       webhook_alerts:
                         type: array
                         items:
@@ -2345,6 +2369,7 @@ paths:
                       - updated_at
                       - user_alerts
                       - slack_alerts
+                      - discord_alerts
                       - webhook_alerts
                       - oncall_alerts
                       - incident_io_alerts
@@ -2459,6 +2484,11 @@ paths:
                   items:
                     type: string
                   description: Array of Slack integration IDs to alert
+                discord_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Discord integration IDs to alert
                 webhook_alerts:
                   type: array
                   items:
@@ -2600,6 +2630,11 @@ paths:
                         items:
                           type: string
                         description: Array of Slack integration IDs subscribed to alerts
+                      discord_alerts:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of Discord integration IDs subscribed to alerts
                       webhook_alerts:
                         type: array
                         items:
@@ -2635,6 +2670,7 @@ paths:
                       - updated_at
                       - user_alerts
                       - slack_alerts
+                      - discord_alerts
                       - webhook_alerts
                       - oncall_alerts
                       - incident_io_alerts
