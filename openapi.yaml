@@ -1,7 +1,19 @@
 openapi: 3.1.0
 info:
   title: OnlineOrNot API
-  description: "Interact with OnlineOrNot programmatically via the OnlineOrNot API.\n\nUsing the OnlineOrNot API requires authentication so that OnlineOrNot knows who is making requests and what permissions you have. Create an API token to grant access to the API to perform actions.\n\nTo create an API token, from the OnlineOrNot dashboard, go to Settings > Developers and select Create Token. \n\nTotally new to OnlineOrNot? [Start here](https://onlineornot.com/docs/welcome/)."
+  description: |-
+    Interact with OnlineOrNot programmatically via the OnlineOrNot API.
+
+    Using the OnlineOrNot API requires authentication so that OnlineOrNot knows who is making requests and what permissions you have. Create an API token to grant access to the API to perform actions.
+
+    To create an API token, from the OnlineOrNot dashboard, go to API Tokens and click Create token.
+
+    ## Documentation
+
+    - [API Reference](https://developers.onlineornot.com) - Full API documentation with examples
+    - [LLM-friendly docs](https://developers.onlineornot.com/llms.txt) - Markdown documentation index for AI assistants
+
+    Totally new to OnlineOrNot? [Start here](https://onlineornot.com/docs/welcome/).
   license:
     name: BSD-3-Clause
     url: https://opensource.org/licenses/BSD-3-Clause
@@ -9,6 +21,33 @@ info:
 servers:
   - url: https://api.onlineornot.com
     description: Client API
+tags:
+  - name: Tokens
+    description: Create, list, verify, and delete API tokens for authentication
+  - name: Checks
+    description: Create and manage uptime checks, retrieve check results and status history
+  - name: Heartbeats
+    description: Monitor cron jobs and scheduled tasks with heartbeat pings
+  - name: Status Pages
+    description: Create and manage public status pages for communicating service health
+  - name: Status Page Components
+    description: Add and manage individual service components displayed on status pages
+  - name: Status Page Component Groups
+    description: Organize status page components into logical groups
+  - name: Status Page Incidents
+    description: Create and manage incidents to communicate outages on status pages
+  - name: Status Page Incident Updates
+    description: Post timeline updates to active incidents
+  - name: Status Page Scheduled Maintenance
+    description: Schedule and manage planned maintenance windows on status pages
+  - name: Status Page Subscribers
+    description: Manage email and webhook subscribers for status page notifications
+  - name: Maintenance Windows
+    description: Configure maintenance windows to suppress alerts during planned downtime
+  - name: People
+    description: List and manage users in your organization, including pending invitations
+  - name: Webhooks
+    description: Configure webhook integrations for alert notifications
 components:
   securitySchemes:
     api_token:
