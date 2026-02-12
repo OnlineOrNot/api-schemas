@@ -323,6 +323,14 @@ paths:
           description: Number of items per page.
           name: per_page
           in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
+          in: query
       responses:
         "200":
           description: Returns a list of API tokens
@@ -826,6 +834,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -1809,6 +1825,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -3715,6 +3739,14 @@ paths:
           description: Number of items per page.
           name: per_page
           in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
+          in: query
       responses:
         "200":
           description: Returns a list of users in the organisation
@@ -3951,6 +3983,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -5186,6 +5226,14 @@ paths:
           description: Number of items per page.
           name: per_page
           in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
+          in: query
       responses:
         "200":
           description: Returns a list of OnlineOrNot Status Pages
@@ -5540,6 +5588,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -6212,6 +6268,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -6997,6 +7061,14 @@ paths:
           description: Number of items per page.
           name: per_page
           in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
+          in: query
       responses:
         "200":
           description: Returns a list of subscribers for a status page
@@ -7341,6 +7413,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -8562,6 +8642,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
@@ -10113,6 +10201,14 @@ paths:
           required: false
           description: Number of items per page.
           name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
           in: query
       responses:
         "200":
