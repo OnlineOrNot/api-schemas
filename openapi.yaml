@@ -22,6 +22,8 @@ servers:
   - url: https://api.onlineornot.com
     description: Client API
 tags:
+  - name: Audit Logs
+    description: View audit log events for your organisation
   - name: Tokens
     description: Create, list, verify, and delete API tokens for authentication
   - name: Checks
@@ -104,6 +106,216 @@ paths:
       responses:
         "200":
           description: Heartbeat received successfully
+        "500":
+          description: Internal Server Error
+  /v1/audit_logs:
+    get:
+      tags:
+        - Audit Logs
+      description: List audit log events
+      summary: Retrieve a paginated list of audit log events for your organisation
+      operationId: listAuditLogs
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            default: "1"
+            example: 1
+            description: Page number of paginated results.
+          required: false
+          description: Page number of paginated results.
+          name: page
+          in: query
+        - schema:
+            type: string
+            default: "20"
+            example: 20
+            description: Number of items per page.
+          required: false
+          description: Number of items per page.
+          name: per_page
+          in: query
+        - schema:
+            type: string
+            example: example
+            description: Search term to filter results.
+          required: false
+          description: Search term to filter results.
+          name: search
+          in: query
+      responses:
+        "200":
+          description: Returns a paginated list of audit log events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: a6uatzrn2k3l
+                        type:
+                          type: string
+                          example: AuditLogEvent
+                        actor_id:
+                          type:
+                            - string
+                            - "null"
+                          example: user_123
+                        actor_type:
+                          type: string
+                          enum:
+                            - User
+                            - ApiToken
+                            - System
+                          example: User
+                        actor_display_name:
+                          type:
+                            - string
+                            - "null"
+                          example: max@onlineornot.com
+                        auditable_id:
+                          type:
+                            - string
+                            - "null"
+                          example: abc123
+                        auditable_type:
+                          type: string
+                          example: Check
+                        auditable_display_name:
+                          type:
+                            - string
+                            - "null"
+                          example: My Website Check
+                        target_id:
+                          type:
+                            - string
+                            - "null"
+                          example: "1"
+                        target_type:
+                          type:
+                            - string
+                            - "null"
+                          example: Organisation
+                        target_display_name:
+                          type:
+                            - string
+                            - "null"
+                        audit_action:
+                          type: string
+                          example: check.created
+                        action:
+                          type: string
+                          example: created
+                        location:
+                          type:
+                            - string
+                            - "null"
+                          example: Sydney, NSW, AU
+                        remote_ip:
+                          type:
+                            - string
+                            - "null"
+                          example: 91.169.182.144
+                        created_at:
+                          type: string
+                          example: "2026-02-17T10:58:07.000Z"
+                        metadata:
+                          type:
+                            - object
+                            - "null"
+                          additionalProperties: {}
+                      required:
+                        - id
+                        - type
+                        - actor_id
+                        - actor_type
+                        - actor_display_name
+                        - auditable_id
+                        - auditable_type
+                        - auditable_display_name
+                        - target_id
+                        - target_type
+                        - target_display_name
+                        - audit_action
+                        - action
+                        - location
+                        - remote_ip
+                        - created_at
+                        - metadata
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "401":
+          description: Unauthenticated
         "500":
           description: Internal Server Error
   /v1/tokens/verify:
