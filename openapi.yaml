@@ -126,7 +126,7 @@ components:
             - PAUSED
             - MUTED
           example: UP
-          description: Current status of the heartbeat
+          description: 'Current status of the heartbeat. Must be one of: `UP`, `DOWN`, `PENDING`, `PAUSED`, `MUTED`'
         last_seen:
           type:
             - string
@@ -165,7 +165,7 @@ components:
             - LOW
             - HIGH
           example: LOW
-          description: Alert priority level
+          description: 'Alert priority level. Must be one of: `LOW`, `HIGH`'
         created_at:
           type:
             - string
@@ -226,6 +226,7 @@ components:
               - THURSDAY
               - FRIDAY
               - SATURDAY
+            description: 'Day of the week. Must be one of: `SUNDAY`, `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`'
           example:
             - MONDAY
             - WEDNESDAY
@@ -236,8 +237,8 @@ components:
           enum:
             - ENABLED
             - DISABLED
+          description: 'Whether the maintenance window is enabled or disabled. Must be one of: `ENABLED`, `DISABLED`'
           example: ENABLED
-          description: Whether the maintenance window is enabled or disabled
       required:
         - id
         - name
@@ -278,7 +279,7 @@ components:
             - MAJOR_SYSTEM_OUTAGE
             - SERVICE_UNDER_MAINTENANCE
           example: ALL_SYSTEMS_OPERATIONAL
-          description: The current overall status of the status page
+          description: 'The current overall status of the status page. Must be one of: `ALL_SYSTEMS_OPERATIONAL`, `PARTIALLY_DEGRADED_SERVICE`, `MINOR_SERVICE_OUTAGE`, `MAJOR_SYSTEM_OUTAGE`, `SERVICE_UNDER_MAINTENANCE`'
         favicon_url:
           type:
             - string
@@ -351,7 +352,7 @@ components:
             - NO_IMPACT
             - MAINTENANCE
           example: MAJOR_OUTAGE
-          description: Status of the component
+          description: 'Status of the component. Must be one of: `OPERATIONAL`, `MAJOR_OUTAGE`, `PARTIAL_OUTAGE`, `DEGRADED_PERFORMANCE`, `NO_IMPACT`, `MAINTENANCE`'
         display_uptime:
           type: boolean
           default: true
@@ -409,7 +410,7 @@ components:
             - NO_IMPACT
             - MAINTENANCE
           example: MAJOR_OUTAGE
-          description: Impact of the incident
+          description: 'Impact of the incident. Must be one of: `MAJOR_OUTAGE`, `PARTIAL_OUTAGE`, `DEGRADED_PERFORMANCE`, `NO_IMPACT`, `MAINTENANCE`'
         started:
           type: string
           example: "2021-01-01T00:00:00.000Z"
@@ -498,7 +499,7 @@ components:
               - uptime.up
               - heartbeat.down
               - heartbeat.up
-            description: Webhook event type
+            description: 'Webhook event type. Must be one of: `status_page.incident.started`, `status_page.incident.updated`, `status_page.incident.resolved`, `uptime.down`, `uptime.up`, `heartbeat.down`, `heartbeat.up`'
             example: status_page.incident.started
           example:
             - status_page.incident.started
@@ -1693,31 +1694,37 @@ paths:
                   type: array
                   items:
                     type: string
+                  description: Regions to run the check from (e.g., us-east, eu-west, ap-southeast)
                 user_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of users to notify when the check fails
                 slack_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Slack integrations to notify when the check fails
                 discord_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Discord integrations to notify when the check fails
                 incident_io_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of incident.io integrations to notify when the check fails
                 microsoft_teams_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Microsoft Teams integrations to notify when the check fails
                 webhook_alerts:
                   type: array
                   items:
                     type: string
-                  description: IDs of webhooks to associate with this check
+                  description: IDs of webhooks to notify when the check fails
                 oncall_alerts:
                   type: array
                   items:
@@ -1748,7 +1755,7 @@ paths:
                     - BROWSER_CHECK
                   default: UPTIME_CHECK
                   example: UPTIME_CHECK
-                  description: Type of check
+                  description: 'Type of check. Must be one of: `UPTIME_CHECK`, `BROWSER_CHECK`'
                 alert_priority:
                   type: string
                   enum:
@@ -1756,7 +1763,7 @@ paths:
                     - HIGH
                   default: LOW
                   example: LOW
-                  description: Alert Priority
+                  description: 'Alert priority level. Must be one of: `LOW`, `HIGH`'
                 headers:
                   type: object
                   additionalProperties:
@@ -1777,10 +1784,11 @@ paths:
                     - DELETE
                   default: GET
                   example: GET
-                  description: HTTP Method
+                  description: 'HTTP method for the request. Must be one of: `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE`'
                 body:
                   type: string
-                  example: Hello World
+                  example: '{"key": "value"}'
+                  description: Request body to send with POST/PUT/PATCH requests
                 follow_redirects:
                   type: boolean
                   default: true
@@ -1799,11 +1807,11 @@ paths:
                           - RESPONSE_HEADERS
                           - HTML_BODY
                         example: JSON_BODY
-                        description: Type of assertion
+                        description: 'Type of assertion. Must be one of: `JSON_BODY`, `TEXT_BODY`, `RESPONSE_HEADERS`, `HTML_BODY`'
                       property:
                         type: string
                         example: $.data.name
-                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                        description: Property to assert on (JSONPath for JSON_BODY, CSS selector for HTML_BODY, header name for RESPONSE_HEADERS)
                       comparison:
                         type: string
                         enum:
@@ -1820,11 +1828,11 @@ paths:
                           - "FALSE"
                           - "TRUE"
                         example: EQUALS
-                        description: Comparison operator
+                        description: 'Comparison operator. Must be one of: `EQUALS`, `NOT_EQUALS`, `GREATER_THAN`, `LESS_THAN`, `NULL`, `NOT_NULL`, `EMPTY`, `NOT_EMPTY`, `CONTAINS`, `NOT_CONTAINS`, `FALSE`, `TRUE`'
                       expected:
                         type: string
                         example: John Doe
-                        description: Expected value
+                        description: Expected value to compare against
                     required:
                       - type
                       - property
@@ -1858,7 +1866,7 @@ paths:
                   enum:
                     - NODE20_PLAYWRIGHT
                   example: NODE20_PLAYWRIGHT
-                  description: Version of the Browser Check
+                  description: 'Runtime version for browser checks. Must be: `NODE20_PLAYWRIGHT`'
               required:
                 - name
                 - url
@@ -2127,14 +2135,14 @@ paths:
                     - UPTIME_CHECK
                     - BROWSER_CHECK
                   example: UPTIME_CHECK
-                  description: Type of check
+                  description: 'Type of check. Must be one of: `UPTIME_CHECK`, `BROWSER_CHECK`'
                 alert_priority:
                   type: string
                   enum:
                     - LOW
                     - HIGH
                   example: LOW
-                  description: Alert Priority
+                  description: 'Alert priority level. Must be one of: `LOW`, `HIGH`'
                 headers:
                   type: object
                   additionalProperties:
@@ -2154,10 +2162,11 @@ paths:
                     - PATCH
                     - DELETE
                   example: GET
-                  description: HTTP Method
+                  description: 'HTTP method for the request. Must be one of: `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE`'
                 body:
                   type: string
-                  example: Hello World
+                  example: '{"key": "value"}'
+                  description: Request body to send with POST/PUT/PATCH requests
                 follow_redirects:
                   type: boolean
                   example: true
@@ -2175,11 +2184,11 @@ paths:
                           - RESPONSE_HEADERS
                           - HTML_BODY
                         example: JSON_BODY
-                        description: Type of assertion
+                        description: 'Type of assertion. Must be one of: `JSON_BODY`, `TEXT_BODY`, `RESPONSE_HEADERS`, `HTML_BODY`'
                       property:
                         type: string
                         example: $.data.name
-                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                        description: Property to assert on (JSONPath for JSON_BODY, CSS selector for HTML_BODY, header name for RESPONSE_HEADERS)
                       comparison:
                         type: string
                         enum:
@@ -2196,16 +2205,17 @@ paths:
                           - "FALSE"
                           - "TRUE"
                         example: EQUALS
-                        description: Comparison operator
+                        description: 'Comparison operator. Must be one of: `EQUALS`, `NOT_EQUALS`, `GREATER_THAN`, `LESS_THAN`, `NULL`, `NOT_NULL`, `EMPTY`, `NOT_EMPTY`, `CONTAINS`, `NOT_CONTAINS`, `FALSE`, `TRUE`'
                       expected:
                         type: string
                         example: John Doe
-                        description: Expected value
+                        description: Expected value to compare against
                     required:
                       - type
                       - property
                       - comparison
                       - expected
+                  description: Assertions to run on the response
                 verify_ssl:
                   type: boolean
                   example: false
@@ -2228,7 +2238,7 @@ paths:
                   enum:
                     - NODE20_PLAYWRIGHT
                   example: NODE20_PLAYWRIGHT
-                  description: Version of the Browser Check
+                  description: 'Runtime version for browser checks. Must be: `NODE20_PLAYWRIGHT`'
                 reminder_alert_interval_minutes:
                   type: integer
                   minimum: -1
@@ -2248,31 +2258,37 @@ paths:
                   type: array
                   items:
                     type: string
+                  description: Regions to run the check from (e.g., us-east, eu-west, ap-southeast)
                 user_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of users to notify when the check fails
                 slack_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Slack integrations to notify when the check fails
                 discord_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Discord integrations to notify when the check fails
                 incident_io_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of incident.io integrations to notify when the check fails
                 microsoft_teams_alerts:
                   type: array
                   items:
                     type: string
+                  description: IDs of Microsoft Teams integrations to notify when the check fails
                 webhook_alerts:
                   type: array
                   items:
                     type: string
-                  description: IDs of webhooks to associate with this check
+                  description: IDs of webhooks to notify when the check fails
                 oncall_alerts:
                   type: array
                   items:
@@ -2546,7 +2562,7 @@ paths:
                     - HIGH
                   default: LOW
                   example: LOW
-                  description: Alert priority level
+                  description: 'Alert priority level. Must be one of: `LOW`, `HIGH`'
               required:
                 - name
                 - grace_period
@@ -2879,7 +2895,7 @@ paths:
                     - LOW
                     - HIGH
                   example: LOW
-                  description: Alert priority level
+                  description: 'Alert priority level. Must be one of: `LOW`, `HIGH`'
                 paused:
                   type: boolean
                   example: false
@@ -3239,6 +3255,7 @@ paths:
                       - THURSDAY
                       - FRIDAY
                       - SATURDAY
+                    description: 'Day of the week. Must be one of: `SUNDAY`, `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`'
                   minItems: 1
                   example:
                     - MONDAY
@@ -3521,6 +3538,7 @@ paths:
                       - THURSDAY
                       - FRIDAY
                       - SATURDAY
+                    description: 'Day of the week. Must be one of: `SUNDAY`, `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`'
                   minItems: 1
                   example:
                     - MONDAY
@@ -3532,8 +3550,8 @@ paths:
                   enum:
                     - ENABLED
                     - DISABLED
+                  description: 'Whether the maintenance window is enabled or disabled. Must be one of: `ENABLED`, `DISABLED`'
                   example: ENABLED
-                  description: Whether the maintenance window is enabled or disabled
                 checks:
                   type: array
                   items:
@@ -4912,7 +4930,7 @@ paths:
                     - MAINTENANCE
                   default: OPERATIONAL
                   example: MAJOR_OUTAGE
-                  description: Status of the component
+                  description: 'Status of the component. Must be one of: `OPERATIONAL`, `MAJOR_OUTAGE`, `PARTIAL_OUTAGE`, `DEGRADED_PERFORMANCE`, `NO_IMPACT`, `MAINTENANCE`'
                 display_uptime:
                   type: boolean
                   default: true
@@ -5223,7 +5241,7 @@ paths:
                     - NO_IMPACT
                     - MAINTENANCE
                   example: MAJOR_OUTAGE
-                  description: Status of the component
+                  description: 'Status of the component. Must be one of: `OPERATIONAL`, `MAJOR_OUTAGE`, `PARTIAL_OUTAGE`, `DEGRADED_PERFORMANCE`, `NO_IMPACT`, `MAINTENANCE`'
                 display_uptime:
                   type: boolean
                   example: true
@@ -6575,8 +6593,8 @@ paths:
                                     - IN_PROGRESS
                                     - VERIFYING
                                     - COMPLETED
-                                  example: INVESTIGATING
                                   description: Status of the latest update
+                                  example: INVESTIGATING
                                 date_happened:
                                   type: string
                                   example: "2021-01-01T00:00:00.000Z"
@@ -6723,7 +6741,7 @@ paths:
                     - RESOLVED
                     - UPDATE
                   example: INVESTIGATING
-                  description: The current status of the incident
+                  description: 'The current status of the incident. Must be one of: `INVESTIGATING`, `IDENTIFIED`, `MONITORING`, `RESOLVED`, `UPDATE`'
                 components:
                   type: array
                   items:
@@ -6742,8 +6760,8 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - MAINTENANCE
                           - NO_IMPACT
-                        example: MAJOR_OUTAGE
                         description: New status for the component
+                        example: MAJOR_OUTAGE
                     required:
                       - id
                       - status
@@ -6789,8 +6807,8 @@ paths:
                                   - IN_PROGRESS
                                   - VERIFYING
                                   - COMPLETED
-                                example: INVESTIGATING
                                 description: Status of the latest update
+                                example: INVESTIGATING
                               date_happened:
                                 type: string
                                 example: "2021-01-01T00:00:00.000Z"
@@ -6872,8 +6890,8 @@ paths:
                                     - IN_PROGRESS
                                     - VERIFYING
                                     - COMPLETED
-                                  example: INVESTIGATING
                                   description: Status of this update
+                                  example: INVESTIGATING
                                 description:
                                   type: string
                                   example: We are investigating reports of connectivity issues
@@ -7027,8 +7045,8 @@ paths:
                                   - IN_PROGRESS
                                   - VERIFYING
                                   - COMPLETED
-                                example: INVESTIGATING
                                 description: Status of the latest update
+                                example: INVESTIGATING
                               date_happened:
                                 type: string
                                 example: "2021-01-01T00:00:00.000Z"
@@ -7110,8 +7128,8 @@ paths:
                                     - IN_PROGRESS
                                     - VERIFYING
                                     - COMPLETED
-                                  example: INVESTIGATING
                                   description: Status of this update
+                                  example: INVESTIGATING
                                 description:
                                   type: string
                                   example: We are investigating reports of connectivity issues
@@ -7254,7 +7272,7 @@ paths:
                     - NO_IMPACT
                     - MAINTENANCE
                   example: MAJOR_OUTAGE
-                  description: Impact of the incident
+                  description: 'Impact of the incident. Must be one of: `MAJOR_OUTAGE`, `PARTIAL_OUTAGE`, `DEGRADED_PERFORMANCE`, `NO_IMPACT`, `MAINTENANCE`'
               required:
                 - title
                 - impact
@@ -7290,8 +7308,8 @@ paths:
                                   - IN_PROGRESS
                                   - VERIFYING
                                   - COMPLETED
-                                example: INVESTIGATING
                                 description: Status of the latest update
+                                example: INVESTIGATING
                               date_happened:
                                 type: string
                                 example: "2021-01-01T00:00:00.000Z"
@@ -7373,8 +7391,8 @@ paths:
                                     - IN_PROGRESS
                                     - VERIFYING
                                     - COMPLETED
-                                  example: INVESTIGATING
                                   description: Status of this update
+                                  example: INVESTIGATING
                                 description:
                                   type: string
                                   example: We are investigating reports of connectivity issues
@@ -7639,8 +7657,8 @@ paths:
                             - IN_PROGRESS
                             - VERIFYING
                             - COMPLETED
-                          example: INVESTIGATING
                           description: Status of this update
+                          example: INVESTIGATING
                         description:
                           type: string
                           example: We are investigating reports of connectivity issues
@@ -7809,8 +7827,8 @@ paths:
                     - IN_PROGRESS
                     - VERIFYING
                     - COMPLETED
-                  example: INVESTIGATING
                   description: Status for this update
+                  example: INVESTIGATING
                 description:
                   type: string
                   minLength: 1
@@ -7839,8 +7857,8 @@ paths:
                           - DEGRADED_PERFORMANCE
                           - MAINTENANCE
                           - NO_IMPACT
-                        example: MAJOR_OUTAGE
                         description: New status for the component
+                        example: MAJOR_OUTAGE
                     required:
                       - id
                       - status
@@ -7883,8 +7901,8 @@ paths:
                           - IN_PROGRESS
                           - VERIFYING
                           - COMPLETED
-                        example: INVESTIGATING
                         description: Status of this update
+                        example: INVESTIGATING
                       description:
                         type: string
                         example: We are investigating reports of connectivity issues
@@ -8052,8 +8070,8 @@ paths:
                           - IN_PROGRESS
                           - VERIFYING
                           - COMPLETED
-                        example: INVESTIGATING
                         description: Status of this update
+                        example: INVESTIGATING
                       description:
                         type: string
                         example: We are investigating reports of connectivity issues
@@ -8208,8 +8226,8 @@ paths:
                     - IN_PROGRESS
                     - VERIFYING
                     - COMPLETED
-                  example: IDENTIFIED
                   description: Updated status
+                  example: IDENTIFIED
                 description:
                   type: string
                   minLength: 1
@@ -8250,8 +8268,8 @@ paths:
                           - IN_PROGRESS
                           - VERIFYING
                           - COMPLETED
-                        example: INVESTIGATING
                         description: Status of this update
+                        example: INVESTIGATING
                       description:
                         type: string
                         example: We are investigating reports of connectivity issues
@@ -9162,7 +9180,7 @@ paths:
                       - uptime.up
                       - heartbeat.down
                       - heartbeat.up
-                    description: Webhook event type
+                    description: 'Webhook event type. Must be one of: `status_page.incident.started`, `status_page.incident.updated`, `status_page.incident.resolved`, `uptime.down`, `uptime.up`, `heartbeat.down`, `heartbeat.up`'
                     example: status_page.incident.started
                   minItems: 1
                   example:
@@ -9392,7 +9410,7 @@ paths:
                       - uptime.up
                       - heartbeat.down
                       - heartbeat.up
-                    description: Webhook event type
+                    description: 'Webhook event type. Must be one of: `status_page.incident.started`, `status_page.incident.updated`, `status_page.incident.resolved`, `uptime.down`, `uptime.up`, `heartbeat.down`, `heartbeat.up`'
                     example: status_page.incident.started
                   minItems: 1
                   example:
