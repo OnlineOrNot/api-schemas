@@ -1676,6 +1676,7 @@ paths:
                   description: URL to check
                 text_to_search_for:
                   type: string
+                  maxLength: 4000
                   example: Example Domain
                   description: Text to search for in the response
                 test_interval:
@@ -2114,6 +2115,7 @@ paths:
                   description: URL to check
                 text_to_search_for:
                   type: string
+                  maxLength: 4000
                   example: Example Domain
                   description: Text to search for in the response
                 test_interval:
