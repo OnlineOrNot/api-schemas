@@ -192,6 +192,54 @@ components:
         - alert_priority
         - created_at
         - updated_at
+    ExpandedHeartbeat:
+      allOf:
+        - $ref: '#/components/schemas/Heartbeat'
+        - type: object
+          properties:
+            user_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of user IDs subscribed to alerts
+            slack_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of Slack integration IDs subscribed to alerts
+            discord_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of Discord integration IDs subscribed to alerts
+            webhook_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of generic webhook IDs subscribed to alerts
+            oncall_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
+            incident_io_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of incident.io integration IDs subscribed to alerts
+            microsoft_teams_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of Microsoft Teams integration IDs subscribed to alerts
+          required:
+            - user_alerts
+            - slack_alerts
+            - discord_alerts
+            - webhook_alerts
+            - oncall_alerts
+            - incident_io_alerts
+            - microsoft_teams_alerts
     MaintenanceWindow:
       type: object
       properties:
@@ -247,6 +295,101 @@ components:
         - timezone
         - days_of_week
         - status
+    FullMaintenanceWindow:
+      allOf:
+        - $ref: '#/components/schemas/MaintenanceWindow'
+        - type: object
+          properties:
+            checks:
+              type: array
+              items:
+                type: string
+              example:
+                - abc123
+                - def456
+              description: IDs of uptime checks associated with this maintenance window
+            heartbeats:
+              type: array
+              items:
+                type: string
+              example:
+                - ghi789
+              description: IDs of heartbeats associated with this maintenance window
+          required:
+            - checks
+            - heartbeats
+    OrgUser:
+      type: object
+      properties:
+        id:
+          type: string
+          example: abc123
+          description: The unique identifier of the user
+        first_name:
+          type:
+            - string
+            - "null"
+          example: Jane
+          description: The user's first name
+        last_name:
+          type:
+            - string
+            - "null"
+          example: Doe
+          description: The user's last name
+        email:
+          type:
+            - string
+            - "null"
+          example: jane@example.com
+          description: The user's email address
+        image:
+          type:
+            - string
+            - "null"
+          example: https://example.com/avatar.jpg
+          description: URL to the user's avatar image
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          example: STANDARD
+          description: The role of the user in the organisation
+      required:
+        - id
+        - first_name
+        - last_name
+        - email
+        - image
+        - role
+    Invitation:
+      type: object
+      properties:
+        id:
+          type: string
+          example: inv123
+          description: The unique identifier of the invitation
+        email:
+          type: string
+          example: newuser@example.com
+          description: The email address the invitation was sent to
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - STANDARD
+          example: STANDARD
+          description: The role of the user in the organisation
+        created_at:
+          type: string
+          example: "2024-01-15T10:30:00Z"
+          description: When the invitation was created
+      required:
+        - id
+        - email
+        - role
+        - created_at
     StatusPage:
       type: object
       properties:
@@ -434,6 +577,60 @@ components:
         - started
         - created_at
         - updated_at
+    StatusPageScheduledMaintenance:
+      allOf:
+        - $ref: '#/components/schemas/StatusPageIncident'
+        - type: object
+          properties:
+            start_date:
+              type: string
+              example: "2021-01-01T00:00:00.000Z"
+              description: When the scheduled maintenance is expected to start
+            duration_minutes:
+              type: integer
+              minimum: 1
+              example: 60
+              description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
+            notifications:
+              type: object
+              properties:
+                an_hour_before:
+                  type: boolean
+                  default: false
+                  example: false
+                  description: Notify subscribers one hour before maintenance starts
+                at_start:
+                  type: boolean
+                  default: true
+                  example: true
+                  description: Notify subscribers when maintenance starts
+                at_end:
+                  type: boolean
+                  default: true
+                  example: true
+                  description: Notify subscribers when maintenance ends
+              description: Subscriber notification settings
+            components:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: comp123
+                    description: Component ID
+                  name:
+                    type: string
+                    example: API Server
+                    description: Component name
+                required:
+                  - id
+                  - name
+                description: Component associated with the scheduled maintenance
+              description: Components affected by this maintenance
+          required:
+            - start_date
+            - duration_minutes
     StatusPageComponentGroup:
       type: object
       properties:
@@ -469,6 +666,200 @@ components:
         - sort_order
         - created_at
         - updated_at
+    Subscriber:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4e5f6
+          description: Status Page Subscriber ID
+        email_address:
+          type: string
+          format: email
+          example: user@example.com
+          description: Email address of the subscriber
+        confirmed:
+          type: boolean
+          example: false
+          description: Whether the subscriber has confirmed their email
+        created_at:
+          type: string
+          example: "2021-01-01T00:00:00.000Z"
+          description: When the subscriber was created
+      required:
+        - id
+        - email_address
+        - confirmed
+        - created_at
+    StatusPageIncidentWithLatestUpdate:
+      allOf:
+        - $ref: '#/components/schemas/StatusPageIncident'
+        - type: object
+          properties:
+            latest_update:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: upd123
+                  description: Latest update ID
+                status:
+                  type: string
+                  enum:
+                    - INVESTIGATING
+                    - IDENTIFIED
+                    - MONITORING
+                    - RESOLVED
+                    - UPDATE
+                    - SCHEDULED
+                    - IN_PROGRESS
+                    - VERIFYING
+                    - COMPLETED
+                  example: INVESTIGATING
+                  description: Status of the latest update
+                date_happened:
+                  type: string
+                  example: "2021-01-01T00:00:00.000Z"
+                  description: When the latest update occurred
+              required:
+                - id
+                - status
+                - date_happened
+              description: Latest update summary
+            scheduled_maintenance:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: sm123
+                  description: Scheduled maintenance ID
+                start_date:
+                  type: string
+                  example: "2021-01-01T00:00:00.000Z"
+                  description: When the maintenance starts
+                duration_minutes:
+                  type: number
+                  example: 60
+                  description: Duration in minutes
+                notify_subscribers_at_start:
+                  type: boolean
+                  example: true
+                  description: Notify subscribers when maintenance starts
+                notify_subscribers_at_end:
+                  type: boolean
+                  example: true
+                  description: Notify subscribers when maintenance ends
+              required:
+                - id
+                - start_date
+                - duration_minutes
+                - notify_subscribers_at_start
+                - notify_subscribers_at_end
+              description: Scheduled maintenance info
+    IncidentUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          example: e5f6g7h8
+          description: Incident Update ID
+        incident_id:
+          type: string
+          example: a1b2c3d4
+          description: Parent incident ID
+        status:
+          type: string
+          enum:
+            - INVESTIGATING
+            - IDENTIFIED
+            - MONITORING
+            - RESOLVED
+            - UPDATE
+            - SCHEDULED
+            - IN_PROGRESS
+            - VERIFYING
+            - COMPLETED
+          example: INVESTIGATING
+          description: Status of this update
+        description:
+          type: string
+          example: We are investigating reports of connectivity issues
+          description: Update message
+        date_happened:
+          type: string
+          example: "2021-01-01T00:00:00.000Z"
+          description: When this update occurred
+        created_at:
+          type: string
+          example: "2021-01-01T00:00:00.000Z"
+          description: When this update was created
+        updated_at:
+          type: string
+          example: "2021-01-01T00:00:00.000Z"
+          description: When this update was last modified
+        components:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: comp123
+                description: Component ID
+              name:
+                type: string
+                example: API Server
+                description: Component name
+              old_status:
+                type:
+                  - string
+                  - "null"
+                example: OPERATIONAL
+                description: Previous component status
+              new_status:
+                type: string
+                example: MAJOR_OUTAGE
+                description: New component status
+            required:
+              - id
+              - name
+              - old_status
+              - new_status
+          description: Component status changes in this update
+      required:
+        - id
+        - incident_id
+        - status
+        - description
+        - date_happened
+        - created_at
+        - updated_at
+    StatusPageIncidentDetail:
+      allOf:
+        - $ref: '#/components/schemas/StatusPageIncidentWithLatestUpdate'
+        - type: object
+          properties:
+            components:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: comp123
+                    description: Component ID
+                  name:
+                    type: string
+                    example: API Server
+                    description: Component name
+                required:
+                  - id
+                  - name
+                description: Component associated with the incident
+            updates:
+              type: array
+              items:
+                $ref: '#/components/schemas/IncidentUpdate'
     Webhook:
       type: object
       properties:
@@ -2587,53 +2978,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/Heartbeat'
-                      - type: object
-                        properties:
-                          user_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of user IDs subscribed to alerts
-                          slack_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Slack integration IDs subscribed to alerts
-                          discord_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Discord integration IDs subscribed to alerts
-                          webhook_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of generic webhook IDs subscribed to alerts
-                          oncall_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
-                          incident_io_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of incident.io integration IDs subscribed to alerts
-                          microsoft_teams_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Microsoft Teams integration IDs subscribed to alerts
-                        required:
-                          - user_alerts
-                          - slack_alerts
-                          - discord_alerts
-                          - webhook_alerts
-                          - oncall_alerts
-                          - incident_io_alerts
-                          - microsoft_teams_alerts
+                    $ref: '#/components/schemas/ExpandedHeartbeat'
                   success:
                     type: boolean
                     default: true
@@ -2704,53 +3049,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/Heartbeat'
-                      - type: object
-                        properties:
-                          user_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of user IDs subscribed to alerts
-                          slack_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Slack integration IDs subscribed to alerts
-                          discord_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Discord integration IDs subscribed to alerts
-                          webhook_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of generic webhook IDs subscribed to alerts
-                          oncall_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
-                          incident_io_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of incident.io integration IDs subscribed to alerts
-                          microsoft_teams_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Microsoft Teams integration IDs subscribed to alerts
-                        required:
-                          - user_alerts
-                          - slack_alerts
-                          - discord_alerts
-                          - webhook_alerts
-                          - oncall_alerts
-                          - incident_io_alerts
-                          - microsoft_teams_alerts
+                    $ref: '#/components/schemas/ExpandedHeartbeat'
                   success:
                     type: boolean
                     default: true
@@ -2924,53 +3223,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/Heartbeat'
-                      - type: object
-                        properties:
-                          user_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of user IDs subscribed to alerts
-                          slack_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Slack integration IDs subscribed to alerts
-                          discord_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Discord integration IDs subscribed to alerts
-                          webhook_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of generic webhook IDs subscribed to alerts
-                          oncall_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of on-call integration IDs (PagerDuty, Opsgenie, etc.) subscribed to alerts
-                          incident_io_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of incident.io integration IDs subscribed to alerts
-                          microsoft_teams_alerts:
-                            type: array
-                            items:
-                              type: string
-                            description: Array of Microsoft Teams integration IDs subscribed to alerts
-                        required:
-                          - user_alerts
-                          - slack_alerts
-                          - discord_alerts
-                          - webhook_alerts
-                          - oncall_alerts
-                          - incident_io_alerts
-                          - microsoft_teams_alerts
+                    $ref: '#/components/schemas/ExpandedHeartbeat'
                   success:
                     type: boolean
                     default: true
@@ -3315,28 +3568,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/MaintenanceWindow'
-                      - type: object
-                        properties:
-                          checks:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - abc123
-                              - def456
-                            description: IDs of uptime checks associated with this maintenance window
-                          heartbeats:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - ghi789
-                            description: IDs of heartbeats associated with this maintenance window
-                        required:
-                          - checks
-                          - heartbeats
+                    $ref: '#/components/schemas/FullMaintenanceWindow'
                   success:
                     type: boolean
                     default: true
@@ -3411,28 +3643,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/MaintenanceWindow'
-                      - type: object
-                        properties:
-                          checks:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - abc123
-                              - def456
-                            description: IDs of uptime checks associated with this maintenance window
-                          heartbeats:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - ghi789
-                            description: IDs of heartbeats associated with this maintenance window
-                        required:
-                          - checks
-                          - heartbeats
+                    $ref: '#/components/schemas/FullMaintenanceWindow'
                   success:
                     type: boolean
                     default: true
@@ -3593,28 +3804,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/MaintenanceWindow'
-                      - type: object
-                        properties:
-                          checks:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - abc123
-                              - def456
-                            description: IDs of uptime checks associated with this maintenance window
-                          heartbeats:
-                            type: array
-                            items:
-                              type: string
-                            example:
-                              - ghi789
-                            description: IDs of heartbeats associated with this maintenance window
-                        required:
-                          - checks
-                          - heartbeats
+                    $ref: '#/components/schemas/FullMaintenanceWindow'
                   success:
                     type: boolean
                     default: true
@@ -3791,50 +3981,7 @@ paths:
                   result:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: abc123
-                          description: The unique identifier of the user
-                        first_name:
-                          type:
-                            - string
-                            - "null"
-                          example: Jane
-                          description: The user's first name
-                        last_name:
-                          type:
-                            - string
-                            - "null"
-                          example: Doe
-                          description: The user's last name
-                        email:
-                          type:
-                            - string
-                            - "null"
-                          example: jane@example.com
-                          description: The user's email address
-                        image:
-                          type:
-                            - string
-                            - "null"
-                          example: https://example.com/avatar.jpg
-                          description: URL to the user's avatar image
-                        role:
-                          type: string
-                          enum:
-                            - ADMIN
-                            - STANDARD
-                          example: STANDARD
-                          description: The role of the user in the organisation
-                      required:
-                        - id
-                        - first_name
-                        - last_name
-                        - email
-                        - image
-                        - role
+                      $ref: '#/components/schemas/OrgUser'
                   result_info:
                     type: object
                     properties:
@@ -4036,32 +4183,7 @@ paths:
                   result:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: inv123
-                          description: The unique identifier of the invitation
-                        email:
-                          type: string
-                          example: newuser@example.com
-                          description: The email address the invitation was sent to
-                        role:
-                          type: string
-                          enum:
-                            - ADMIN
-                            - STANDARD
-                          example: STANDARD
-                          description: The role of the user in the organisation
-                        created_at:
-                          type: string
-                          example: "2024-01-15T10:30:00Z"
-                          description: When the invitation was created
-                      required:
-                        - id
-                        - email
-                        - role
-                        - created_at
+                      $ref: '#/components/schemas/Invitation'
                   result_info:
                     type: object
                     properties:
@@ -4181,32 +4303,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: inv123
-                        description: The unique identifier of the invitation
-                      email:
-                        type: string
-                        example: newuser@example.com
-                        description: The email address the invitation was sent to
-                      role:
-                        type: string
-                        enum:
-                          - ADMIN
-                          - STANDARD
-                        example: STANDARD
-                        description: The role of the user in the organisation
-                      created_at:
-                        type: string
-                        example: "2024-01-15T10:30:00Z"
-                        description: When the invitation was created
-                    required:
-                      - id
-                      - email
-                      - role
-                      - created_at
+                    $ref: '#/components/schemas/Invitation'
                   success:
                     type: boolean
                     default: true
@@ -4566,59 +4663,7 @@ paths:
                       scheduled_maintenance:
                         type: array
                         items:
-                          allOf:
-                            - $ref: '#/components/schemas/StatusPageIncident'
-                            - type: object
-                              properties:
-                                start_date:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When the scheduled maintenance is expected to start
-                                duration_minutes:
-                                  type: integer
-                                  minimum: 1
-                                  example: 60
-                                  description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
-                                notifications:
-                                  type: object
-                                  properties:
-                                    an_hour_before:
-                                      type: boolean
-                                      default: false
-                                      example: false
-                                      description: Notify subscribers one hour before maintenance starts
-                                    at_start:
-                                      type: boolean
-                                      default: true
-                                      example: true
-                                      description: Notify subscribers when maintenance starts
-                                    at_end:
-                                      type: boolean
-                                      default: true
-                                      example: true
-                                      description: Notify subscribers when maintenance ends
-                                  description: Subscriber notification settings
-                                components:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: string
-                                        example: comp123
-                                        description: Component ID
-                                      name:
-                                        type: string
-                                        example: API Server
-                                        description: Component name
-                                    required:
-                                      - id
-                                      - name
-                                    description: Component associated with the scheduled maintenance
-                                  description: Components affected by this maintenance
-                              required:
-                                - start_date
-                                - duration_minutes
+                          $ref: '#/components/schemas/StatusPageScheduledMaintenance'
                     required:
                       - status
                       - status_page
@@ -6212,30 +6257,7 @@ paths:
                   result:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: a1b2c3d4e5f6
-                          description: Status Page Subscriber ID
-                        email_address:
-                          type: string
-                          format: email
-                          example: user@example.com
-                          description: Email address of the subscriber
-                        confirmed:
-                          type: boolean
-                          example: false
-                          description: Whether the subscriber has confirmed their email
-                        created_at:
-                          type: string
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When the subscriber was created
-                      required:
-                        - id
-                        - email_address
-                        - confirmed
-                        - created_at
+                      $ref: '#/components/schemas/Subscriber'
                   result_info:
                     type: object
                     properties:
@@ -6346,30 +6368,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: a1b2c3d4e5f6
-                        description: Status Page Subscriber ID
-                      email_address:
-                        type: string
-                        format: email
-                        example: user@example.com
-                        description: Email address of the subscriber
-                      confirmed:
-                        type: boolean
-                        example: false
-                        description: Whether the subscriber has confirmed their email
-                      created_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When the subscriber was created
-                    required:
-                      - id
-                      - email_address
-                      - confirmed
-                      - created_at
+                    $ref: '#/components/schemas/Subscriber'
                   success:
                     type: boolean
                     default: true
@@ -6565,70 +6564,7 @@ paths:
                   result:
                     type: array
                     items:
-                      allOf:
-                        - $ref: '#/components/schemas/StatusPageIncident'
-                        - type: object
-                          properties:
-                            latest_update:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: upd123
-                                  description: Latest update ID
-                                status:
-                                  type: string
-                                  enum:
-                                    - INVESTIGATING
-                                    - IDENTIFIED
-                                    - MONITORING
-                                    - RESOLVED
-                                    - UPDATE
-                                    - SCHEDULED
-                                    - IN_PROGRESS
-                                    - VERIFYING
-                                    - COMPLETED
-                                  example: INVESTIGATING
-                                  description: Status of the latest update
-                                date_happened:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When the latest update occurred
-                              required:
-                                - id
-                                - status
-                                - date_happened
-                              description: Latest update summary
-                            scheduled_maintenance:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: sm123
-                                  description: Scheduled maintenance ID
-                                start_date:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When the maintenance starts
-                                duration_minutes:
-                                  type: number
-                                  example: 60
-                                  description: Duration in minutes
-                                notify_subscribers_at_start:
-                                  type: boolean
-                                  example: true
-                                  description: Notify subscribers when maintenance starts
-                                notify_subscribers_at_end:
-                                  type: boolean
-                                  example: true
-                                  description: Notify subscribers when maintenance ends
-                              required:
-                                - id
-                                - start_date
-                                - duration_minutes
-                                - notify_subscribers_at_start
-                                - notify_subscribers_at_end
-                              description: Scheduled maintenance info
+                      $ref: '#/components/schemas/StatusPageIncidentWithLatestUpdate'
                   result_info:
                     type: object
                     properties:
@@ -6779,167 +6715,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          latest_update:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: upd123
-                                description: Latest update ID
-                              status:
-                                type: string
-                                enum:
-                                  - INVESTIGATING
-                                  - IDENTIFIED
-                                  - MONITORING
-                                  - RESOLVED
-                                  - UPDATE
-                                  - SCHEDULED
-                                  - IN_PROGRESS
-                                  - VERIFYING
-                                  - COMPLETED
-                                example: INVESTIGATING
-                                description: Status of the latest update
-                              date_happened:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the latest update occurred
-                            required:
-                              - id
-                              - status
-                              - date_happened
-                            description: Latest update summary
-                          scheduled_maintenance:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: sm123
-                                description: Scheduled maintenance ID
-                              start_date:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the maintenance starts
-                              duration_minutes:
-                                type: number
-                                example: 60
-                                description: Duration in minutes
-                              notify_subscribers_at_start:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              notify_subscribers_at_end:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            required:
-                              - id
-                              - start_date
-                              - duration_minutes
-                              - notify_subscribers_at_start
-                              - notify_subscribers_at_end
-                            description: Scheduled maintenance info
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the incident
-                          updates:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: e5f6g7h8
-                                  description: Incident Update ID
-                                incident_id:
-                                  type: string
-                                  example: a1b2c3d4
-                                  description: Parent incident ID
-                                status:
-                                  type: string
-                                  enum:
-                                    - INVESTIGATING
-                                    - IDENTIFIED
-                                    - MONITORING
-                                    - RESOLVED
-                                    - UPDATE
-                                    - SCHEDULED
-                                    - IN_PROGRESS
-                                    - VERIFYING
-                                    - COMPLETED
-                                  example: INVESTIGATING
-                                  description: Status of this update
-                                description:
-                                  type: string
-                                  example: We are investigating reports of connectivity issues
-                                  description: Update message
-                                date_happened:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update occurred
-                                created_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was created
-                                updated_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was last modified
-                                components:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: string
-                                        example: comp123
-                                        description: Component ID
-                                      name:
-                                        type: string
-                                        example: API Server
-                                        description: Component name
-                                      old_status:
-                                        type:
-                                          - string
-                                          - "null"
-                                        example: OPERATIONAL
-                                        description: Previous component status
-                                      new_status:
-                                        type: string
-                                        example: MAJOR_OUTAGE
-                                        description: New component status
-                                    required:
-                                      - id
-                                      - name
-                                      - old_status
-                                      - new_status
-                                  description: Component status changes in this update
-                              required:
-                                - id
-                                - incident_id
-                                - status
-                                - description
-                                - date_happened
-                                - created_at
-                                - updated_at
+                    $ref: '#/components/schemas/StatusPageIncidentDetail'
                   success:
                     type: boolean
                     default: true
@@ -7017,167 +6793,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          latest_update:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: upd123
-                                description: Latest update ID
-                              status:
-                                type: string
-                                enum:
-                                  - INVESTIGATING
-                                  - IDENTIFIED
-                                  - MONITORING
-                                  - RESOLVED
-                                  - UPDATE
-                                  - SCHEDULED
-                                  - IN_PROGRESS
-                                  - VERIFYING
-                                  - COMPLETED
-                                example: INVESTIGATING
-                                description: Status of the latest update
-                              date_happened:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the latest update occurred
-                            required:
-                              - id
-                              - status
-                              - date_happened
-                            description: Latest update summary
-                          scheduled_maintenance:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: sm123
-                                description: Scheduled maintenance ID
-                              start_date:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the maintenance starts
-                              duration_minutes:
-                                type: number
-                                example: 60
-                                description: Duration in minutes
-                              notify_subscribers_at_start:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              notify_subscribers_at_end:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            required:
-                              - id
-                              - start_date
-                              - duration_minutes
-                              - notify_subscribers_at_start
-                              - notify_subscribers_at_end
-                            description: Scheduled maintenance info
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the incident
-                          updates:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: e5f6g7h8
-                                  description: Incident Update ID
-                                incident_id:
-                                  type: string
-                                  example: a1b2c3d4
-                                  description: Parent incident ID
-                                status:
-                                  type: string
-                                  enum:
-                                    - INVESTIGATING
-                                    - IDENTIFIED
-                                    - MONITORING
-                                    - RESOLVED
-                                    - UPDATE
-                                    - SCHEDULED
-                                    - IN_PROGRESS
-                                    - VERIFYING
-                                    - COMPLETED
-                                  example: INVESTIGATING
-                                  description: Status of this update
-                                description:
-                                  type: string
-                                  example: We are investigating reports of connectivity issues
-                                  description: Update message
-                                date_happened:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update occurred
-                                created_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was created
-                                updated_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was last modified
-                                components:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: string
-                                        example: comp123
-                                        description: Component ID
-                                      name:
-                                        type: string
-                                        example: API Server
-                                        description: Component name
-                                      old_status:
-                                        type:
-                                          - string
-                                          - "null"
-                                        example: OPERATIONAL
-                                        description: Previous component status
-                                      new_status:
-                                        type: string
-                                        example: MAJOR_OUTAGE
-                                        description: New component status
-                                    required:
-                                      - id
-                                      - name
-                                      - old_status
-                                      - new_status
-                                  description: Component status changes in this update
-                              required:
-                                - id
-                                - incident_id
-                                - status
-                                - description
-                                - date_happened
-                                - created_at
-                                - updated_at
+                    $ref: '#/components/schemas/StatusPageIncidentDetail'
                   success:
                     type: boolean
                     default: true
@@ -7280,167 +6896,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          latest_update:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: upd123
-                                description: Latest update ID
-                              status:
-                                type: string
-                                enum:
-                                  - INVESTIGATING
-                                  - IDENTIFIED
-                                  - MONITORING
-                                  - RESOLVED
-                                  - UPDATE
-                                  - SCHEDULED
-                                  - IN_PROGRESS
-                                  - VERIFYING
-                                  - COMPLETED
-                                example: INVESTIGATING
-                                description: Status of the latest update
-                              date_happened:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the latest update occurred
-                            required:
-                              - id
-                              - status
-                              - date_happened
-                            description: Latest update summary
-                          scheduled_maintenance:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: sm123
-                                description: Scheduled maintenance ID
-                              start_date:
-                                type: string
-                                example: "2021-01-01T00:00:00.000Z"
-                                description: When the maintenance starts
-                              duration_minutes:
-                                type: number
-                                example: 60
-                                description: Duration in minutes
-                              notify_subscribers_at_start:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              notify_subscribers_at_end:
-                                type: boolean
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            required:
-                              - id
-                              - start_date
-                              - duration_minutes
-                              - notify_subscribers_at_start
-                              - notify_subscribers_at_end
-                            description: Scheduled maintenance info
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the incident
-                          updates:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: e5f6g7h8
-                                  description: Incident Update ID
-                                incident_id:
-                                  type: string
-                                  example: a1b2c3d4
-                                  description: Parent incident ID
-                                status:
-                                  type: string
-                                  enum:
-                                    - INVESTIGATING
-                                    - IDENTIFIED
-                                    - MONITORING
-                                    - RESOLVED
-                                    - UPDATE
-                                    - SCHEDULED
-                                    - IN_PROGRESS
-                                    - VERIFYING
-                                    - COMPLETED
-                                  example: INVESTIGATING
-                                  description: Status of this update
-                                description:
-                                  type: string
-                                  example: We are investigating reports of connectivity issues
-                                  description: Update message
-                                date_happened:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update occurred
-                                created_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was created
-                                updated_at:
-                                  type: string
-                                  example: "2021-01-01T00:00:00.000Z"
-                                  description: When this update was last modified
-                                components:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      id:
-                                        type: string
-                                        example: comp123
-                                        description: Component ID
-                                      name:
-                                        type: string
-                                        example: API Server
-                                        description: Component name
-                                      old_status:
-                                        type:
-                                          - string
-                                          - "null"
-                                        example: OPERATIONAL
-                                        description: Previous component status
-                                      new_status:
-                                        type: string
-                                        example: MAJOR_OUTAGE
-                                        description: New component status
-                                    required:
-                                      - id
-                                      - name
-                                      - old_status
-                                      - new_status
-                                  description: Component status changes in this update
-                              required:
-                                - id
-                                - incident_id
-                                - status
-                                - description
-                                - date_happened
-                                - created_at
-                                - updated_at
+                    $ref: '#/components/schemas/StatusPageIncidentDetail'
                   success:
                     type: boolean
                     default: true
@@ -7630,83 +7086,7 @@ paths:
                   result:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: e5f6g7h8
-                          description: Incident Update ID
-                        incident_id:
-                          type: string
-                          example: a1b2c3d4
-                          description: Parent incident ID
-                        status:
-                          type: string
-                          enum:
-                            - INVESTIGATING
-                            - IDENTIFIED
-                            - MONITORING
-                            - RESOLVED
-                            - UPDATE
-                            - SCHEDULED
-                            - IN_PROGRESS
-                            - VERIFYING
-                            - COMPLETED
-                          example: INVESTIGATING
-                          description: Status of this update
-                        description:
-                          type: string
-                          example: We are investigating reports of connectivity issues
-                          description: Update message
-                        date_happened:
-                          type: string
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When this update occurred
-                        created_at:
-                          type: string
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When this update was created
-                        updated_at:
-                          type: string
-                          example: "2021-01-01T00:00:00.000Z"
-                          description: When this update was last modified
-                        components:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: string
-                                example: comp123
-                                description: Component ID
-                              name:
-                                type: string
-                                example: API Server
-                                description: Component name
-                              old_status:
-                                type:
-                                  - string
-                                  - "null"
-                                example: OPERATIONAL
-                                description: Previous component status
-                              new_status:
-                                type: string
-                                example: MAJOR_OUTAGE
-                                description: New component status
-                            required:
-                              - id
-                              - name
-                              - old_status
-                              - new_status
-                          description: Component status changes in this update
-                      required:
-                        - id
-                        - incident_id
-                        - status
-                        - description
-                        - date_happened
-                        - created_at
-                        - updated_at
+                      $ref: '#/components/schemas/IncidentUpdate'
                   result_info:
                     type: object
                     properties:
@@ -7874,83 +7254,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: e5f6g7h8
-                        description: Incident Update ID
-                      incident_id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Parent incident ID
-                      status:
-                        type: string
-                        enum:
-                          - INVESTIGATING
-                          - IDENTIFIED
-                          - MONITORING
-                          - RESOLVED
-                          - UPDATE
-                          - SCHEDULED
-                          - IN_PROGRESS
-                          - VERIFYING
-                          - COMPLETED
-                        example: INVESTIGATING
-                        description: Status of this update
-                      description:
-                        type: string
-                        example: We are investigating reports of connectivity issues
-                        description: Update message
-                      date_happened:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update occurred
-                      created_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was created
-                      updated_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was last modified
-                      components:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              example: comp123
-                              description: Component ID
-                            name:
-                              type: string
-                              example: API Server
-                              description: Component name
-                            old_status:
-                              type:
-                                - string
-                                - "null"
-                              example: OPERATIONAL
-                              description: Previous component status
-                            new_status:
-                              type: string
-                              example: MAJOR_OUTAGE
-                              description: New component status
-                          required:
-                            - id
-                            - name
-                            - old_status
-                            - new_status
-                        description: Component status changes in this update
-                    required:
-                      - id
-                      - incident_id
-                      - status
-                      - description
-                      - date_happened
-                      - created_at
-                      - updated_at
+                    $ref: '#/components/schemas/IncidentUpdate'
                   success:
                     type: boolean
                     default: true
@@ -8043,83 +7347,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: e5f6g7h8
-                        description: Incident Update ID
-                      incident_id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Parent incident ID
-                      status:
-                        type: string
-                        enum:
-                          - INVESTIGATING
-                          - IDENTIFIED
-                          - MONITORING
-                          - RESOLVED
-                          - UPDATE
-                          - SCHEDULED
-                          - IN_PROGRESS
-                          - VERIFYING
-                          - COMPLETED
-                        example: INVESTIGATING
-                        description: Status of this update
-                      description:
-                        type: string
-                        example: We are investigating reports of connectivity issues
-                        description: Update message
-                      date_happened:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update occurred
-                      created_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was created
-                      updated_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was last modified
-                      components:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              example: comp123
-                              description: Component ID
-                            name:
-                              type: string
-                              example: API Server
-                              description: Component name
-                            old_status:
-                              type:
-                                - string
-                                - "null"
-                              example: OPERATIONAL
-                              description: Previous component status
-                            new_status:
-                              type: string
-                              example: MAJOR_OUTAGE
-                              description: New component status
-                          required:
-                            - id
-                            - name
-                            - old_status
-                            - new_status
-                        description: Component status changes in this update
-                    required:
-                      - id
-                      - incident_id
-                      - status
-                      - description
-                      - date_happened
-                      - created_at
-                      - updated_at
+                    $ref: '#/components/schemas/IncidentUpdate'
                   success:
                     type: boolean
                     default: true
@@ -8241,83 +7469,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: e5f6g7h8
-                        description: Incident Update ID
-                      incident_id:
-                        type: string
-                        example: a1b2c3d4
-                        description: Parent incident ID
-                      status:
-                        type: string
-                        enum:
-                          - INVESTIGATING
-                          - IDENTIFIED
-                          - MONITORING
-                          - RESOLVED
-                          - UPDATE
-                          - SCHEDULED
-                          - IN_PROGRESS
-                          - VERIFYING
-                          - COMPLETED
-                        example: INVESTIGATING
-                        description: Status of this update
-                      description:
-                        type: string
-                        example: We are investigating reports of connectivity issues
-                        description: Update message
-                      date_happened:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update occurred
-                      created_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was created
-                      updated_at:
-                        type: string
-                        example: "2021-01-01T00:00:00.000Z"
-                        description: When this update was last modified
-                      components:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                              example: comp123
-                              description: Component ID
-                            name:
-                              type: string
-                              example: API Server
-                              description: Component name
-                            old_status:
-                              type:
-                                - string
-                                - "null"
-                              example: OPERATIONAL
-                              description: Previous component status
-                            new_status:
-                              type: string
-                              example: MAJOR_OUTAGE
-                              description: New component status
-                          required:
-                            - id
-                            - name
-                            - old_status
-                            - new_status
-                        description: Component status changes in this update
-                    required:
-                      - id
-                      - incident_id
-                      - status
-                      - description
-                      - date_happened
-                      - created_at
-                      - updated_at
+                    $ref: '#/components/schemas/IncidentUpdate'
                   success:
                     type: boolean
                     default: true
@@ -8552,59 +7704,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          start_date:
-                            type: string
-                            example: "2021-01-01T00:00:00.000Z"
-                            description: When the scheduled maintenance is expected to start
-                          duration_minutes:
-                            type: integer
-                            minimum: 1
-                            example: 60
-                            description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
-                          notifications:
-                            type: object
-                            properties:
-                              an_hour_before:
-                                type: boolean
-                                default: false
-                                example: false
-                                description: Notify subscribers one hour before maintenance starts
-                              at_start:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              at_end:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            description: Subscriber notification settings
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the scheduled maintenance
-                            description: Components affected by this maintenance
-                        required:
-                          - start_date
-                          - duration_minutes
+                    $ref: '#/components/schemas/StatusPageScheduledMaintenance'
                   success:
                     type: boolean
                     default: true
@@ -8684,59 +7784,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          start_date:
-                            type: string
-                            example: "2021-01-01T00:00:00.000Z"
-                            description: When the scheduled maintenance is expected to start
-                          duration_minutes:
-                            type: integer
-                            minimum: 1
-                            example: 60
-                            description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
-                          notifications:
-                            type: object
-                            properties:
-                              an_hour_before:
-                                type: boolean
-                                default: false
-                                example: false
-                                description: Notify subscribers one hour before maintenance starts
-                              at_start:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              at_end:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            description: Subscriber notification settings
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the scheduled maintenance
-                            description: Components affected by this maintenance
-                        required:
-                          - start_date
-                          - duration_minutes
+                    $ref: '#/components/schemas/StatusPageScheduledMaintenance'
                   success:
                     type: boolean
                     default: true
@@ -8837,59 +7885,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    allOf:
-                      - $ref: '#/components/schemas/StatusPageIncident'
-                      - type: object
-                        properties:
-                          start_date:
-                            type: string
-                            example: "2021-01-01T00:00:00.000Z"
-                            description: When the scheduled maintenance is expected to start
-                          duration_minutes:
-                            type: integer
-                            minimum: 1
-                            example: 60
-                            description: How long (in minutes) the scheduled maintenance should be displayed on your status page before being resolved automatically
-                          notifications:
-                            type: object
-                            properties:
-                              an_hour_before:
-                                type: boolean
-                                default: false
-                                example: false
-                                description: Notify subscribers one hour before maintenance starts
-                              at_start:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance starts
-                              at_end:
-                                type: boolean
-                                default: true
-                                example: true
-                                description: Notify subscribers when maintenance ends
-                            description: Subscriber notification settings
-                          components:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: comp123
-                                  description: Component ID
-                                name:
-                                  type: string
-                                  example: API Server
-                                  description: Component name
-                              required:
-                                - id
-                                - name
-                              description: Component associated with the scheduled maintenance
-                            description: Components affected by this maintenance
-                        required:
-                          - start_date
-                          - duration_minutes
+                    $ref: '#/components/schemas/StatusPageScheduledMaintenance'
                   success:
                     type: boolean
                     default: true
