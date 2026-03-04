@@ -124,6 +124,7 @@ components:
             - DOWN
             - PENDING
             - PAUSED
+            - MAINTENANCE
             - MUTED
           example: UP
           description: Current status of the heartbeat
