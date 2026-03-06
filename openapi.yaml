@@ -81,7 +81,9 @@ components:
           example: UPTIME
           description: Indicates whether the check is a regular uptime check, or a browser check.
         last_queued:
-          type: string
+          type:
+            - string
+            - "null"
           example: "2021-01-01T00:00:00.000Z"
           description: Last time the check was queued
         status:
@@ -104,6 +106,210 @@ components:
         - check_type
         - last_queued
         - status
+    ExpandedCheck:
+      allOf:
+        - $ref: '#/components/schemas/Check'
+        - type: object
+          properties:
+            headers:
+              type:
+                - object
+                - "null"
+              additionalProperties:
+                type: string
+              example:
+                X-My-Header: My Value
+              description: Headers to send with the request
+            text_to_search_for:
+              type:
+                - string
+                - "null"
+              description: Text to search for in the response
+            reminder_alert_interval_minutes:
+              type: number
+              example: 1440
+              description: Interval in minutes between reminder alerts (-1 for never)
+            confirmation_period_seconds:
+              type: number
+              example: 60
+              description: Seconds to wait before confirming a down status
+            recovery_period_seconds:
+              type: number
+              example: 180
+              description: Seconds to wait before confirming recovery
+            test_interval:
+              type: number
+              example: 60
+              description: Interval in seconds between checks
+            timeout:
+              type: number
+              example: 10000
+              description: Timeout in milliseconds
+            version:
+              type:
+                - string
+                - "null"
+              enum:
+                - NODE20_PLAYWRIGHT
+                - CLOUDFLARE
+              example: NODE20_PLAYWRIGHT
+              description: Version of the check runner (null for standard uptime checks)
+            alert_priority:
+              type: string
+              enum:
+                - LOW
+                - HIGH
+              example: HIGH
+              description: Priority level for alerts
+            verify_ssl:
+              type: boolean
+              example: true
+              description: Whether to verify SSL certificates
+            method:
+              type: string
+              enum:
+                - GET
+                - HEAD
+                - POST
+                - PUT
+                - PATCH
+                - DELETE
+              example: GET
+              description: HTTP method to use
+            body:
+              type:
+                - string
+                - "null"
+              description: Request body for POST/PUT/PATCH requests
+            follow_redirects:
+              type: boolean
+              example: true
+              description: Whether to follow HTTP redirects
+            assertions:
+              type:
+                - array
+                - "null"
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              description: Assertions to validate the response
+            auth_username:
+              type:
+                - string
+                - "null"
+              description: Username for HTTP Basic Auth
+            auth_password:
+              type:
+                - string
+                - "null"
+              description: Password for HTTP Basic Auth
+            test_regions:
+              type: array
+              items:
+                type: string
+              example:
+                - aws:us-east-1
+                - aws:eu-central-1
+              description: 'Regions the check runs from. Format: aws:{region}'
+            user_alerts:
+              type: array
+              items:
+                type: string
+              description: User IDs to notify on alerts
+            slack_alerts:
+              type: array
+              items:
+                type: string
+              description: Slack integration IDs to notify
+            discord_alerts:
+              type: array
+              items:
+                type: string
+              description: Discord integration IDs to notify
+            incident_io_alerts:
+              type: array
+              items:
+                type: string
+              description: Incident.io integration IDs to notify
+            microsoft_teams_alerts:
+              type: array
+              items:
+                type: string
+              description: Microsoft Teams integration IDs to notify
+            oncall_alerts:
+              type: array
+              items:
+                type: string
+              description: On-call integration IDs (PagerDuty, Opsgenie, Grafana, Spike)
+            webhook_alerts:
+              type: array
+              items:
+                type: string
+              description: Webhook IDs to notify
+          required:
+            - headers
+            - text_to_search_for
+            - reminder_alert_interval_minutes
+            - confirmation_period_seconds
+            - recovery_period_seconds
+            - test_interval
+            - timeout
+            - version
+            - alert_priority
+            - verify_ssl
+            - method
+            - body
+            - follow_redirects
+            - assertions
+            - auth_username
+            - auth_password
+            - test_regions
+            - user_alerts
+            - slack_alerts
+            - discord_alerts
+            - incident_io_alerts
+            - microsoft_teams_alerts
+            - oncall_alerts
+            - webhook_alerts
     Heartbeat:
       type: object
       properties:
@@ -2285,7 +2491,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/Check'
+                    $ref: '#/components/schemas/ExpandedCheck'
                   success:
                     type: boolean
                     default: true
@@ -2356,7 +2562,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/Check'
+                    $ref: '#/components/schemas/ExpandedCheck'
                   success:
                     type: boolean
                     default: true
@@ -2707,7 +2913,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/Check'
+                    $ref: '#/components/schemas/ExpandedCheck'
                   success:
                     type: boolean
                     default: true
