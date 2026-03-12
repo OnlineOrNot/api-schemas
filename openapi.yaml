@@ -151,9 +151,15 @@ components:
                 - "null"
               enum:
                 - NODE20_PLAYWRIGHT
+                - NODE24_PLAYWRIGHT
                 - CLOUDFLARE
-              example: NODE20_PLAYWRIGHT
-              description: Version of the check runner (null for standard uptime checks)
+              example: NODE24_PLAYWRIGHT
+              description: Runtime version for browser checks (null for standard uptime checks)
+            script:
+              type:
+                - string
+                - "null"
+              description: Playwright Test script for scripted browser checks (null for URL-based checks)
             alert_priority:
               type: string
               enum:
@@ -294,6 +300,7 @@ components:
             - test_interval
             - timeout
             - version
+            - script
             - alert_priority
             - verify_ssl
             - method
@@ -2461,8 +2468,18 @@ paths:
                   type: string
                   enum:
                     - NODE20_PLAYWRIGHT
-                  example: NODE20_PLAYWRIGHT
-                  description: Version of the Browser Check
+                    - NODE24_PLAYWRIGHT
+                  example: NODE24_PLAYWRIGHT
+                  description: Runtime version for browser checks
+                script:
+                  type: string
+                  example: |-
+                    import { test, expect } from '@playwright/test';
+                    test('check homepage', async ({ page }) => {
+                      await page.goto('https://example.com');
+                      await expect(page.locator('h1')).toContainText('Example');
+                    });
+                  description: Playwright Test script to run. If provided, the check runs as a scripted browser check instead of a URL-based check.
               required:
                 - name
                 - url
@@ -2832,8 +2849,18 @@ paths:
                   type: string
                   enum:
                     - NODE20_PLAYWRIGHT
-                  example: NODE20_PLAYWRIGHT
-                  description: Version of the Browser Check
+                    - NODE24_PLAYWRIGHT
+                  example: NODE24_PLAYWRIGHT
+                  description: Runtime version for browser checks
+                script:
+                  type: string
+                  example: |-
+                    import { test, expect } from '@playwright/test';
+                    test('check homepage', async ({ page }) => {
+                      await page.goto('https://example.com');
+                      await expect(page.locator('h1')).toContainText('Example');
+                    });
+                  description: Playwright Test script to run. If provided, the check runs as a scripted browser check instead of a URL-based check.
                 reminder_alert_interval_minutes:
                   type: integer
                   minimum: -1
