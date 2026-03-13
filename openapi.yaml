@@ -2479,7 +2479,7 @@ paths:
                       await page.goto('https://example.com');
                       await expect(page.locator('h1')).toContainText('Example');
                     });
-                  description: Playwright Test script to run. If provided, the check runs as a scripted browser check instead of a URL-based check.
+                  description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
               required:
                 - name
                 - url
@@ -2860,7 +2860,7 @@ paths:
                       await page.goto('https://example.com');
                       await expect(page.locator('h1')).toContainText('Example');
                     });
-                  description: Playwright Test script to run. If provided, the check runs as a scripted browser check instead of a URL-based check.
+                  description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
                 reminder_alert_interval_minutes:
                   type: integer
                   minimum: -1
