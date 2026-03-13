@@ -69,10 +69,12 @@ components:
           example: My landing page
           description: Name of the check
         url:
-          type: string
+          type:
+            - string
+            - "null"
           format: uri
           example: https://example.com
-          description: URL to check
+          description: URL to check (null for script-based browser checks)
         check_type:
           type: string
           enum:
@@ -2278,7 +2280,7 @@ paths:
                   type: string
                   format: uri
                   example: https://example.com
-                  description: URL to check
+                  description: URL to check. Required for URL-based checks, optional for script-based checks.
                 text_to_search_for:
                   type: string
                   maxLength: 4000
@@ -2479,10 +2481,9 @@ paths:
                       await page.goto('https://example.com');
                       await expect(page.locator('h1')).toContainText('Example');
                     });
-                  description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
+                  description: Playwright Test script for scripted browser checks. Required for script-based checks, optional for URL-based checks.
               required:
                 - name
-                - url
             examples:
               basic:
                 summary: Basic uptime check
