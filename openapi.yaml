@@ -2276,7 +2276,9 @@ paths:
                   example: My landing page
                   description: Name of the check
                 url:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   format: uri
                   example: https://example.com
                   description: URL to check. Required for URL-based checks, optional for script-based checks.
