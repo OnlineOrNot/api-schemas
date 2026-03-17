@@ -2470,10 +2470,9 @@ paths:
                 version:
                   type: string
                   enum:
-                    - NODE20_PLAYWRIGHT
                     - NODE24_PLAYWRIGHT
                   example: NODE24_PLAYWRIGHT
-                  description: Runtime version for browser checks
+                  description: Runtime version for browser checks.
                 script:
                   type: string
                   example: |-
@@ -2854,7 +2853,7 @@ paths:
                     - NODE20_PLAYWRIGHT
                     - NODE24_PLAYWRIGHT
                   example: NODE24_PLAYWRIGHT
-                  description: Runtime version for browser checks
+                  description: Runtime version for browser checks. NODE20_PLAYWRIGHT is deprecated; existing checks can keep this version but new checks should use NODE24_PLAYWRIGHT.
                 script:
                   type: string
                   example: |-
