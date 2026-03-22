@@ -756,6 +756,8 @@ components:
           description: Status Page Incident ID
         title:
           type: string
+          minLength: 1
+          maxLength: 256
           example: API is inaccessible
           description: a title for the incident
         impact:
@@ -6898,6 +6900,8 @@ paths:
               properties:
                 title:
                   type: string
+                  minLength: 1
+                  maxLength: 256
                   example: API is inaccessible
                   description: a title for the incident
                 description:
@@ -7111,6 +7115,8 @@ paths:
               properties:
                 title:
                   type: string
+                  minLength: 1
+                  maxLength: 256
                   example: API is inaccessible
                   description: a title for the incident
                 impact:
