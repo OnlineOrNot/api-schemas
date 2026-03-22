@@ -613,6 +613,8 @@ components:
           description: Status Page ID
         name:
           type: string
+          minLength: 1
+          maxLength: 100
           example: My Example SaaS
           description: Name of the Status Page
         subdomain:
@@ -4681,6 +4683,8 @@ paths:
               properties:
                 name:
                   type: string
+                  minLength: 1
+                  maxLength: 100
                   example: My Example SaaS
                   description: Name of the Status Page
                 subdomain:
@@ -4965,6 +4969,8 @@ paths:
               properties:
                 name:
                   type: string
+                  minLength: 1
+                  maxLength: 100
                   example: My Example SaaS
                   description: Name of the Status Page
                 subdomain:
