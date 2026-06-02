@@ -104,6 +104,7 @@ components:
       required:
         - id
         - name
+        - url
         - check_type
         - last_queued
         - status
@@ -211,7 +212,7 @@ components:
                   property:
                     type: string
                     example: $.data.name
-                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
                   comparison:
                     type: string
                     enum:
@@ -282,6 +283,11 @@ components:
               items:
                 type: string
               description: Microsoft Teams integration IDs to notify
+            telegram_alerts:
+              type: array
+              items:
+                type: string
+              description: Telegram integration IDs to notify
             oncall_alerts:
               type: array
               items:
@@ -316,6 +322,7 @@ components:
             - discord_alerts
             - incident_io_alerts
             - microsoft_teams_alerts
+            - telegram_alerts
             - oncall_alerts
             - webhook_alerts
     Heartbeat:
@@ -446,6 +453,11 @@ components:
               items:
                 type: string
               description: Array of Microsoft Teams integration IDs subscribed to alerts
+            telegram_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of Telegram integration IDs subscribed to alerts
           required:
             - user_alerts
             - slack_alerts
@@ -454,6 +466,7 @@ components:
             - oncall_alerts
             - incident_io_alerts
             - microsoft_teams_alerts
+            - telegram_alerts
     MaintenanceWindow:
       type: object
       properties:
@@ -2310,7 +2323,7 @@ paths:
                   example:
                     - aws:us-east-1
                     - aws:eu-central-1
-                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
+                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
                 user_alerts:
                   type: array
                   items:
@@ -2328,6 +2341,10 @@ paths:
                   items:
                     type: string
                 microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                telegram_alerts:
                   type: array
                   items:
                     type: string
@@ -2421,7 +2438,7 @@ paths:
                       property:
                         type: string
                         example: $.data.name
-                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
                       comparison:
                         type: string
                         enum:
@@ -2807,7 +2824,7 @@ paths:
                       property:
                         type: string
                         example: $.data.name
-                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS)
+                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
                       comparison:
                         type: string
                         enum:
@@ -2890,7 +2907,7 @@ paths:
                   example:
                     - aws:us-east-1
                     - aws:eu-central-1
-                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
+                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
                 user_alerts:
                   type: array
                   items:
@@ -2908,6 +2925,10 @@ paths:
                   items:
                     type: string
                 microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                telegram_alerts:
                   type: array
                   items:
                     type: string
@@ -3182,6 +3203,11 @@ paths:
                   items:
                     type: string
                   description: Array of Microsoft Teams integration IDs to alert
+                telegram_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Telegram integration IDs to alert
                 alert_priority:
                   type: string
                   enum:
@@ -3424,6 +3450,11 @@ paths:
                   items:
                     type: string
                   description: Array of Microsoft Teams integration IDs to alert
+                telegram_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Telegram integration IDs to alert
                 alert_priority:
                   type: string
                   enum:
