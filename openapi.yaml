@@ -57,6 +57,539 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    DnsAssertion:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - DNS_RESPONSE_CODE
+            - DNS_TEXT_ANSWER
+            - DNS_JSON_ANSWER
+          example: DNS_JSON_ANSWER
+          description: Type of DNS assertion
+        property:
+          type: string
+          example: $.answers[0].data
+          description: Property to assert on. Use JSONPath for DNS_JSON_ANSWER, status for DNS_RESPONSE_CODE, and an empty string for DNS_TEXT_ANSWER.
+        comparison:
+          type: string
+          enum:
+            - EQUALS
+            - NOT_EQUALS
+            - GREATER_THAN
+            - LESS_THAN
+            - "NULL"
+            - NOT_NULL
+            - EMPTY
+            - NOT_EMPTY
+            - CONTAINS
+            - NOT_CONTAINS
+            - "FALSE"
+            - "TRUE"
+          example: EQUALS
+          description: Comparison operator
+        expected:
+          type: string
+          example: 93.184.216.34
+          description: Expected value
+      required:
+        - type
+        - property
+        - comparison
+        - expected
+    ExpandedDnsCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4
+          description: Uptime Check ID
+        name:
+          type: string
+          example: My landing page
+          description: Name of the check
+        last_queued:
+          type:
+            - string
+            - "null"
+          example: "2021-01-01T00:00:00.000Z"
+          description: Last time the check was queued
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - PENDING
+            - PAUSED
+            - MUTED
+            - MAINTENANCE
+            - RECOVERING
+            - VERIFYING
+          example: UP
+          description: Current status of the check based on the latest uptime event
+        headers:
+          type:
+            - object
+            - "null"
+          additionalProperties:
+            type: string
+          example:
+            X-My-Header: My Value
+          description: Headers to send with the request
+        text_to_search_for:
+          type:
+            - string
+            - "null"
+          description: Text to search for in the response
+        reminder_alert_interval_minutes:
+          type: number
+          example: 1440
+          description: Interval in minutes between reminder alerts (-1 for never)
+        confirmation_period_seconds:
+          type: number
+          example: 60
+          description: Seconds to wait before confirming a down status
+        recovery_period_seconds:
+          type: number
+          example: 180
+          description: Seconds to wait before confirming recovery
+        test_interval:
+          type: number
+          example: 60
+          description: Interval in seconds between checks
+        timeout:
+          type: number
+          example: 10000
+          description: Timeout in milliseconds
+        script:
+          type:
+            - string
+            - "null"
+          description: Playwright Test script for scripted browser checks (null for URL-based checks)
+        alert_priority:
+          type: string
+          enum:
+            - LOW
+            - HIGH
+          example: HIGH
+          description: Priority level for alerts
+        verify_ssl:
+          type: boolean
+          example: true
+          description: Whether to verify SSL certificates
+        method:
+          type: string
+          enum:
+            - GET
+            - HEAD
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+          example: GET
+          description: HTTP method to use
+        body:
+          type:
+            - string
+            - "null"
+          description: Request body for POST/PUT/PATCH requests
+        follow_redirects:
+          type: boolean
+          example: true
+          description: Whether to follow HTTP redirects
+        auth_username:
+          type:
+            - string
+            - "null"
+          description: Username for HTTP Basic Auth
+        auth_password:
+          type:
+            - string
+            - "null"
+          description: Password for HTTP Basic Auth
+        test_regions:
+          type: array
+          items:
+            type: string
+          example:
+            - aws:us-east-1
+            - aws:eu-central-1
+          description: 'Regions the check runs from. Format: aws:{region}'
+        user_alerts:
+          type: array
+          items:
+            type: string
+          description: User IDs to notify on alerts
+        slack_alerts:
+          type: array
+          items:
+            type: string
+          description: Slack integration IDs to notify
+        discord_alerts:
+          type: array
+          items:
+            type: string
+          description: Discord integration IDs to notify
+        incident_io_alerts:
+          type: array
+          items:
+            type: string
+          description: Incident.io integration IDs to notify
+        microsoft_teams_alerts:
+          type: array
+          items:
+            type: string
+          description: Microsoft Teams integration IDs to notify
+        telegram_alerts:
+          type: array
+          items:
+            type: string
+          description: Telegram integration IDs to notify
+        oncall_alerts:
+          type: array
+          items:
+            type: string
+          description: On-call integration IDs (PagerDuty, Opsgenie, Grafana, Spike)
+        webhook_alerts:
+          type: array
+          items:
+            type: string
+          description: Webhook IDs to notify
+        check_type:
+          type: string
+          enum:
+            - DNS
+          example: DNS
+          description: Indicates this monitor is a DNS check.
+        url:
+          type: "null"
+          description: DNS checks do not use a URL target.
+        version:
+          type: string
+          enum:
+            - NODE24_DNS
+          example: NODE24_DNS
+          description: Runtime version for DNS checks.
+        dns_domain:
+          type: string
+          example: example.com
+          description: DNS name queried by this check.
+        dns_record_type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+          example: A
+          description: DNS record type queried by this check.
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom resolver used by this check, or null for the default resolver.
+        dns_protocol:
+          type: string
+          enum:
+            - UDP
+            - TCP
+          example: UDP
+          description: DNS transport protocol used by this check.
+        assertions:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/DnsAssertion'
+          description: DNS assertions to validate the response.
+      required:
+        - id
+        - name
+        - last_queued
+        - status
+        - headers
+        - text_to_search_for
+        - reminder_alert_interval_minutes
+        - confirmation_period_seconds
+        - recovery_period_seconds
+        - test_interval
+        - timeout
+        - script
+        - alert_priority
+        - verify_ssl
+        - method
+        - body
+        - follow_redirects
+        - auth_username
+        - auth_password
+        - test_regions
+        - user_alerts
+        - slack_alerts
+        - discord_alerts
+        - incident_io_alerts
+        - microsoft_teams_alerts
+        - telegram_alerts
+        - oncall_alerts
+        - webhook_alerts
+        - check_type
+        - url
+        - version
+        - dns_domain
+        - dns_record_type
+        - dns_resolver
+        - dns_protocol
+        - assertions
+    DnsCheckInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My monitor
+          description: Name of the monitor
+        test_interval:
+          type: integer
+          minimum: 30
+          example: 60
+          description: Interval in seconds between checks
+        test_regions:
+          type: array
+          items:
+            type: string
+            description: Region identifier in format aws:{region}
+          example:
+            - aws:us-east-1
+            - aws:eu-central-1
+          description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
+        user_alerts:
+          type: array
+          items:
+            type: string
+        slack_alerts:
+          type: array
+          items:
+            type: string
+        discord_alerts:
+          type: array
+          items:
+            type: string
+        incident_io_alerts:
+          type: array
+          items:
+            type: string
+        microsoft_teams_alerts:
+          type: array
+          items:
+            type: string
+        telegram_alerts:
+          type: array
+          items:
+            type: string
+        webhook_alerts:
+          type: array
+          items:
+            type: string
+          description: IDs of webhooks to associate with this check
+        oncall_alerts:
+          type: array
+          items:
+            type: string
+          description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
+        alert_priority:
+          type: string
+          enum:
+            - LOW
+            - HIGH
+          default: LOW
+          example: LOW
+          description: Alert Priority
+        confirmation_period_seconds:
+          type: integer
+          minimum: 0
+          default: 60
+        recovery_period_seconds:
+          type: integer
+          minimum: 0
+          default: 180
+        reminder_alert_interval_minutes:
+          type: integer
+          minimum: -1
+          default: 1440
+        timeout:
+          type: integer
+          minimum: 1000
+          default: 10000
+        type:
+          type: string
+          enum:
+            - DNS_CHECK
+        dns_domain:
+          type: string
+          minLength: 1
+          maxLength: 253
+          example: example.com
+          description: DNS name to query
+        dns_record_type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+          example: A
+          description: DNS record type to query
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom DNS resolver in host:port format. IPv6 must use bracket notation.
+        dns_protocol:
+          type: string
+          enum:
+            - UDP
+            - TCP
+          default: UDP
+          example: UDP
+          description: DNS transport protocol
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsAssertion'
+          description: DNS assertions to run on the response
+      required:
+        - name
+        - dns_domain
+        - dns_record_type
+      additionalProperties: false
+    DnsCheckPatch:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My monitor
+          description: Name of the monitor
+        test_interval:
+          type: integer
+          minimum: 30
+          example: 60
+          description: Interval in seconds between checks
+        test_regions:
+          type: array
+          items:
+            type: string
+            description: Region identifier in format aws:{region}
+          example:
+            - aws:us-east-1
+            - aws:eu-central-1
+          description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
+        user_alerts:
+          type: array
+          items:
+            type: string
+        slack_alerts:
+          type: array
+          items:
+            type: string
+        discord_alerts:
+          type: array
+          items:
+            type: string
+        incident_io_alerts:
+          type: array
+          items:
+            type: string
+        microsoft_teams_alerts:
+          type: array
+          items:
+            type: string
+        telegram_alerts:
+          type: array
+          items:
+            type: string
+        webhook_alerts:
+          type: array
+          items:
+            type: string
+          description: IDs of webhooks to associate with this check
+        oncall_alerts:
+          type: array
+          items:
+            type: string
+          description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
+        alert_priority:
+          type: string
+          enum:
+            - LOW
+            - HIGH
+          default: LOW
+          example: LOW
+          description: Alert Priority
+        confirmation_period_seconds:
+          type: integer
+          minimum: 0
+          example: 60
+          description: Confirmation period in seconds
+        recovery_period_seconds:
+          type: integer
+          minimum: 0
+          example: 180
+          description: Recovery period in seconds
+        reminder_alert_interval_minutes:
+          type: integer
+          minimum: -1
+          example: 1440
+          description: Interval in minutes between reminders (-1 for never)
+        timeout:
+          type: integer
+          minimum: 1000
+          example: 10000
+          description: Timeout in milliseconds
+        paused:
+          type: boolean
+          example: false
+          description: Whether the monitor is paused (completely stops execution) or actively running
+        muted:
+          type: boolean
+          example: false
+          description: Whether the monitor is muted (continues running but suppresses alerts) or sending alerts normally
+        dns_domain:
+          type: string
+          minLength: 1
+          maxLength: 253
+        dns_record_type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom DNS resolver in host:port format. IPv6 must use bracket notation.
+        dns_protocol:
+          type: string
+          enum:
+            - UDP
+            - TCP
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsAssertion'
+      additionalProperties: false
     Check:
       type: object
       properties:
@@ -81,7 +614,7 @@ components:
             - UPTIME
             - BROWSER
           example: UPTIME
-          description: Indicates whether the check is a regular uptime check, or a browser check.
+          description: Indicates whether the check is a regular uptime check or browser check.
         last_queued:
           type:
             - string
@@ -108,6 +641,89 @@ components:
         - check_type
         - last_queued
         - status
+    DnsCheck:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4
+          description: Uptime Check ID
+        name:
+          type: string
+          example: My landing page
+          description: Name of the check
+        last_queued:
+          type:
+            - string
+            - "null"
+          example: "2021-01-01T00:00:00.000Z"
+          description: Last time the check was queued
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - PENDING
+            - PAUSED
+            - MUTED
+            - MAINTENANCE
+            - RECOVERING
+            - VERIFYING
+          example: UP
+          description: Current status of the check based on the latest uptime event
+        check_type:
+          type: string
+          enum:
+            - DNS
+          example: DNS
+          description: Indicates this monitor is a DNS check.
+        url:
+          type: "null"
+          description: DNS checks do not use a URL target.
+        dns_domain:
+          type: string
+          example: example.com
+          description: DNS name queried by this check.
+        dns_record_type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+          example: A
+          description: DNS record type queried by this check.
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom resolver used by this DNS check, or null for default resolver.
+        dns_protocol:
+          type: string
+          enum:
+            - UDP
+            - TCP
+          example: UDP
+          description: DNS transport protocol used by this check.
+      required:
+        - id
+        - name
+        - last_queued
+        - status
+        - check_type
+        - url
+        - dns_domain
+        - dns_record_type
+        - dns_resolver
+        - dns_protocol
+    CheckListItem:
+      anyOf:
+        - $ref: '#/components/schemas/Check'
+        - $ref: '#/components/schemas/DnsCheck'
     ExpandedCheck:
       allOf:
         - $ref: '#/components/schemas/Check'
@@ -2158,6 +2774,321 @@ paths:
           description: Token not found
         "500":
           description: Internal Server Error
+  /v1/checks/dns:
+    post:
+      tags:
+        - Checks
+      description: Create a DNS check
+      summary: Create a new DNS check to monitor DNS records
+      operationId: createDnsCheck
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsCheckInput'
+            examples:
+              basic:
+                summary: Basic DNS A record check
+                value:
+                  name: DNS for example.com
+                  dns_domain: example.com
+                  dns_record_type: A
+                  test_interval: 60
+              resolver:
+                summary: DNS check with custom resolver
+                value:
+                  name: DNS through Google resolver
+                  dns_domain: example.com
+                  dns_record_type: A
+                  dns_resolver: 8.8.8.8:53
+                  dns_protocol: UDP
+      responses:
+        "201":
+          description: Create a new OnlineOrNot DNS Check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ExpandedDnsCheck'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+  /v1/checks/dns/{check_id}:
+    get:
+      tags:
+        - Checks
+      description: Retrieve a DNS check
+      summary: Look up detailed information about a specific DNS check
+      operationId: getDnsCheck
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Uptime Check ID
+          required: true
+          description: Uptime Check ID
+          name: check_id
+          in: path
+      responses:
+        "200":
+          description: Retrieve the specified OnlineOrNot DNS Check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ExpandedDnsCheck'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - Checks
+      description: Modify a DNS check
+      summary: Modify the configuration of an existing DNS check
+      operationId: updateDnsCheck
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Uptime Check ID
+          required: true
+          description: Uptime Check ID
+          name: check_id
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DnsCheckPatch'
+            examples:
+              updateDnsConfig:
+                summary: Update DNS query config
+                value:
+                  dns_domain: example.org
+                  dns_record_type: TXT
+                  dns_resolver: 1.1.1.1:53
+                  dns_protocol: TCP
+      responses:
+        "200":
+          description: Modify an OnlineOrNot DNS Check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ExpandedDnsCheck'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Checks
+      description: Delete a DNS check
+      summary: Permanently delete a DNS check
+      operationId: deleteDnsCheck
+      security:
+        - api_token: []
+      parameters:
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Uptime Check ID
+          required: true
+          description: Uptime Check ID
+          name: check_id
+          in: path
+      responses:
+        "200":
+          description: Returns the deleted OnlineOrNot DNS Check's ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: a1b2c3d4
+                        description: Uptime Check ID
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type: string
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "500":
+          description: Internal Server Error
   /v1/checks:
     get:
       tags:
@@ -2205,7 +3136,7 @@ paths:
                   result:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Check'
+                      $ref: '#/components/schemas/CheckListItem'
                   result_info:
                     type: object
                     properties:
@@ -2290,31 +3221,13 @@ paths:
               properties:
                 name:
                   type: string
-                  example: My landing page
-                  description: Name of the check
-                url:
-                  type:
-                    - string
-                    - "null"
-                  format: uri
-                  example: https://example.com
-                  description: URL to check. Required for URL-based checks, optional for script-based checks.
-                text_to_search_for:
-                  type: string
-                  maxLength: 4000
-                  example: Example Domain
-                  description: Text to search for in the response
+                  example: My monitor
+                  description: Name of the monitor
                 test_interval:
                   type: integer
                   minimum: 30
                   example: 60
                   description: Interval in seconds between checks
-                reminder_alert_interval_minutes:
-                  type: integer
-                  minimum: -1
-                  default: 1440
-                  example: 1440
-                  description: Interval in minutes between reminders (-1 for never)
                 test_regions:
                   type: array
                   items:
@@ -2358,32 +3271,6 @@ paths:
                   items:
                     type: string
                   description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
-                confirmation_period_seconds:
-                  type: integer
-                  minimum: 0
-                  default: 60
-                  example: 60
-                  description: Confirmation period in seconds
-                recovery_period_seconds:
-                  type: integer
-                  minimum: 0
-                  default: 180
-                  example: 180
-                  description: Recovery period in seconds
-                timeout:
-                  type: integer
-                  minimum: 1000
-                  default: 10000
-                  example: 10000
-                  description: Timeout in milliseconds
-                type:
-                  type: string
-                  enum:
-                    - UPTIME_CHECK
-                    - BROWSER_CHECK
-                  default: UPTIME_CHECK
-                  example: UPTIME_CHECK
-                  description: Type of check
                 alert_priority:
                   type: string
                   enum:
@@ -2392,6 +3279,42 @@ paths:
                   default: LOW
                   example: LOW
                   description: Alert Priority
+                confirmation_period_seconds:
+                  type: integer
+                  minimum: 0
+                  default: 60
+                recovery_period_seconds:
+                  type: integer
+                  minimum: 0
+                  default: 180
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  default: 1440
+                timeout:
+                  type: integer
+                  minimum: 1000
+                  default: 10000
+                url:
+                  type:
+                    - string
+                    - "null"
+                  format: uri
+                  example: https://example.com
+                  description: URL to check. Required for URL-based checks, optional for script-based checks.
+                text_to_search_for:
+                  type: string
+                  maxLength: 4000
+                  example: Example Domain
+                  description: Text to search for in the response
+                type:
+                  type: string
+                  enum:
+                    - UPTIME_CHECK
+                    - BROWSER_CHECK
+                  default: UPTIME_CHECK
+                  example: UPTIME_CHECK
+                  description: Type of check
                 headers:
                   type: object
                   additionalProperties:
@@ -2748,8 +3671,92 @@ paths:
               properties:
                 name:
                   type: string
-                  example: My landing page
-                  description: Name of the check
+                  example: My monitor
+                  description: Name of the monitor
+                test_interval:
+                  type: integer
+                  minimum: 30
+                  example: 60
+                  description: Interval in seconds between checks
+                test_regions:
+                  type: array
+                  items:
+                    type: string
+                    description: Region identifier in format aws:{region}
+                  example:
+                    - aws:us-east-1
+                    - aws:eu-central-1
+                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
+                user_alerts:
+                  type: array
+                  items:
+                    type: string
+                slack_alerts:
+                  type: array
+                  items:
+                    type: string
+                discord_alerts:
+                  type: array
+                  items:
+                    type: string
+                incident_io_alerts:
+                  type: array
+                  items:
+                    type: string
+                microsoft_teams_alerts:
+                  type: array
+                  items:
+                    type: string
+                telegram_alerts:
+                  type: array
+                  items:
+                    type: string
+                webhook_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of webhooks to associate with this check
+                oncall_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
+                alert_priority:
+                  type: string
+                  enum:
+                    - LOW
+                    - HIGH
+                  default: LOW
+                  example: LOW
+                  description: Alert Priority
+                confirmation_period_seconds:
+                  type: integer
+                  minimum: 0
+                  example: 60
+                  description: Confirmation period in seconds
+                recovery_period_seconds:
+                  type: integer
+                  minimum: 0
+                  example: 180
+                  description: Recovery period in seconds
+                reminder_alert_interval_minutes:
+                  type: integer
+                  minimum: -1
+                  example: 1440
+                  description: Interval in minutes between reminders (-1 for never)
+                timeout:
+                  type: integer
+                  minimum: 1000
+                  example: 10000
+                  description: Timeout in milliseconds
+                paused:
+                  type: boolean
+                  example: false
+                  description: Whether the monitor is paused (completely stops execution) or actively running
+                muted:
+                  type: boolean
+                  example: false
+                  description: Whether the monitor is muted (continues running but suppresses alerts) or sending alerts normally
                 url:
                   type:
                     - string
@@ -2761,11 +3768,6 @@ paths:
                   maxLength: 4000
                   example: Example Domain
                   description: Text to search for in the response
-                test_interval:
-                  type: integer
-                  minimum: 30
-                  example: 60
-                  description: Interval in seconds between checks
                 type:
                   type: string
                   enum:
@@ -2773,13 +3775,6 @@ paths:
                     - BROWSER_CHECK
                   example: UPTIME_CHECK
                   description: Type of check
-                alert_priority:
-                  type: string
-                  enum:
-                    - LOW
-                    - HIGH
-                  example: LOW
-                  description: Alert Priority
                 headers:
                   type: object
                   additionalProperties:
@@ -2863,11 +3858,6 @@ paths:
                   type: string
                   example: password
                   description: Password to use for URLs behind HTTP Basic Auth
-                timeout:
-                  type: integer
-                  minimum: 1000
-                  example: 10000
-                  description: Timeout in milliseconds
                 version:
                   type: string
                   enum:
@@ -2884,72 +3874,6 @@ paths:
                       await expect(page.locator('h1')).toContainText('Example');
                     });
                   description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
-                reminder_alert_interval_minutes:
-                  type: integer
-                  minimum: -1
-                  example: 1440
-                  description: Interval in minutes between reminders (-1 for never)
-                confirmation_period_seconds:
-                  type: integer
-                  minimum: 0
-                  example: 60
-                  description: Confirmation period in seconds
-                recovery_period_seconds:
-                  type: integer
-                  minimum: 0
-                  example: 180
-                  description: Recovery period in seconds
-                test_regions:
-                  type: array
-                  items:
-                    type: string
-                    description: Region identifier in format aws:{region}
-                  example:
-                    - aws:us-east-1
-                    - aws:eu-central-1
-                  description: 'Regions to run checks from. Valid regions: aws:us-east-1, aws:us-east-2, aws:us-west-1, aws:eu-central-1, aws:eu-west-2, aws:ap-south-1, aws:ap-southeast-2, aws:ap-northeast-1'
-                user_alerts:
-                  type: array
-                  items:
-                    type: string
-                slack_alerts:
-                  type: array
-                  items:
-                    type: string
-                discord_alerts:
-                  type: array
-                  items:
-                    type: string
-                incident_io_alerts:
-                  type: array
-                  items:
-                    type: string
-                microsoft_teams_alerts:
-                  type: array
-                  items:
-                    type: string
-                telegram_alerts:
-                  type: array
-                  items:
-                    type: string
-                webhook_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: IDs of webhooks to associate with this check
-                oncall_alerts:
-                  type: array
-                  items:
-                    type: string
-                  description: IDs of on-call integrations (Grafana, PagerDuty, Opsgenie, Spike)
-                paused:
-                  type: boolean
-                  example: false
-                  description: Whether the check is paused (completely stops execution) or actively running
-                muted:
-                  type: boolean
-                  example: false
-                  description: Whether the check is muted (continues running but suppresses alerts) or sending alerts normally
             examples:
               updateHeaders:
                 summary: Update check headers
