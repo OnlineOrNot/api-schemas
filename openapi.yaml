@@ -590,6 +590,87 @@ components:
           items:
             $ref: '#/components/schemas/DnsAssertion'
       additionalProperties: false
+    CheckListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4
+          description: Uptime Check ID
+        name:
+          type: string
+          example: My landing page
+          description: Name of the check
+        url:
+          type:
+            - string
+            - "null"
+          format: uri
+          example: https://example.com
+          description: URL to check (null for DNS or script-based browser checks)
+        check_type:
+          type: string
+          enum:
+            - UPTIME
+            - BROWSER
+            - DNS
+          example: UPTIME
+          description: Indicates whether the check is an uptime, browser, or DNS check.
+        last_queued:
+          type:
+            - string
+            - "null"
+          example: "2021-01-01T00:00:00.000Z"
+          description: Last time the check was queued
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - PENDING
+            - PAUSED
+            - MUTED
+            - MAINTENANCE
+            - RECOVERING
+            - VERIFYING
+          example: UP
+          description: Current status of the check based on the latest event
+        dns_domain:
+          type: string
+          example: example.com
+          description: DNS name queried by this check. Present for DNS checks.
+        dns_record_type:
+          type: string
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+          example: A
+          description: DNS record type queried by this check. Present for DNS checks.
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom resolver used by this DNS check, or null for the default resolver.
+        dns_protocol:
+          type: string
+          enum:
+            - UDP
+            - TCP
+          example: UDP
+          description: DNS transport protocol used by this check. Present for DNS checks.
+      required:
+        - id
+        - name
+        - url
+        - check_type
+        - last_queued
+        - status
     Check:
       type: object
       properties:
@@ -641,89 +722,6 @@ components:
         - check_type
         - last_queued
         - status
-    DnsCheck:
-      type: object
-      properties:
-        id:
-          type: string
-          example: a1b2c3d4
-          description: Uptime Check ID
-        name:
-          type: string
-          example: My landing page
-          description: Name of the check
-        last_queued:
-          type:
-            - string
-            - "null"
-          example: "2021-01-01T00:00:00.000Z"
-          description: Last time the check was queued
-        status:
-          type: string
-          enum:
-            - UP
-            - DOWN
-            - PENDING
-            - PAUSED
-            - MUTED
-            - MAINTENANCE
-            - RECOVERING
-            - VERIFYING
-          example: UP
-          description: Current status of the check based on the latest uptime event
-        check_type:
-          type: string
-          enum:
-            - DNS
-          example: DNS
-          description: Indicates this monitor is a DNS check.
-        url:
-          type: "null"
-          description: DNS checks do not use a URL target.
-        dns_domain:
-          type: string
-          example: example.com
-          description: DNS name queried by this check.
-        dns_record_type:
-          type: string
-          enum:
-            - A
-            - AAAA
-            - CNAME
-            - MX
-            - NS
-            - SOA
-            - TXT
-          example: A
-          description: DNS record type queried by this check.
-        dns_resolver:
-          type:
-            - string
-            - "null"
-          example: 8.8.8.8:53
-          description: Custom resolver used by this DNS check, or null for default resolver.
-        dns_protocol:
-          type: string
-          enum:
-            - UDP
-            - TCP
-          example: UDP
-          description: DNS transport protocol used by this check.
-      required:
-        - id
-        - name
-        - last_queued
-        - status
-        - check_type
-        - url
-        - dns_domain
-        - dns_record_type
-        - dns_resolver
-        - dns_protocol
-    CheckListItem:
-      anyOf:
-        - $ref: '#/components/schemas/Check'
-        - $ref: '#/components/schemas/DnsCheck'
     ExpandedCheck:
       allOf:
         - $ref: '#/components/schemas/Check'
