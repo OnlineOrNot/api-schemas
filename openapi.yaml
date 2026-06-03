@@ -411,18 +411,26 @@ components:
           type: integer
           minimum: 0
           default: 60
+          example: 60
+          description: Confirmation period in seconds
         recovery_period_seconds:
           type: integer
           minimum: 0
           default: 180
+          example: 180
+          description: Recovery period in seconds
         reminder_alert_interval_minutes:
           type: integer
           minimum: -1
           default: 1440
+          example: 1440
+          description: Interval in minutes between reminders (-1 for never)
         timeout:
           type: integer
           minimum: 1000
           default: 10000
+          example: 10000
+          description: Timeout in milliseconds
         type:
           type: string
           enum:
@@ -3281,18 +3289,26 @@ paths:
                   type: integer
                   minimum: 0
                   default: 60
+                  example: 60
+                  description: Confirmation period in seconds
                 recovery_period_seconds:
                   type: integer
                   minimum: 0
                   default: 180
+                  example: 180
+                  description: Recovery period in seconds
                 reminder_alert_interval_minutes:
                   type: integer
                   minimum: -1
                   default: 1440
+                  example: 1440
+                  description: Interval in minutes between reminders (-1 for never)
                 timeout:
                   type: integer
                   minimum: 1000
                   default: 10000
+                  example: 10000
+                  description: Timeout in milliseconds
                 url:
                   type:
                     - string
