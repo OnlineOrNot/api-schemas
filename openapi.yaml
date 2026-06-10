@@ -4263,6 +4263,22 @@ components:
           type: boolean
           example: false
           description: Whether the subscriber has confirmed their email
+        component_subscription_mode:
+          type: string
+          enum:
+            - ALL_COMPONENTS
+            - SELECTED_COMPONENTS
+          example: ALL_COMPONENTS
+          description: Component alert preference mode for this subscriber
+        component_ids:
+          type: array
+          items:
+            type: string
+            example: a1b2c3d4
+            description: Status Page Component ID
+          example:
+            - a1b2c3d4
+          description: Selected component IDs when component_subscription_mode is SELECTED_COMPONENTS
         created_at:
           type: string
           example: "2021-01-01T00:00:00.000Z"
@@ -4271,6 +4287,8 @@ components:
         - id
         - email_address
         - confirmed
+        - component_subscription_mode
+        - component_ids
         - created_at
     StatusPageIncidentWithLatestUpdate:
       allOf:
@@ -9967,6 +9985,24 @@ paths:
                   format: email
                   example: user@example.com
                   description: Email address of the subscriber
+                component_subscription_mode:
+                  type: string
+                  enum:
+                    - ALL_COMPONENTS
+                    - SELECTED_COMPONENTS
+                  default: ALL_COMPONENTS
+                  example: ALL_COMPONENTS
+                  description: Component alert preference mode for this subscriber
+                component_ids:
+                  type: array
+                  items:
+                    type: string
+                    example: a1b2c3d4
+                    description: Status Page Component ID
+                  default: []
+                  example:
+                    - a1b2c3d4
+                  description: Selected component IDs when component_subscription_mode is SELECTED_COMPONENTS
               required:
                 - email_address
       responses:
