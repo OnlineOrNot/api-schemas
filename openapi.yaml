@@ -246,6 +246,11 @@ components:
           items:
             type: string
           description: Telegram integration IDs to notify
+        pushover_alerts:
+          type: array
+          items:
+            type: string
+          description: Pushover integration IDs to notify
         oncall_alerts:
           type: array
           items:
@@ -334,6 +339,7 @@ components:
         - incident_io_alerts
         - microsoft_teams_alerts
         - telegram_alerts
+        - pushover_alerts
         - oncall_alerts
         - webhook_alerts
         - check_type
@@ -431,6 +437,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -564,6 +574,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -883,6 +897,11 @@ components:
           items:
             type: string
           description: Telegram integration IDs to notify
+        pushover_alerts:
+          type: array
+          items:
+            type: string
+          description: Pushover integration IDs to notify
         oncall_alerts:
           type: array
           items:
@@ -968,6 +987,7 @@ components:
         - incident_io_alerts
         - microsoft_teams_alerts
         - telegram_alerts
+        - pushover_alerts
         - oncall_alerts
         - webhook_alerts
         - check_type
@@ -1066,6 +1086,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -1199,6 +1223,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -1491,6 +1519,11 @@ components:
           items:
             type: string
           description: Telegram integration IDs to notify
+        pushover_alerts:
+          type: array
+          items:
+            type: string
+          description: Pushover integration IDs to notify
         oncall_alerts:
           type: array
           items:
@@ -1537,6 +1570,7 @@ components:
         - incident_io_alerts
         - microsoft_teams_alerts
         - telegram_alerts
+        - pushover_alerts
         - oncall_alerts
         - webhook_alerts
         - check_type
@@ -1627,6 +1661,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -1831,6 +1869,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -2186,6 +2228,11 @@ components:
           items:
             type: string
           description: Telegram integration IDs to notify
+        pushover_alerts:
+          type: array
+          items:
+            type: string
+          description: Pushover integration IDs to notify
         oncall_alerts:
           type: array
           items:
@@ -2232,6 +2279,7 @@ components:
         - incident_io_alerts
         - microsoft_teams_alerts
         - telegram_alerts
+        - pushover_alerts
         - oncall_alerts
         - webhook_alerts
         - check_type
@@ -2322,6 +2370,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -2543,6 +2595,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -3106,6 +3162,11 @@ components:
               items:
                 type: string
               description: Telegram integration IDs to notify
+            pushover_alerts:
+              type: array
+              items:
+                type: string
+              description: Pushover integration IDs to notify
             oncall_alerts:
               type: array
               items:
@@ -3141,6 +3202,7 @@ components:
             - incident_io_alerts
             - microsoft_teams_alerts
             - telegram_alerts
+            - pushover_alerts
             - oncall_alerts
             - webhook_alerts
     CheckResponse:
@@ -3230,6 +3292,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -3508,6 +3574,10 @@ components:
           items:
             type: string
         telegram_alerts:
+          type: array
+          items:
+            type: string
+        pushover_alerts:
           type: array
           items:
             type: string
@@ -3808,6 +3878,11 @@ components:
               items:
                 type: string
               description: Array of Telegram integration IDs subscribed to alerts
+            pushover_alerts:
+              type: array
+              items:
+                type: string
+              description: Array of Pushover integration IDs subscribed to alerts
           required:
             - user_alerts
             - slack_alerts
@@ -3817,6 +3892,7 @@ components:
             - incident_io_alerts
             - microsoft_teams_alerts
             - telegram_alerts
+            - pushover_alerts
     MaintenanceWindow:
       type: object
       properties:
@@ -6562,6 +6638,11 @@ paths:
                   items:
                     type: string
                   description: Array of Telegram integration IDs to alert
+                pushover_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Pushover integration IDs to alert
                 alert_priority:
                   type: string
                   enum:
@@ -6809,6 +6890,11 @@ paths:
                   items:
                     type: string
                   description: Array of Telegram integration IDs to alert
+                pushover_alerts:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of Pushover integration IDs to alert
                 alert_priority:
                   type: string
                   enum:
