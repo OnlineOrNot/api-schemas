@@ -128,20 +128,6 @@ components:
             - VERIFYING
           example: UP
           description: Current status of the check based on the latest uptime event
-        headers:
-          type:
-            - object
-            - "null"
-          additionalProperties:
-            type: string
-          example:
-            X-My-Header: My Value
-          description: Headers to send with the request
-        text_to_search_for:
-          type:
-            - string
-            - "null"
-          description: Text to search for in the response
         reminder_alert_interval_minutes:
           type: number
           example: 1440
@@ -162,11 +148,6 @@ components:
           type: number
           example: 10000
           description: Timeout in milliseconds
-        script:
-          type:
-            - string
-            - "null"
-          description: Playwright Test script for scripted browser checks (null for URL-based checks)
         alert_priority:
           type: string
           enum:
@@ -174,40 +155,6 @@ components:
             - HIGH
           example: HIGH
           description: Priority level for alerts
-        verify_ssl:
-          type: boolean
-          example: true
-          description: Whether to verify SSL certificates
-        method:
-          type: string
-          enum:
-            - GET
-            - HEAD
-            - POST
-            - PUT
-            - PATCH
-            - DELETE
-          example: GET
-          description: HTTP method to use
-        body:
-          type:
-            - string
-            - "null"
-          description: Request body for POST/PUT/PATCH requests
-        follow_redirects:
-          type: boolean
-          example: true
-          description: Whether to follow HTTP redirects
-        auth_username:
-          type:
-            - string
-            - "null"
-          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
-        auth_password:
-          type:
-            - string
-            - "null"
-          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -317,21 +264,12 @@ components:
         - name
         - last_queued
         - status
-        - headers
-        - text_to_search_for
         - reminder_alert_interval_minutes
         - confirmation_period_seconds
         - recovery_period_seconds
         - test_interval
         - timeout
-        - script
         - alert_priority
-        - verify_ssl
-        - method
-        - body
-        - follow_redirects
-        - auth_username
-        - auth_password
         - test_regions
         - user_alerts
         - slack_alerts
@@ -779,20 +717,6 @@ components:
             - VERIFYING
           example: UP
           description: Current status of the check based on the latest uptime event
-        headers:
-          type:
-            - object
-            - "null"
-          additionalProperties:
-            type: string
-          example:
-            X-My-Header: My Value
-          description: Headers to send with the request
-        text_to_search_for:
-          type:
-            - string
-            - "null"
-          description: Text to search for in the response
         reminder_alert_interval_minutes:
           type: number
           example: 1440
@@ -813,11 +737,6 @@ components:
           type: number
           example: 10000
           description: Timeout in milliseconds
-        script:
-          type:
-            - string
-            - "null"
-          description: Playwright Test script for scripted browser checks (null for URL-based checks)
         alert_priority:
           type: string
           enum:
@@ -825,40 +744,6 @@ components:
             - HIGH
           example: HIGH
           description: Priority level for alerts
-        verify_ssl:
-          type: boolean
-          example: true
-          description: Whether to verify SSL certificates
-        method:
-          type: string
-          enum:
-            - GET
-            - HEAD
-            - POST
-            - PUT
-            - PATCH
-            - DELETE
-          example: GET
-          description: HTTP method to use
-        body:
-          type:
-            - string
-            - "null"
-          description: Request body for POST/PUT/PATCH requests
-        follow_redirects:
-          type: boolean
-          example: true
-          description: Whether to follow HTTP redirects
-        auth_username:
-          type:
-            - string
-            - "null"
-          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
-        auth_password:
-          type:
-            - string
-            - "null"
-          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -965,21 +850,12 @@ components:
         - name
         - last_queued
         - status
-        - headers
-        - text_to_search_for
         - reminder_alert_interval_minutes
         - confirmation_period_seconds
         - recovery_period_seconds
         - test_interval
         - timeout
-        - script
         - alert_priority
-        - verify_ssl
-        - method
-        - body
-        - follow_redirects
-        - auth_username
-        - auth_password
         - test_regions
         - user_alerts
         - slack_alerts
