@@ -202,12 +202,12 @@ components:
           type:
             - string
             - "null"
-          description: Username for HTTP Basic Auth
+          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
         auth_password:
           type:
             - string
             - "null"
-          description: Password for HTTP Basic Auth
+          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -853,12 +853,12 @@ components:
           type:
             - string
             - "null"
-          description: Username for HTTP Basic Auth
+          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
         auth_password:
           type:
             - string
             - "null"
-          description: Password for HTTP Basic Auth
+          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -1475,12 +1475,12 @@ components:
           type:
             - string
             - "null"
-          description: Username for HTTP Basic Auth
+          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
         auth_password:
           type:
             - string
             - "null"
-          description: Password for HTTP Basic Auth
+          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -1818,11 +1818,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
       required:
         - name
         - url
@@ -2010,11 +2010,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
       additionalProperties: false
     ExpandedBrowserCheck:
       type: object
@@ -2184,12 +2184,12 @@ components:
           type:
             - string
             - "null"
-          description: Username for HTTP Basic Auth
+          description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
         auth_password:
           type:
             - string
             - "null"
-          description: Password for HTTP Basic Auth
+          description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
         test_regions:
           type: array
           items:
@@ -2529,11 +2529,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
         version:
           type: string
           enum:
@@ -2738,11 +2738,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
         version:
           type: string
           enum:
@@ -3772,12 +3772,12 @@ components:
               type:
                 - string
                 - "null"
-              description: Username for HTTP Basic Auth
+              description: Username for HTTP Basic Auth. Null when unset; an empty string represents an empty user-id.
             auth_password:
               type:
                 - string
                 - "null"
-              description: Password for HTTP Basic Auth
+              description: Password for HTTP Basic Auth. Null when unset; empty strings are preserved.
             test_regions:
               type: array
               items:
@@ -4106,11 +4106,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
         version:
           type: string
           enum:
@@ -4378,11 +4378,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth
+          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth
+          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
         version:
           type: string
           enum:
