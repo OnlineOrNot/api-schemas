@@ -306,7 +306,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -321,7 +323,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -620,7 +624,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -635,7 +641,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -891,7 +899,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -906,7 +916,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -1464,7 +1476,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -1479,7 +1493,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -2175,7 +2191,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -2190,7 +2208,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3343,7 +3363,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3358,7 +3380,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3665,7 +3689,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3680,7 +3706,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3947,7 +3975,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -3962,7 +3992,9 @@ components:
               message:
                 type: string
               type:
-                type: string
+                type:
+                  - string
+                  - "null"
             required:
               - code
               - message
@@ -4491,17 +4523,13 @@ components:
           example: a1b2c3d4
           description: Status Page ID
         name:
-          type:
-            - string
-            - "null"
+          type: string
           minLength: 1
           maxLength: 100
           example: My Example SaaS
           description: Name of the Status Page
         subdomain:
-          type:
-            - string
-            - "null"
+          type: string
           pattern: ^\w(?:[\w-]{0,61}\w)?$
           example: status
           description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
@@ -4580,17 +4608,13 @@ components:
           example: a1b2c3d4
           description: Status Page ID
         name:
-          type:
-            - string
-            - "null"
+          type: string
           minLength: 1
           maxLength: 100
           example: My Example SaaS
           description: Name of the Status Page
         subdomain:
-          type:
-            - string
-            - "null"
+          type: string
           pattern: ^\w(?:[\w-]{0,61}\w)?$
           example: status
           description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
@@ -5206,21 +5230,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -5375,7 +5401,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -5390,7 +5418,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -5584,13 +5614,12 @@ paths:
                           id:
                             type: string
                             example: a1b2c3d4
-                            description: Token ID
+                            description: API token ID. Omitted when verifying an OAuth access token.
                           status:
                             type: string
                             example: active
                             description: Status
                         required:
-                          - id
                           - status
                       success:
                         type: boolean
@@ -5607,7 +5636,9 @@ paths:
                             message:
                               type: string
                             type:
-                              type: string
+                              type:
+                                - string
+                                - "null"
                           required:
                             - code
                             - message
@@ -5622,7 +5653,9 @@ paths:
                             message:
                               type: string
                             type:
-                              type: string
+                              type:
+                                - string
+                                - "null"
                           required:
                             - code
                             - message
@@ -5870,7 +5903,9 @@ paths:
                             message:
                               type: string
                             type:
-                              type: string
+                              type:
+                                - string
+                                - "null"
                           required:
                             - code
                             - message
@@ -5885,7 +5920,9 @@ paths:
                             message:
                               type: string
                             type:
-                              type: string
+                              type:
+                                - string
+                                - "null"
                           required:
                             - code
                             - message
@@ -6101,21 +6138,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
-            example: 20
-            description: Number of items per page.
+            type: integer
+            minimum: 1
+            default: 10
+            example: 10
+            description: Number of tokens per page, default 10. Pagination metadata is nested at result.result_info.
           required: false
-          description: Number of items per page.
+          description: Number of tokens per page, default 10. Pagination metadata is nested at result.result_info.
           name: per_page
           in: query
         - schema:
@@ -6135,81 +6174,81 @@ paths:
                 type: object
                 properties:
                   result:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: a1b2c3d4
-                          description: Token ID
-                        name:
-                          type: string
-                          example: My API Token
-                          description: Token name
-                        expiresAfter:
-                          type: string
-                          example: "2025-12-31T23:59:59.000Z"
-                          description: Token expiration date
-                        createdAt:
-                          type: string
-                          example: "2024-01-15T10:30:00.000Z"
-                          description: Token creation date
-                        grants:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              scope:
-                                type: string
-                                enum:
-                                  - UPTIME_CHECKS
-                                  - STATUS_PAGES
-                                  - HEARTBEAT_CHECKS
-                                  - MAINTENANCE_WINDOWS
-                                  - PEOPLE
-                                  - INTEGRATIONS
-                                  - API_TOKENS
-                                  - WEBHOOKS
-                              permission:
-                                type: string
-                                enum:
-                                  - READ
-                                  - EDIT
-                            required:
-                              - scope
-                              - permission
-                          description: List of grants (scope and permission pairs) assigned to this token
-                      required:
-                        - id
-                        - name
-                        - expiresAfter
-                        - createdAt
-                        - grants
-                  result_info:
                     type: object
                     properties:
-                      page:
-                        type: number
-                        default: 1
-                        example: 1
-                        description: Page number of paginated results.
-                      per_page:
-                        type: number
-                        default: 20
-                        example: 20
-                        description: Number of items per page.
-                      count:
-                        type: number
-                        example: 1
-                        description: Number of items on the current page.
-                      total_count:
-                        type: number
-                        example: 1
-                        description: Total number of items.
+                      result:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: a1b2c3d4
+                              description: Token ID
+                            name:
+                              type: string
+                              example: My API Token
+                              description: Token name
+                            expiresAfter:
+                              type:
+                                - string
+                                - "null"
+                              example: "2025-12-31T23:59:59.000Z"
+                              description: Token expiration date, or null for a token that never expires.
+                            createdAt:
+                              type: string
+                              example: "2024-01-15T10:30:00.000Z"
+                              description: Token creation date
+                            grants:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  scope:
+                                    type: string
+                                    enum:
+                                      - UPTIME_CHECKS
+                                      - STATUS_PAGES
+                                      - HEARTBEAT_CHECKS
+                                      - MAINTENANCE_WINDOWS
+                                      - PEOPLE
+                                      - INTEGRATIONS
+                                      - API_TOKENS
+                                      - WEBHOOKS
+                                  permission:
+                                    type: string
+                                    enum:
+                                      - READ
+                                      - EDIT
+                                required:
+                                  - scope
+                                  - permission
+                              description: List of grants (scope and permission pairs) assigned to this token
+                          required:
+                            - id
+                            - name
+                            - expiresAfter
+                            - createdAt
+                            - grants
+                      result_info:
+                        type: object
+                        properties:
+                          page:
+                            type: number
+                          per_page:
+                            type: number
+                          total_count:
+                            type: number
+                          total_pages:
+                            type: number
+                        required:
+                          - page
+                          - per_page
+                          - total_count
+                          - total_pages
                     required:
-                      - count
-                      - total_count
+                      - result
+                      - result_info
                   success:
                     type: boolean
                     default: true
@@ -6225,7 +6264,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -6240,14 +6281,15 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
                     example: []
                 required:
                   - result
-                  - result_info
                   - success
                   - errors
                   - messages
@@ -6505,9 +6547,11 @@ paths:
                         example: My API Token
                         description: Token name
                       expiresAfter:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         example: "2025-12-31T23:59:59.000Z"
-                        description: Token expiration date
+                        description: Token expiration date, or null for a token that never expires.
                       createdAt:
                         type: string
                         example: "2024-01-15T10:30:00.000Z"
@@ -6537,7 +6581,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -6552,7 +6598,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -6760,9 +6808,11 @@ paths:
                         example: My API Token
                         description: Token name
                       expiresAfter:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         example: "2025-12-31T23:59:59.000Z"
-                        description: Token expiration date
+                        description: Token expiration date, or null for a token that never expires.
                       createdAt:
                         type: string
                         example: "2024-01-15T10:30:00.000Z"
@@ -6813,7 +6863,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -6828,7 +6880,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -7085,7 +7139,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -7100,7 +7156,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -10851,9 +10909,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -10861,9 +10920,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -11115,9 +11175,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -11125,9 +11186,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -11379,9 +11441,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -11389,9 +11452,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -11643,9 +11707,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -11653,9 +11718,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -11907,9 +11973,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -11917,9 +11984,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -12211,9 +12279,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -12221,9 +12290,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -12515,9 +12585,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -12525,9 +12596,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -12819,9 +12891,10 @@ paths:
           name: check_id
           in: path
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 1
+            minimum: 1
+            maximum: 9007199254740991
             example: 1
             description: Page number of paginated results
           required: false
@@ -12829,9 +12902,10 @@ paths:
           name: page
           in: query
         - schema:
-            type: string
-            pattern: ^[1-9][0-9]*$
+            type: integer
             default: 20
+            minimum: 1
+            maximum: 100
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -13114,21 +13188,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -13138,6 +13214,23 @@ paths:
           required: false
           description: Search term to filter results.
           name: search
+          in: query
+        - schema:
+            type: string
+            enum:
+              - DOWN
+              - MUTED
+              - NA
+              - PAUSED
+              - PENDING
+              - RECOVERING
+              - UP
+              - VERIFYING
+            example: DOWN
+            description: Filter by current check status. NA, omitted and unrecognized values leave status unfiltered.
+          required: false
+          description: Filter by current check status. NA, omitted and unrecognized values leave status unfiltered.
+          name: filter
           in: query
       responses:
         "200":
@@ -14203,21 +14296,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -14279,7 +14374,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -14294,7 +14391,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -14604,7 +14703,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -14619,7 +14720,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -14833,7 +14936,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -14848,7 +14953,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15175,7 +15282,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15190,7 +15299,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15410,7 +15521,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15425,7 +15538,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15606,21 +15721,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -15682,7 +15799,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15697,7 +15816,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -15992,7 +16113,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16007,7 +16130,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16221,7 +16346,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16236,7 +16363,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16576,7 +16705,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16591,7 +16722,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16851,7 +16984,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -16866,7 +17001,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17087,21 +17224,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -17163,7 +17302,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17178,7 +17319,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17399,7 +17542,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17414,7 +17559,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17635,21 +17782,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -17711,7 +17860,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17726,7 +17877,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17963,7 +18116,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -17978,7 +18133,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18191,7 +18348,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18206,7 +18365,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18482,7 +18643,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18497,7 +18660,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18716,7 +18881,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18731,7 +18898,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18978,7 +19147,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -18993,7 +19164,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19203,7 +19376,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19218,7 +19393,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19397,21 +19574,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -19440,17 +19619,13 @@ paths:
                           example: a1b2c3d4
                           description: Status Page ID
                         name:
-                          type:
-                            - string
-                            - "null"
+                          type: string
                           minLength: 1
                           maxLength: 100
                           example: My Example SaaS
                           description: Name of the Status Page
                         subdomain:
-                          type:
-                            - string
-                            - "null"
+                          type: string
                           pattern: ^\w(?:[\w-]{0,61}\w)?$
                           example: status
                           description: The subdomain your status page will be hosted at. For example "status" would become "status.yourdomain.com"
@@ -19566,7 +19741,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19581,7 +19758,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19831,7 +20010,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -19846,7 +20027,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20034,21 +20217,23 @@ paths:
           name: status_page_id
           in: path
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -20110,7 +20295,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20125,7 +20312,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20348,7 +20537,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20363,7 +20554,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20639,7 +20832,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20654,7 +20849,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20882,7 +21079,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -20897,7 +21096,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21134,7 +21335,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21149,7 +21352,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21338,21 +21543,23 @@ paths:
           name: status_page_id
           in: path
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -21414,7 +21621,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21429,7 +21638,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21660,7 +21871,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21675,7 +21888,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21897,7 +22112,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -21912,7 +22129,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22151,7 +22370,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22166,7 +22387,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22394,7 +22617,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22409,7 +22634,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22646,7 +22873,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22661,7 +22890,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22907,7 +23138,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -22922,7 +23155,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23111,21 +23346,23 @@ paths:
           name: status_page_id
           in: path
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -23187,7 +23424,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23202,7 +23441,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23447,7 +23688,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23462,7 +23705,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23731,7 +23976,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23746,7 +23993,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -23975,21 +24224,23 @@ paths:
           name: status_page_id
           in: path
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -24051,7 +24302,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24066,7 +24319,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24339,7 +24594,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24354,7 +24611,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24576,7 +24835,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24591,7 +24852,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24840,7 +25103,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -24855,7 +25120,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25083,7 +25350,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25098,7 +25367,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25296,21 +25567,23 @@ paths:
           name: status_page_incident_id
           in: path
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -25372,7 +25645,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25387,7 +25662,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25671,7 +25948,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25686,7 +25965,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25917,7 +26198,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -25932,7 +26215,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26232,7 +26517,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26247,7 +26534,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26524,7 +26813,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26539,7 +26830,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26851,7 +27144,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -26866,7 +27161,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27088,7 +27385,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27103,7 +27402,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27386,7 +27687,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27401,7 +27704,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27669,7 +27974,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27684,7 +27991,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27905,21 +28214,23 @@ paths:
         - api_token: []
       parameters:
         - schema:
-            type: string
-            default: "1"
+            type: integer
+            minimum: 1
+            default: 1
             example: 1
-            description: Page number of paginated results.
+            description: Page number of paginated results, starting at 1.
           required: false
-          description: Page number of paginated results.
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
-            type: string
-            default: "20"
+            type: integer
+            minimum: 1
+            default: 20
             example: 20
-            description: Number of items per page.
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
-          description: Number of items per page.
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
         - schema:
@@ -27981,7 +28292,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -27996,7 +28309,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28281,7 +28596,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28296,7 +28613,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28510,7 +28829,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28525,7 +28846,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28847,7 +29170,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -28862,7 +29187,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -29122,7 +29449,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
@@ -29137,7 +29466,9 @@ paths:
                         message:
                           type: string
                         type:
-                          type: string
+                          type:
+                            - string
+                            - "null"
                       required:
                         - code
                         - message
