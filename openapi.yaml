@@ -4594,8 +4594,8 @@ components:
           description: Name of the maintenance window
         start_date:
           type: string
-          example: 09:00
-          description: Start time of the maintenance window (HH:MM format)
+          example: "2026-09-13T09:00:00.000Z"
+          description: Start date and time of the maintenance window, as a timestamp
         duration_minutes:
           type: number
           example: 60
@@ -5409,9 +5409,25 @@ paths:
           in: path
       responses:
         "200":
-          description: Heartbeat received successfully
+          description: 'Accepted for asynchronous processing, with an empty body. Does not guarantee the ping was recorded: missing, paused, early pings and processing failures can still return 200. Request body and query are ignored.'
+        "404":
+          description: Invalid heartbeat ID
+          content:
+            text/plain:
+              schema:
+                type: string
+        "429":
+          description: Too many requests for this heartbeat ID. Retry later.
+          content:
+            text/plain:
+              schema:
+                type: string
         "500":
           description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
     post:
       tags:
         - Heartbeats
@@ -5434,9 +5450,25 @@ paths:
           in: path
       responses:
         "200":
-          description: Heartbeat received successfully
+          description: 'Accepted for asynchronous processing, with an empty body. Does not guarantee the ping was recorded: missing, paused, early pings and processing failures can still return 200. Request body and query are ignored.'
+        "404":
+          description: Invalid heartbeat ID
+          content:
+            text/plain:
+              schema:
+                type: string
+        "429":
+          description: Too many requests for this heartbeat ID. Retry later.
+          content:
+            text/plain:
+              schema:
+                type: string
         "500":
           description: Internal Server Error
+          content:
+            text/plain:
+              schema:
+                type: string
   /v1/audit_logs:
     get:
       tags:
@@ -10319,8 +10351,8 @@ paths:
                   description: Name of the maintenance window
                 start_date:
                   type: string
-                  example: 09:00
-                  description: Start time of the maintenance window (HH:MM format)
+                  example: "2026-09-13T09:00:00.000Z"
+                  description: Start date and time of the maintenance window, as a timestamp
                 duration_minutes:
                   type: integer
                   exclusiveMinimum: 0
@@ -10376,7 +10408,7 @@ paths:
                 summary: Weekly maintenance window
                 value:
                   name: Weekly Server Maintenance
-                  start_date: 03:00
+                  start_date: "2026-09-13T03:00:00.000Z"
                   duration_minutes: 60
                   timezone: America/New_York
                   days_of_week:
@@ -10385,7 +10417,7 @@ paths:
                 summary: With checks and heartbeats
                 value:
                   name: Database Maintenance
-                  start_date: 02:00
+                  start_date: "2026-09-13T02:00:00.000Z"
                   duration_minutes: 120
                   timezone: UTC
                   days_of_week:
@@ -10627,8 +10659,8 @@ paths:
                   description: Name of the maintenance window
                 start_date:
                   type: string
-                  example: 09:00
-                  description: Start time of the maintenance window (HH:MM format)
+                  example: "2026-09-13T09:00:00.000Z"
+                  description: Start date and time of the maintenance window, as a timestamp
                 duration_minutes:
                   type: integer
                   exclusiveMinimum: 0
@@ -10690,7 +10722,7 @@ paths:
               updateSchedule:
                 summary: Update schedule
                 value:
-                  start_date: 04:00
+                  start_date: "2026-09-13T04:00:00.000Z"
                   duration_minutes: 90
                   days_of_week:
                     - SATURDAY
