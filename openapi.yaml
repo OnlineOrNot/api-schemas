@@ -1624,9 +1624,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -1761,9 +1761,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -1991,9 +1991,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -2128,9 +2128,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -2303,9 +2303,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -2511,9 +2511,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -2749,9 +2749,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -2974,9 +2974,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -4060,9 +4060,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -4284,9 +4284,9 @@ components:
           enum:
             - LOW
             - HIGH
-          default: LOW
+          default: HIGH
           example: LOW
-          description: Alert Priority
+          description: Alert priority. Omitted creation defaults to HIGH; omission on PATCH preserves the current priority.
         confirmation_period_seconds:
           type: integer
           minimum: 0
@@ -9501,7 +9501,7 @@ paths:
       tags:
         - Heartbeats
       description: |-
-        Create a heartbeat
+        Create a heartbeat.
 
         Requires HEARTBEAT_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       summary: Create a new heartbeat monitor for cron jobs or scheduled tasks
@@ -9799,6 +9799,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Heartbeat not found or unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -9809,7 +9815,7 @@ paths:
       tags:
         - Heartbeats
       description: |-
-        Modify a heartbeat
+        Update a heartbeat.
 
         Requires HEARTBEAT_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       summary: Modify the configuration of an existing heartbeat monitor
