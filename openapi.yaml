@@ -43,7 +43,7 @@ tags:
   - name: Status Page Scheduled Maintenance
     description: Schedule and manage planned maintenance windows on status pages
   - name: Status Page Subscribers
-    description: Manage email and webhook subscribers for status page notifications
+    description: Manage email subscribers for status page notifications
   - name: Maintenance Windows
     description: Configure maintenance windows to suppress alerts during planned downtime
   - name: People
@@ -4902,6 +4902,7 @@ components:
           type:
             - number
             - "null"
+          description: Zero-based sort order, or null when unordered.
         is_external_component:
           type: boolean
           example: false
@@ -4915,7 +4916,6 @@ components:
         - created_at
         - updated_at
         - group_id
-        - sort_order
     StatusPageIncident:
       type: object
       properties:
@@ -4979,6 +4979,10 @@ components:
         - $ref: '#/components/schemas/StatusPageIncident'
         - type: object
           properties:
+            title:
+              type: string
+              minLength: 1
+              maxLength: 256
             start_date:
               type: string
               example: "2021-01-01T00:00:00.000Z"
@@ -11654,6 +11658,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -11929,6 +11939,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -12924,6 +12940,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -13092,6 +13114,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -13208,6 +13236,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -13337,6 +13371,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -13772,6 +13812,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -13903,6 +13949,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -14019,6 +14071,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -14148,6 +14206,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -14286,6 +14350,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -14446,6 +14516,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Unauthorized - status page not in user's organisation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -15192,6 +15268,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -15333,6 +15415,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -15449,6 +15537,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
@@ -16414,6 +16508,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource not found, unavailable, or rejected by the domain operation
           content:
             application/json:
               schema:
