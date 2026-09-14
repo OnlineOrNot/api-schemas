@@ -5349,8 +5349,8 @@ paths:
     get:
       tags:
         - Heartbeats
-      summary: 'Send a heartbeat ping (GET). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
-      description: Send a heartbeat (GET)
+      description: 'Send a heartbeat ping (GET). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
+      summary: Send a heartbeat (GET)
       operationId: pingHeartbeatGet
       servers:
         - url: https://oonchk.com
@@ -5390,8 +5390,8 @@ paths:
     post:
       tags:
         - Heartbeats
-      summary: 'Send a heartbeat ping (POST). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
-      description: Send a heartbeat (POST)
+      description: 'Send a heartbeat ping (POST). Use this from scripts or cron jobs to signal completion. Note: This endpoint uses oonchk.com, not api.onlineornot.com.'
+      summary: Send a heartbeat (POST)
       operationId: pingHeartbeat
       servers:
         - url: https://oonchk.com
@@ -5432,11 +5432,11 @@ paths:
     get:
       tags:
         - Audit Logs
+      summary: List audit log events
       description: |-
-        List audit log events
+        Retrieve a paginated list of audit log events for your organisation
 
         Requires PEOPLE:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of audit log events for your organisation
       operationId: listAuditLogs
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -5678,12 +5678,13 @@ paths:
       tags:
         - Tokens
       operationId: verifyToken
-      description: 'Verify an API token or OAuth access token. No session-cookie authentication or organization selection. Invalid nonempty tokens return HTTP 200 with success: false; a missing Authorization header returns 401.'
+      summary: Verify a token
+      description: 'Check whether an API token or OAuth access token is valid. Send the token in the `Authorization` header as `Bearer <token>`. Session cookies are not accepted, and no organization needs to be selected. Check success in the response body: invalid tokens return HTTP 200 with success: false. A missing Authorization header returns HTTP 401.'
       security:
         - api_token: []
       responses:
         "200":
-          description: 'Verification result. OAuth success omits result.id; invalid tokens have success: false.. May also return a canonical failure envelope with success: false at HTTP200.'
+          description: 'Verification result. Valid API tokens include result.id; valid OAuth tokens omit it. May also return a canonical failure envelope with success: false at HTTP200.'
           content:
             application/json:
               schema:
@@ -5804,7 +5805,8 @@ paths:
       tags:
         - Tokens
       operationId: getTokenPermissions
-      description: 'Retrieve API-token grants. Does not inspect OAuth scopes, check token expiration, select an organization, or use session cookies. No matching grants returns HTTP 200 with success: false.'
+      summary: Get token permissions
+      description: 'List the permissions granted to an API token. Send the token in the `Authorization` header as `Bearer <token>`. This endpoint does not support OAuth scopes or session cookies, check token expiration, or require organization selection. If no grants match, it returns HTTP 200 with success: false.'
       security:
         - api_token: []
       responses:
@@ -5927,11 +5929,11 @@ paths:
     get:
       tags:
         - Tokens
+      summary: List all API tokens
       description: |-
-        List all API tokens
+        Retrieve a paginated list of all API tokens for the organization
 
         Requires API_TOKENS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all API tokens for the organization
       operationId: listTokens
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6125,11 +6127,11 @@ paths:
     post:
       tags:
         - Tokens
+      summary: Create an API token
       description: |-
-        Create an API token
+        Create a new API token for the organization
 
         Requires API_TOKENS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new API token for the organization
       operationId: createToken
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6317,11 +6319,11 @@ paths:
     get:
       tags:
         - Tokens
+      summary: Retrieve an API token
       description: |-
-        Retrieve an API token
+        Look up detailed information about a specific API token
 
         Requires API_TOKENS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific API token
       operationId: getToken
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6477,11 +6479,11 @@ paths:
     delete:
       tags:
         - Tokens
+      summary: Delete an API token
       description: |-
-        Delete an API token
+        Permanently delete an API token
 
         Requires API_TOKENS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete an API token
       operationId: deleteToken
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6593,11 +6595,11 @@ paths:
     post:
       tags:
         - DNS Checks
+      summary: Create a DNS check
       description: |-
-        Create a DNS check
+        Create a new DNS check to monitor DNS records
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new DNS check to monitor DNS records
       operationId: createDnsCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6665,11 +6667,11 @@ paths:
     get:
       tags:
         - DNS Checks
+      summary: Retrieve a DNS check
       description: |-
-        Retrieve a DNS check
+        Look up detailed information about a specific DNS check
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific DNS check
       operationId: getDnsCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6811,11 +6813,11 @@ paths:
     patch:
       tags:
         - DNS Checks
+      summary: Modify a DNS check
       description: |-
-        Modify a DNS check
+        Modify the configuration of an existing DNS check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing DNS check
       operationId: updateDnsCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6889,11 +6891,11 @@ paths:
     delete:
       tags:
         - DNS Checks
+      summary: Delete a DNS check
       description: |-
-        Delete a DNS check
+        Permanently delete a DNS check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete a DNS check
       operationId: deleteDnsCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -6954,11 +6956,11 @@ paths:
     post:
       tags:
         - TCP Checks
+      summary: Create a TCP check
       description: |-
-        Create a TCP check
+        Create a new TCP check to monitor TCP connectivity
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new TCP check to monitor TCP connectivity
       operationId: createTcpCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7030,11 +7032,11 @@ paths:
     get:
       tags:
         - TCP Checks
+      summary: Retrieve a TCP check
       description: |-
-        Retrieve a TCP check
+        Look up detailed information about a specific TCP check
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific TCP check
       operationId: getTcpCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7176,11 +7178,11 @@ paths:
     patch:
       tags:
         - TCP Checks
+      summary: Modify a TCP check
       description: |-
-        Modify a TCP check
+        Modify the configuration of an existing TCP check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing TCP check
       operationId: updateTcpCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7253,11 +7255,11 @@ paths:
     delete:
       tags:
         - TCP Checks
+      summary: Delete a TCP check
       description: |-
-        Delete a TCP check
+        Permanently delete a TCP check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete a TCP check
       operationId: deleteTcpCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7318,11 +7320,11 @@ paths:
     post:
       tags:
         - Uptime Checks
+      summary: Create an uptime check
       description: |-
-        Create an uptime check
+        Create a new HTTP uptime check to monitor a URL
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new HTTP uptime check to monitor a URL
       operationId: createUptimeCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7381,11 +7383,11 @@ paths:
     get:
       tags:
         - Uptime Checks
+      summary: Retrieve an uptime check
       description: |-
-        Retrieve an uptime check
+        Look up detailed information about a specific uptime check
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific uptime check
       operationId: getUptimeCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7445,11 +7447,11 @@ paths:
     patch:
       tags:
         - Uptime Checks
+      summary: Modify an uptime check
       description: |-
-        Modify an uptime check
+        Modify the configuration of an existing uptime check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing uptime check
       operationId: updateUptimeCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7515,11 +7517,11 @@ paths:
     delete:
       tags:
         - Uptime Checks
+      summary: Delete an uptime check
       description: |-
-        Delete an uptime check
+        Permanently delete an uptime check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete an uptime check
       operationId: deleteUptimeCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7580,11 +7582,11 @@ paths:
     post:
       tags:
         - Browser Checks
+      summary: Create a browser check
       description: |-
-        Create a browser check
+        Create a new browser check using Playwright
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new browser check using Playwright
       operationId: createBrowserCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7643,11 +7645,11 @@ paths:
     get:
       tags:
         - Browser Checks
+      summary: Retrieve a browser check
       description: |-
-        Retrieve a browser check
+        Look up detailed information about a specific browser check
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific browser check
       operationId: getBrowserCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7707,11 +7709,11 @@ paths:
     patch:
       tags:
         - Browser Checks
+      summary: Modify a browser check
       description: |-
-        Modify a browser check
+        Modify the configuration of an existing browser check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing browser check
       operationId: updateBrowserCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -7777,11 +7779,11 @@ paths:
     delete:
       tags:
         - Browser Checks
+      summary: Delete a browser check
       description: |-
-        Delete a browser check
+        Permanently delete a browser check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete a browser check
       operationId: deleteBrowserCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -8706,11 +8708,11 @@ paths:
     get:
       tags:
         - Checks
+      summary: List all checks
       description: |-
-        List all checks
+        Retrieve a paginated list of all uptime checks
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all uptime checks
       operationId: listChecks
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -8909,11 +8911,11 @@ paths:
     post:
       tags:
         - Checks
+      summary: Create a check
       description: |-
-        Create a check
+        Create a new uptime check to monitor a URL
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new uptime check to monitor a URL
       operationId: createCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -8981,11 +8983,11 @@ paths:
     get:
       tags:
         - Checks
+      summary: Retrieve a check
       description: |-
-        Retrieve a check
+        Look up detailed information about a specific uptime check
 
         Requires UPTIME_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific uptime check
       operationId: getCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9127,11 +9129,11 @@ paths:
     delete:
       tags:
         - Checks
+      summary: Delete a check
       description: |-
-        Delete a check
+        Permanently delete an uptime check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete an uptime check
       operationId: deleteCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9191,11 +9193,11 @@ paths:
     patch:
       tags:
         - Checks
+      summary: Modify a check
       description: |-
-        Modify a check
+        Modify the configuration of an existing uptime check
 
         Requires UPTIME_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing uptime check
       operationId: updateCheck
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9269,11 +9271,11 @@ paths:
     get:
       tags:
         - Heartbeats
+      summary: List all heartbeats
       description: |-
-        List all heartbeats
+        Retrieve a paginated list of all heartbeat monitors
 
         Requires HEARTBEAT_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all heartbeat monitors
       operationId: listHeartbeats
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9455,11 +9457,11 @@ paths:
     post:
       tags:
         - Heartbeats
+      summary: Create a heartbeat.
       description: |-
-        Create a heartbeat.
+        Create a new heartbeat monitor for cron jobs or scheduled tasks
 
         Requires HEARTBEAT_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new heartbeat monitor for cron jobs or scheduled tasks
       operationId: createHeartbeat
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9657,11 +9659,11 @@ paths:
     get:
       tags:
         - Heartbeats
+      summary: Retrieve a heartbeat
       description: |-
-        Retrieve a heartbeat
+        Look up detailed information about a specific heartbeat monitor
 
         Requires HEARTBEAT_CHECKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific heartbeat monitor
       operationId: getHeartbeat
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9768,11 +9770,11 @@ paths:
     patch:
       tags:
         - Heartbeats
+      summary: Update a heartbeat.
       description: |-
-        Update a heartbeat.
+        Modify the configuration of an existing heartbeat monitor
 
         Requires HEARTBEAT_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Modify the configuration of an existing heartbeat monitor
       operationId: updateHeartbeat
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -9986,11 +9988,11 @@ paths:
     delete:
       tags:
         - Heartbeats
+      summary: Delete a heartbeat
       description: |-
-        Delete a heartbeat
+        Permanently delete a heartbeat monitor
 
         Requires HEARTBEAT_CHECKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete a heartbeat monitor
       operationId: deleteHeartbeat
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10099,11 +10101,11 @@ paths:
     get:
       tags:
         - Maintenance Windows
+      summary: List all maintenance windows
       description: |-
-        List all maintenance windows
+        Retrieve a paginated list of all maintenance windows
 
         Requires MAINTENANCE_WINDOWS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all maintenance windows
       operationId: listMaintenanceWindows
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10285,11 +10287,11 @@ paths:
     post:
       tags:
         - Maintenance Windows
-      summary: Create a new maintenance window with associated checks and heartbeats
       description: |-
-        Create a new maintenance window
+        Create a new maintenance window with associated checks and heartbeats
 
         Requires MAINTENANCE_WINDOWS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a new maintenance window
       operationId: createMaintenanceWindow
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10472,11 +10474,11 @@ paths:
     get:
       tags:
         - Maintenance Windows
+      summary: Get a maintenance window by ID
       description: |-
-        Get a maintenance window by ID
+        Retrieve a maintenance window with associated checks and heartbeats
 
         Requires MAINTENANCE_WINDOWS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a maintenance window with associated checks and heartbeats
       operationId: getMaintenanceWindow
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10583,11 +10585,11 @@ paths:
     patch:
       tags:
         - Maintenance Windows
-      summary: Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
       description: |-
-        Update a maintenance window
+        Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
 
         Requires MAINTENANCE_WINDOWS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update a maintenance window
       operationId: updateMaintenanceWindow
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10779,11 +10781,11 @@ paths:
     delete:
       tags:
         - Maintenance Windows
-      summary: Delete a maintenance window and all its associations with checks and heartbeats
       description: |-
-        Delete a maintenance window
+        Delete a maintenance window and all its associations with checks and heartbeats
 
         Requires MAINTENANCE_WINDOWS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a maintenance window
       operationId: deleteMaintenanceWindow
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10898,11 +10900,11 @@ paths:
     get:
       tags:
         - People
+      summary: List all users
       description: |-
-        List all users
+        Retrieve a paginated list of all users in your organisation
 
         Requires PEOPLE:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all users in your organisation
       operationId: listUsers
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -11085,11 +11087,11 @@ paths:
     delete:
       tags:
         - People
+      summary: Remove a user from the organisation
       description: |-
-        Remove a user from the organisation
+        Remove a team member from your organisation
 
         Requires PEOPLE:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Remove a team member from your organisation
       operationId: removeUser
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -11203,11 +11205,11 @@ paths:
     get:
       tags:
         - People
+      summary: List all invitations
       description: |-
-        List all invitations
+        Retrieve a paginated list of all pending invitations in your organisation
 
         Requires PEOPLE:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all pending invitations in your organisation
       operationId: listInvitations
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -11389,11 +11391,11 @@ paths:
     post:
       tags:
         - People
+      summary: Create an invitation
       description: |-
-        Create an invitation
+        Send an invitation email to add a new team member to your organisation
 
         Requires PEOPLE:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Send an invitation email to add a new team member to your organisation
       operationId: createInvitation
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -11520,10 +11522,8 @@ paths:
       tags:
         - Status Pages
       operationId: getStatusPage
-      description: |-
-        Retrieve a status page
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve a status page
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -11630,10 +11630,8 @@ paths:
       tags:
         - Status Pages
       operationId: updateStatusPage
-      description: |-
-        Update a status page
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update a status page
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -11796,10 +11794,8 @@ paths:
       tags:
         - Status Pages
       operationId: deleteStatusPage
-      description: |-
-        Delete a status page
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a status page
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -11914,7 +11910,7 @@ paths:
       tags:
         - Status Pages
       operationId: getStatusPageSummary
-      description: Get a status page's overview.
+      summary: Get a status page's overview.
       security: []
       parameters:
         - schema:
@@ -12039,10 +12035,8 @@ paths:
       tags:
         - Status Pages
       operationId: createStatusPage
-      description: |-
-        Create a status page
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a status page
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -12179,10 +12173,8 @@ paths:
       tags:
         - Status Pages
       operationId: listStatusPages
-      description: |-
-        List all status pages
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all status pages
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -12453,10 +12445,8 @@ paths:
       tags:
         - Status Page Components
       operationId: createStatusPageComponent
-      description: |-
-        Create a component
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a component
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -12593,10 +12583,8 @@ paths:
       tags:
         - Status Page Components
       operationId: listStatusPageComponents
-      description: |-
-        List all components
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all components
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -12788,10 +12776,8 @@ paths:
       tags:
         - Status Page Components
       operationId: getStatusPageComponent
-      description: |-
-        Retrieve a component
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve a component
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -12907,10 +12893,8 @@ paths:
       tags:
         - Status Page Components
       operationId: updateStatusPageComponent
-      description: |-
-        Update a component
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update a component
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13081,10 +13065,8 @@ paths:
       tags:
         - Status Page Components
       operationId: deleteStatusPageComponent
-      description: |-
-        Delete a component
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a component
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13208,10 +13190,8 @@ paths:
       tags:
         - Status Page Components
       operationId: updateStatusPageComponentSortOrder
-      description: |-
-        Update the sort order of ungrouped components
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update the sort order of ungrouped components
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13343,10 +13323,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: listStatusPageComponentGroups
-      description: |-
-        List all component groups
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all component groups
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13537,10 +13515,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: createStatusPageComponentGroup
-      description: |-
-        Create a component group
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a component group
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13660,10 +13636,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: getStatusPageComponentGroup
-      description: |-
-        Retrieve a component group
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve a component group
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13779,10 +13753,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: updateStatusPageComponentGroup
-      description: |-
-        Update a component group
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update a component group
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -13916,10 +13888,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: deleteStatusPageComponentGroup
-      description: |-
-        Delete a component group
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a component group
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14043,10 +14013,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: updateStatusPageComponentGroupSortOrder
-      description: |-
-        Update the sort order of component groups
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update the sort order of component groups
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14178,10 +14146,8 @@ paths:
       tags:
         - Status Page Component Groups
       operationId: updateStatusPageGroupComponentSortOrder
-      description: |-
-        Update the sort order of components within a group
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update the sort order of components within a group
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14322,10 +14288,8 @@ paths:
       tags:
         - Status Page Subscribers
       operationId: listStatusPageSubscribers
-      description: |-
-        List all subscribers
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all subscribers
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14487,10 +14451,8 @@ paths:
       tags:
         - Status Page Subscribers
       operationId: createStatusPageSubscriber
-      description: |-
-        Create a subscriber
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a subscriber
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14630,10 +14592,8 @@ paths:
       tags:
         - Status Page Subscribers
       operationId: deleteStatusPageSubscriber
-      description: |-
-        Delete a subscriber
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a subscriber
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14757,10 +14717,8 @@ paths:
       tags:
         - Status Page Incidents
       operationId: listStatusPageIncidents
-      description: |-
-        List all incidents
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all incidents
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -14951,10 +14909,8 @@ paths:
       tags:
         - Status Page Incidents
       operationId: createStatusPageIncident
-      description: |-
-        Create an incident
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create an incident
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15116,10 +15072,8 @@ paths:
       tags:
         - Status Page Incidents
       operationId: getStatusPageIncident
-      description: |-
-        Retrieve an incident
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve an incident
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15235,10 +15189,8 @@ paths:
       tags:
         - Status Page Incidents
       operationId: updateStatusPageIncident
-      description: |-
-        Update an incident
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update an incident
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15382,10 +15334,8 @@ paths:
       tags:
         - Status Page Incidents
       operationId: deleteStatusPageIncident
-      description: |-
-        Delete an incident
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete an incident
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15509,10 +15459,8 @@ paths:
       tags:
         - Status Page Incident Updates
       operationId: listStatusPageIncidentUpdates
-      description: |-
-        List all updates for an incident
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: List all updates for an incident
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15712,10 +15660,8 @@ paths:
       tags:
         - Status Page Incident Updates
       operationId: createStatusPageIncidentUpdate
-      description: |-
-        Create a new update for an incident
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Create a new update for an incident
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -15888,10 +15834,8 @@ paths:
       tags:
         - Status Page Incident Updates
       operationId: getStatusPageIncidentUpdate
-      description: |-
-        Retrieve a single incident update
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve a single incident update
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16016,10 +15960,8 @@ paths:
       tags:
         - Status Page Incident Updates
       operationId: updateStatusPageIncidentUpdate
-      description: |-
-        Update an existing incident update
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update an existing incident update
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16174,10 +16116,8 @@ paths:
       tags:
         - Status Page Incident Updates
       operationId: deleteStatusPageIncidentUpdate
-      description: |-
-        Delete an incident update
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete an incident update
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16310,10 +16250,8 @@ paths:
       tags:
         - Status Page Scheduled Maintenance
       operationId: createStatusPageScheduledMaintenance
-      description: |-
-        Schedule maintenance for a status page
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Schedule maintenance for a status page
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16480,10 +16418,8 @@ paths:
       tags:
         - Status Page Scheduled Maintenance
       operationId: getStatusPageScheduledMaintenance
-      description: |-
-        Retrieve a scheduled maintenance
-
-        Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Retrieve a scheduled maintenance
+      description: Requires STATUS_PAGES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16599,10 +16535,8 @@ paths:
       tags:
         - Status Page Scheduled Maintenance
       operationId: updateStatusPageScheduledMaintenance
-      description: |-
-        Update a scheduled maintenance (only before it has started)
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Update a scheduled maintenance (only before it has started)
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16740,10 +16674,8 @@ paths:
       tags:
         - Status Page Scheduled Maintenance
       operationId: deleteStatusPageScheduledMaintenance
-      description: |-
-        Delete a scheduled maintenance
-
-        Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      summary: Delete a scheduled maintenance
+      description: Requires STATUS_PAGES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -16866,11 +16798,11 @@ paths:
     get:
       tags:
         - Webhooks
+      summary: List all webhooks
       description: |-
-        List all webhooks
+        Retrieve a paginated list of all webhooks for your organization
 
         Requires WEBHOOKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Retrieve a paginated list of all webhooks for your organization
       operationId: listWebhooks
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -17052,11 +16984,11 @@ paths:
     post:
       tags:
         - Webhooks
+      summary: Create a webhook
       description: |-
-        Create a webhook
+        Create a new webhook to receive event notifications
 
         Requires WEBHOOKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Create a new webhook to receive event notifications
       operationId: createWebhook
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -17241,11 +17173,11 @@ paths:
     get:
       tags:
         - Webhooks
+      summary: Retrieve a webhook
       description: |-
-        Retrieve a webhook
+        Look up detailed information about a specific webhook
 
         Requires WEBHOOKS:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Look up detailed information about a specific webhook
       operationId: getWebhook
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -17352,11 +17284,11 @@ paths:
     patch:
       tags:
         - Webhooks
+      summary: Modify a webhook
       description: |-
-        Modify a webhook
+        Update the configuration of an existing webhook
 
         Requires WEBHOOKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Update the configuration of an existing webhook
       operationId: updateWebhook
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -17532,11 +17464,11 @@ paths:
     delete:
       tags:
         - Webhooks
+      summary: Delete a webhook
       description: |-
-        Delete a webhook
+        Permanently delete a webhook
 
         Requires WEBHOOKS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
-      summary: Permanently delete a webhook
       operationId: deleteWebhook
       parameters:
         - name: X-OnlineOrNot-Organisation
