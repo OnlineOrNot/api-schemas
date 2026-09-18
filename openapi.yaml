@@ -566,17 +566,6 @@ components:
             - "null"
           example: 10000
           description: Timeout in milliseconds
-        version:
-          type:
-            - string
-            - "null"
-          enum:
-            - NODE20_PLAYWRIGHT
-            - NODE24_PLAYWRIGHT
-            - CLOUDFLARE
-            - null
-          example: NODE24_PLAYWRIGHT
-          description: Runtime version for browser checks (null for standard uptime checks)
         script:
           type:
             - string
@@ -722,6 +711,14 @@ components:
           items:
             type: string
           description: Webhook IDs to notify
+        version:
+          type: string
+          enum:
+            - NODE20_PLAYWRIGHT
+            - NODE24_PLAYWRIGHT
+            - CLOUDFLARE
+          example: NODE24_PLAYWRIGHT
+          description: Runtime version for browser checks.
         check_type:
           type: string
           enum:
@@ -740,7 +737,6 @@ components:
         - recovery_period_seconds
         - test_interval
         - timeout
-        - version
         - script
         - alert_priority
         - verify_ssl
@@ -760,6 +756,7 @@ components:
         - pushover_alerts
         - oncall_alerts
         - webhook_alerts
+        - version
         - check_type
     ExpandedDnsCheck:
       type: object
@@ -4425,9 +4422,7 @@ components:
           type: string
           example: Daily backup job
         status:
-          type:
-            - string
-            - "null"
+          type: string
           enum:
             - UP
             - DOWN
@@ -4435,7 +4430,6 @@ components:
             - PAUSED
             - MAINTENANCE
             - MUTED
-            - null
           example: UP
           description: Current status of the heartbeat
         last_seen:
@@ -4480,15 +4474,11 @@ components:
           example: LOW
           description: '[Alert priority](https://onlineornot.com/docs/how-to/alerts/configure-priority).'
         created_at:
-          type:
-            - string
-            - "null"
+          type: string
           example: "2021-01-01T00:00:00.000Z"
           description: When the heartbeat was created
         updated_at:
-          type:
-            - string
-            - "null"
+          type: string
           example: "2021-01-01T00:00:00.000Z"
           description: When the heartbeat was last updated
       required:
@@ -4770,9 +4760,7 @@ components:
           example: Real-time status updates for My Example SaaS
           description: A description of the status page
         hide_from_search_engines:
-          type:
-            - boolean
-            - "null"
+          type: boolean
           example: false
           description: Whether the status page is hidden from search engines
         has_password:
@@ -4831,15 +4819,11 @@ components:
           example: a1b2c3d4
           description: Status Page Component ID
         name:
-          type:
-            - string
-            - "null"
+          type: string
           example: Website
           description: a name for the component
         status:
-          type:
-            - string
-            - "null"
+          type: string
           enum:
             - OPERATIONAL
             - MAJOR_OUTAGE
@@ -4847,20 +4831,15 @@ components:
             - DEGRADED_PERFORMANCE
             - MAINTENANCE
             - NO_IMPACT
-            - null
           example: MAJOR_OUTAGE
           description: Status of the component
         display_uptime:
-          type:
-            - boolean
-            - "null"
+          type: boolean
           default: true
           example: true
           description: Show this component's uptime and historical incidents on the status page.
         display_metrics:
-          type:
-            - boolean
-            - "null"
+          type: boolean
           default: true
           example: true
           description: Show this component's response time metrics on the status page.
@@ -4904,24 +4883,19 @@ components:
           example: a1b2c3d4
           description: Status Page Incident ID
         title:
-          type:
-            - string
-            - "null"
+          type: string
           minLength: 1
           maxLength: 256
           example: API is inaccessible
           description: a title for the incident
         impact:
-          type:
-            - string
-            - "null"
+          type: string
           enum:
             - MAJOR_OUTAGE
             - PARTIAL_OUTAGE
             - DEGRADED_PERFORMANCE
             - NO_IMPACT
             - MAINTENANCE
-            - null
           example: MAJOR_OUTAGE
           description: Impact of the incident
         started:
@@ -4937,15 +4911,11 @@ components:
           example: "2021-02-01T00:00:00.000Z"
           description: When the incident was resolved
         created_at:
-          type:
-            - string
-            - "null"
+          type: string
           example: "2021-01-01T00:00:00.000Z"
           description: When the incident was created
         updated_at:
-          type:
-            - string
-            - "null"
+          type: string
           example: "2021-02-01T00:00:00.000Z"
           description: When the incident was last updated
       required:
@@ -4960,10 +4930,6 @@ components:
         - $ref: '#/components/schemas/StatusPageIncident'
         - type: object
           properties:
-            title:
-              type: string
-              minLength: 1
-              maxLength: 256
             start_date:
               type: string
               example: "2021-01-01T00:00:00.000Z"
@@ -5140,9 +5106,7 @@ components:
                   example: "2021-01-01T00:00:00.000Z"
                   description: When the maintenance starts
                 duration_minutes:
-                  type:
-                    - number
-                    - "null"
+                  type: number
                   example: 60
                   description: Duration in minutes
                 notify_subscribers_at_start:
@@ -11755,9 +11719,7 @@ paths:
                             example: Real-time status updates for My Example SaaS
                             description: A description of the status page
                           hide_from_search_engines:
-                            type:
-                              - boolean
-                              - "null"
+                            type: boolean
                             example: false
                             description: Whether the status page is hidden from search engines
                         required:
@@ -12323,9 +12285,7 @@ paths:
                               example: Real-time status updates for My Example SaaS
                               description: A description of the status page
                             hide_from_search_engines:
-                              type:
-                                - boolean
-                                - "null"
+                              type: boolean
                               example: false
                               description: Whether the status page is hidden from search engines
                             has_password:
@@ -15282,16 +15242,13 @@ paths:
                   example: API is inaccessible
                   description: a title for the incident
                 impact:
-                  type:
-                    - string
-                    - "null"
+                  type: string
                   enum:
                     - MAJOR_OUTAGE
                     - PARTIAL_OUTAGE
                     - DEGRADED_PERFORMANCE
                     - NO_IMPACT
                     - MAINTENANCE
-                    - null
                   example: MAJOR_OUTAGE
                   description: Impact of the incident
               required:
