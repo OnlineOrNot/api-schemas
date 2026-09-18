@@ -165,6 +165,68 @@ components:
         - result
         - errors
         - messages
+    AnyCheckResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/AnyCheck'
+        success:
+          type: boolean
+          default: true
+          example: true
+          description: Whether the API call was successful
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+      required:
+        - result
+        - success
+        - errors
+        - messages
+    AnyCheck:
+      oneOf:
+        - $ref: '#/components/schemas/ExpandedUptimeCheck'
+        - $ref: '#/components/schemas/ExpandedBrowserCheck'
+        - $ref: '#/components/schemas/ExpandedDnsCheck'
+        - $ref: '#/components/schemas/ExpandedTcpCheck'
+      discriminator:
+        propertyName: check_type
+        mapping:
+          UPTIME: '#/components/schemas/ExpandedUptimeCheck'
+          BROWSER: '#/components/schemas/ExpandedBrowserCheck'
+          DNS: '#/components/schemas/ExpandedDnsCheck'
+          TCP: '#/components/schemas/ExpandedTcpCheck'
     ExpandedUptimeCheck:
       type: object
       properties:
@@ -243,6 +305,7 @@ components:
             - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
             - CLOUDFLARE
+            - null
           example: NODE24_PLAYWRIGHT
           description: Runtime version for browser checks (null for standard uptime checks)
         script:
@@ -511,6 +574,7 @@ components:
             - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
             - CLOUDFLARE
+            - null
           example: NODE24_PLAYWRIGHT
           description: Runtime version for browser checks (null for standard uptime checks)
         script:
@@ -697,47 +761,6 @@ components:
         - oncall_alerts
         - webhook_alerts
         - check_type
-    DnsAssertion:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - DNS_RESPONSE_CODE
-            - DNS_TEXT_ANSWER
-            - DNS_JSON_ANSWER
-          example: DNS_JSON_ANSWER
-          description: Type of DNS assertion
-        property:
-          type: string
-          example: $.answers[0].data
-          description: Property to assert on. Use JSONPath for DNS_JSON_ANSWER, status for DNS_RESPONSE_CODE, and an empty string for DNS_TEXT_ANSWER.
-        comparison:
-          type: string
-          enum:
-            - EQUALS
-            - NOT_EQUALS
-            - GREATER_THAN
-            - LESS_THAN
-            - "NULL"
-            - NOT_NULL
-            - EMPTY
-            - NOT_EMPTY
-            - CONTAINS
-            - NOT_CONTAINS
-            - "FALSE"
-            - "TRUE"
-          example: EQUALS
-          description: Comparison operator
-        expected:
-          type: string
-          example: 93.184.216.34
-          description: Expected value
-      required:
-        - type
-        - property
-        - comparison
-        - expected
     ExpandedDnsCheck:
       type: object
       properties:
@@ -926,20 +949,21 @@ components:
         - dns_resolver
         - dns_protocol
         - assertions
-    TcpAssertion:
+    DnsAssertion:
       type: object
       properties:
         type:
           type: string
           enum:
-            - TCP_RESPONSE_TIME
-            - TCP_RESPONSE_DATA
-          example: TCP_RESPONSE_DATA
-          description: Type of TCP assertion
+            - DNS_RESPONSE_CODE
+            - DNS_TEXT_ANSWER
+            - DNS_JSON_ANSWER
+          example: DNS_JSON_ANSWER
+          description: Type of DNS assertion
         property:
           type: string
-          example: ""
-          description: Property to assert on. Use an empty string for raw TCP response data and responseTime for response time assertions.
+          example: $.answers[0].data
+          description: Property to assert on. Use JSONPath for DNS_JSON_ANSWER, status for DNS_RESPONSE_CODE, and an empty string for DNS_TEXT_ANSWER.
         comparison:
           type: string
           enum:
@@ -959,7 +983,7 @@ components:
           description: Comparison operator
         expected:
           type: string
-          example: OK
+          example: 93.184.216.34
           description: Expected value
       required:
         - type
@@ -1152,177 +1176,46 @@ components:
         - tcp_data
         - tcp_should_fail
         - assertions
-    AnyCheck:
-      oneOf:
-        - $ref: '#/components/schemas/ExpandedUptimeCheck'
-        - $ref: '#/components/schemas/ExpandedBrowserCheck'
-        - $ref: '#/components/schemas/ExpandedDnsCheck'
-        - $ref: '#/components/schemas/ExpandedTcpCheck'
-      discriminator:
-        propertyName: check_type
-        mapping:
-          UPTIME: '#/components/schemas/ExpandedUptimeCheck'
-          BROWSER: '#/components/schemas/ExpandedBrowserCheck'
-          DNS: '#/components/schemas/ExpandedDnsCheck'
-          TCP: '#/components/schemas/ExpandedTcpCheck'
-    AnyCheckResponse:
+    TcpAssertion:
       type: object
       properties:
-        result:
-          $ref: '#/components/schemas/AnyCheck'
-        success:
-          type: boolean
-          default: true
-          example: true
-          description: Whether the API call was successful
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: number
-              message:
-                type: string
-              type:
-                type:
-                  - string
-                  - "null"
-            required:
-              - code
-              - message
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: number
-              message:
-                type: string
-              type:
-                type:
-                  - string
-                  - "null"
-            required:
-              - code
-              - message
-          example: []
+        type:
+          type: string
+          enum:
+            - TCP_RESPONSE_TIME
+            - TCP_RESPONSE_DATA
+          example: TCP_RESPONSE_DATA
+          description: Type of TCP assertion
+        property:
+          type: string
+          example: ""
+          description: Property to assert on. Use an empty string for raw TCP response data and responseTime for response time assertions.
+        comparison:
+          type: string
+          enum:
+            - EQUALS
+            - NOT_EQUALS
+            - GREATER_THAN
+            - LESS_THAN
+            - "NULL"
+            - NOT_NULL
+            - EMPTY
+            - NOT_EMPTY
+            - CONTAINS
+            - NOT_CONTAINS
+            - "FALSE"
+            - "TRUE"
+          example: EQUALS
+          description: Comparison operator
+        expected:
+          type: string
+          example: OK
+          description: Expected value
       required:
-        - result
-        - success
-        - errors
-        - messages
-    CheckListItem:
-      type: object
-      properties:
-        id:
-          type: string
-          example: a1b2c3d4
-          description: Uptime Check ID
-        name:
-          type: string
-          example: My landing page
-        url:
-          type:
-            - string
-            - "null"
-          format: uri
-          example: https://example.com
-          description: URL to check (null for DNS or script-based browser checks)
-        check_type:
-          type: string
-          enum:
-            - UPTIME
-            - BROWSER
-            - DNS
-            - TCP
-          example: UPTIME
-        last_queued:
-          type:
-            - string
-            - "null"
-          example: "2021-01-01T00:00:00.000Z"
-          description: Last time the check was queued
-        status:
-          type: string
-          enum:
-            - UP
-            - DOWN
-            - PENDING
-            - PAUSED
-            - MUTED
-            - MAINTENANCE
-            - RECOVERING
-            - VERIFYING
-          example: UP
-          description: Current status of the check based on the latest event
-        dns_domain:
-          type:
-            - string
-            - "null"
-          example: example.com
-          description: DNS name queried by this check. Present for DNS checks.
-        dns_record_type:
-          type:
-            - string
-            - "null"
-          enum:
-            - A
-            - AAAA
-            - CNAME
-            - MX
-            - NS
-            - SOA
-            - TXT
-          example: A
-          description: DNS record type queried by this check. Present for DNS checks.
-        dns_resolver:
-          type:
-            - string
-            - "null"
-          example: 8.8.8.8:53
-          description: Custom resolver used by this DNS check, or null for the default resolver.
-        dns_protocol:
-          type:
-            - string
-            - "null"
-          enum:
-            - UDP
-            - TCP
-          example: UDP
-          description: DNS transport protocol used by this check. Present for DNS checks.
-        tcp_hostname:
-          type:
-            - string
-            - "null"
-          example: tcpbin.com
-          description: TCP hostname connected to by this check. Present for TCP checks.
-        tcp_port:
-          type:
-            - integer
-            - "null"
-          minimum: 1
-          maximum: 65535
-          example: 4242
-          description: TCP port to connect to
-        tcp_ip_family:
-          type:
-            - string
-            - "null"
-          enum:
-            - IPv4
-            - IPv6
-          example: IPv4
-          description: IP family used by this check. Present for TCP checks.
-      required:
-        - id
-        - name
-        - url
-        - check_type
-        - last_queued
-        - status
+        - type
+        - property
+        - comparison
+        - expected
     CheckListResponse:
       type: object
       properties:
@@ -1399,6 +1292,118 @@ components:
         - success
         - errors
         - messages
+    CheckListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4
+          description: Uptime Check ID
+        name:
+          type: string
+          example: My landing page
+        url:
+          type:
+            - string
+            - "null"
+          format: uri
+          example: https://example.com
+          description: URL to check (null for DNS or script-based browser checks)
+        check_type:
+          type: string
+          enum:
+            - UPTIME
+            - BROWSER
+            - DNS
+            - TCP
+          example: UPTIME
+        last_queued:
+          type:
+            - string
+            - "null"
+          example: "2021-01-01T00:00:00.000Z"
+          description: Last time the check was queued
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - PENDING
+            - PAUSED
+            - MUTED
+            - MAINTENANCE
+            - RECOVERING
+            - VERIFYING
+          example: UP
+          description: Current status of the check based on the latest event
+        dns_domain:
+          type:
+            - string
+            - "null"
+          example: example.com
+          description: DNS name queried by this check. Present for DNS checks.
+        dns_record_type:
+          type:
+            - string
+            - "null"
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SOA
+            - TXT
+            - null
+          example: A
+          description: DNS record type queried by this check. Present for DNS checks.
+        dns_resolver:
+          type:
+            - string
+            - "null"
+          example: 8.8.8.8:53
+          description: Custom resolver used by this DNS check, or null for the default resolver.
+        dns_protocol:
+          type:
+            - string
+            - "null"
+          enum:
+            - UDP
+            - TCP
+            - null
+          example: UDP
+          description: DNS transport protocol used by this check. Present for DNS checks.
+        tcp_hostname:
+          type:
+            - string
+            - "null"
+          example: tcpbin.com
+          description: TCP hostname connected to by this check. Present for TCP checks.
+        tcp_port:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+          maximum: 65535
+          example: 4242
+          description: TCP port to connect to
+        tcp_ip_family:
+          type:
+            - string
+            - "null"
+          enum:
+            - IPv4
+            - IPv6
+            - null
+          example: IPv4
+          description: IP family used by this check. Present for TCP checks.
+      required:
+        - id
+        - name
+        - url
+        - check_type
+        - last_queued
+        - status
     PublicApiValidationError:
       type: object
       properties:
@@ -3095,49 +3100,6 @@ components:
             });
           description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
       additionalProperties: false
-    PublicCheckIncident:
-      type: object
-      properties:
-        id:
-          type: string
-        check_id:
-          type: string
-        started_at:
-          type: string
-          format: date-time
-        ended_at:
-          type:
-            - string
-            - "null"
-          format: date-time
-      required:
-        - id
-        - check_id
-        - started_at
-        - ended_at
-      additionalProperties: false
-    PublicCheckIncidentResultInfo:
-      type: object
-      properties:
-        page:
-          type: integer
-          exclusiveMinimum: 0
-        per_page:
-          type: integer
-          minimum: 1
-          maximum: 100
-        count:
-          type: integer
-          minimum: 0
-        total_count:
-          type: integer
-          minimum: 0
-      required:
-        - page
-        - per_page
-        - count
-        - total_count
-      additionalProperties: false
     PublicCheckIncidentListResponse:
       type: object
       properties:
@@ -3164,106 +3126,28 @@ components:
         - errors
         - messages
       additionalProperties: false
-    PublicCheckResultWindow:
-      type: object
-      properties:
-        from:
-          type: string
-          format: date-time
-          description: Inclusive start of the returned result window
-        to:
-          type: string
-          format: date-time
-          description: Exclusive end of the returned result window
-      required:
-        - from
-        - to
-      additionalProperties: false
-    PublicCheckResultBodyAvailability:
-      type: string
-      enum:
-        - AVAILABLE
-        - NOT_RECORDED
-        - EXPIRED
-        - TRACE_ONLY
-    PublicHttpCheckResult:
+    PublicCheckIncident:
       type: object
       properties:
         id:
           type: string
-          minLength: 1
-        checked_at:
+        check_id:
+          type: string
+        started_at:
           type: string
           format: date-time
-        checked_from:
+        ended_at:
           type:
             - string
             - "null"
-          enum:
-            - aws:us-east-1
-            - aws:us-east-2
-            - aws:us-west-1
-            - aws:eu-central-1
-            - aws:eu-west-2
-            - aws:ap-south-1
-            - aws:ap-southeast-2
-            - aws:ap-northeast-1
-          description: Region identifier in format aws:{region}
-        passing:
-          type:
-            - boolean
-            - "null"
-        response_time_ms:
-          type: number
-          minimum: 0
-        attempt_number:
-          type:
-            - integer
-            - "null"
-          minimum: 0
-        is_final_attempt:
-          type:
-            - boolean
-            - "null"
-        dispatched_at_ms:
-          type:
-            - integer
-            - "null"
-          minimum: 0
-        response_body:
-          type:
-            - string
-            - "null"
-        body_availability:
-          $ref: '#/components/schemas/PublicCheckResultBodyAvailability'
-        response_code:
-          type:
-            - integer
-            - "null"
-          minimum: 100
-          maximum: 599
-        result_summary:
-          type:
-            - string
-            - "null"
-        has_stored_response:
-          type: boolean
+          format: date-time
       required:
         - id
-        - checked_at
-        - checked_from
-        - passing
-        - response_time_ms
-        - attempt_number
-        - is_final_attempt
-        - dispatched_at_ms
-        - response_body
-        - body_availability
-        - response_code
-        - result_summary
-        - has_stored_response
+        - check_id
+        - started_at
+        - ended_at
       additionalProperties: false
-    PublicCheckResultsResultInfo:
+    PublicCheckIncidentResultInfo:
       type: object
       properties:
         page:
@@ -3329,6 +3213,128 @@ components:
         - errors
         - messages
       additionalProperties: false
+    PublicCheckResultWindow:
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+          description: Inclusive start of the returned result window
+        to:
+          type: string
+          format: date-time
+          description: Exclusive end of the returned result window
+      required:
+        - from
+        - to
+      additionalProperties: false
+    PublicHttpCheckResult:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        checked_at:
+          type: string
+          format: date-time
+        checked_from:
+          type:
+            - string
+            - "null"
+          enum:
+            - aws:us-east-1
+            - aws:us-east-2
+            - aws:us-west-1
+            - aws:eu-central-1
+            - aws:eu-west-2
+            - aws:ap-south-1
+            - aws:ap-southeast-2
+            - aws:ap-northeast-1
+            - null
+          description: Region identifier in format aws:{region}
+        passing:
+          type:
+            - boolean
+            - "null"
+        response_time_ms:
+          type: number
+          minimum: 0
+        attempt_number:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+        is_final_attempt:
+          type:
+            - boolean
+            - "null"
+        dispatched_at_ms:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+        response_body:
+          type:
+            - string
+            - "null"
+        body_availability:
+          $ref: '#/components/schemas/PublicCheckResultBodyAvailability'
+        response_code:
+          type:
+            - integer
+            - "null"
+          minimum: 100
+          maximum: 599
+        result_summary:
+          type:
+            - string
+            - "null"
+        has_stored_response:
+          type: boolean
+      required:
+        - id
+        - checked_at
+        - checked_from
+        - passing
+        - response_time_ms
+        - attempt_number
+        - is_final_attempt
+        - dispatched_at_ms
+        - response_body
+        - body_availability
+        - response_code
+        - result_summary
+        - has_stored_response
+      additionalProperties: false
+    PublicCheckResultBodyAvailability:
+      type: string
+      enum:
+        - AVAILABLE
+        - NOT_RECORDED
+        - EXPIRED
+        - TRACE_ONLY
+    PublicCheckResultsResultInfo:
+      type: object
+      properties:
+        page:
+          type: integer
+          exclusiveMinimum: 0
+        per_page:
+          type: integer
+          minimum: 1
+          maximum: 100
+        count:
+          type: integer
+          minimum: 0
+        total_count:
+          type: integer
+          minimum: 0
+      required:
+        - page
+        - per_page
+        - count
+        - total_count
+      additionalProperties: false
     PublicBrowserCheckResultsResponse:
       type: object
       properties:
@@ -3372,96 +3378,6 @@ components:
         - result
         - errors
         - messages
-      additionalProperties: false
-    PublicDnsCheckResult:
-      type: object
-      properties:
-        id:
-          type: string
-          minLength: 1
-        checked_at:
-          type: string
-          format: date-time
-        checked_from:
-          type:
-            - string
-            - "null"
-          enum:
-            - aws:us-east-1
-            - aws:us-east-2
-            - aws:us-west-1
-            - aws:eu-central-1
-            - aws:eu-west-2
-            - aws:ap-south-1
-            - aws:ap-southeast-2
-            - aws:ap-northeast-1
-          description: Region identifier in format aws:{region}
-        passing:
-          type:
-            - boolean
-            - "null"
-        response_time_ms:
-          type: number
-          minimum: 0
-        attempt_number:
-          type:
-            - integer
-            - "null"
-          minimum: 0
-        is_final_attempt:
-          type:
-            - boolean
-            - "null"
-        dispatched_at_ms:
-          type:
-            - integer
-            - "null"
-          minimum: 0
-        response_body:
-          type:
-            - string
-            - "null"
-        body_availability:
-          $ref: '#/components/schemas/PublicCheckResultBodyAvailability'
-        dns_status:
-          type:
-            - string
-            - "null"
-        failure_source:
-          type:
-            - string
-            - "null"
-          enum:
-            - TRANSPORT
-            - ASSERTION
-        failure_type:
-          type:
-            - string
-            - "null"
-        resolver:
-          type:
-            - string
-            - "null"
-        parsed_response:
-          type:
-            - string
-            - "null"
-      required:
-        - id
-        - checked_at
-        - checked_from
-        - passing
-        - response_time_ms
-        - attempt_number
-        - is_final_attempt
-        - dispatched_at_ms
-        - response_body
-        - body_availability
-        - dns_status
-        - failure_source
-        - failure_type
-        - resolver
-        - parsed_response
       additionalProperties: false
     PublicDnsCheckResultsResponse:
       type: object
@@ -3507,7 +3423,7 @@ components:
         - errors
         - messages
       additionalProperties: false
-    PublicTcpCheckResult:
+    PublicDnsCheckResult:
       type: object
       properties:
         id:
@@ -3529,6 +3445,7 @@ components:
             - aws:ap-south-1
             - aws:ap-southeast-2
             - aws:ap-northeast-1
+            - null
           description: Region identifier in format aws:{region}
         passing:
           type:
@@ -3557,7 +3474,7 @@ components:
             - "null"
         body_availability:
           $ref: '#/components/schemas/PublicCheckResultBodyAvailability'
-        tcp_status:
+        dns_status:
           type:
             - string
             - "null"
@@ -3568,25 +3485,19 @@ components:
           enum:
             - TRANSPORT
             - ASSERTION
+            - null
         failure_type:
           type:
             - string
             - "null"
-        dns_time_ms:
+        resolver:
           type:
-            - number
+            - string
             - "null"
-          minimum: 0
-        connect_time_ms:
+        parsed_response:
           type:
-            - number
+            - string
             - "null"
-          minimum: 0
-        data_time_ms:
-          type:
-            - number
-            - "null"
-          minimum: 0
       required:
         - id
         - checked_at
@@ -3598,12 +3509,11 @@ components:
         - dispatched_at_ms
         - response_body
         - body_availability
-        - tcp_status
+        - dns_status
         - failure_source
         - failure_type
-        - dns_time_ms
-        - connect_time_ms
-        - data_time_ms
+        - resolver
+        - parsed_response
       additionalProperties: false
     PublicTcpCheckResultsResponse:
       type: object
@@ -3649,56 +3559,155 @@ components:
         - errors
         - messages
       additionalProperties: false
-    Check:
+    PublicTcpCheckResult:
       type: object
       properties:
         id:
           type: string
-          example: a1b2c3d4
-          description: Uptime Check ID
-        name:
+          minLength: 1
+        checked_at:
           type: string
-          example: My landing page
-        url:
+          format: date-time
+        checked_from:
           type:
             - string
             - "null"
-          format: uri
-          example: https://example.com
-          description: URL to check (null for script-based browser checks)
-        check_type:
-          type: string
           enum:
-            - UPTIME
-            - BROWSER
-          example: UPTIME
-          description: Indicates whether the check is a regular uptime check or browser check.
-        last_queued:
+            - aws:us-east-1
+            - aws:us-east-2
+            - aws:us-west-1
+            - aws:eu-central-1
+            - aws:eu-west-2
+            - aws:ap-south-1
+            - aws:ap-southeast-2
+            - aws:ap-northeast-1
+            - null
+          description: Region identifier in format aws:{region}
+        passing:
+          type:
+            - boolean
+            - "null"
+        response_time_ms:
+          type: number
+          minimum: 0
+        attempt_number:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+        is_final_attempt:
+          type:
+            - boolean
+            - "null"
+        dispatched_at_ms:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+        response_body:
           type:
             - string
             - "null"
-          example: "2021-01-01T00:00:00.000Z"
-          description: Last time the check was queued
-        status:
-          type: string
+        body_availability:
+          $ref: '#/components/schemas/PublicCheckResultBodyAvailability'
+        tcp_status:
+          type:
+            - string
+            - "null"
+        failure_source:
+          type:
+            - string
+            - "null"
           enum:
-            - UP
-            - DOWN
-            - PENDING
-            - PAUSED
-            - MUTED
-            - MAINTENANCE
-            - RECOVERING
-            - VERIFYING
-          example: UP
-          description: Current status of the check based on the latest uptime event
+            - TRANSPORT
+            - ASSERTION
+            - null
+        failure_type:
+          type:
+            - string
+            - "null"
+        dns_time_ms:
+          type:
+            - number
+            - "null"
+          minimum: 0
+        connect_time_ms:
+          type:
+            - number
+            - "null"
+          minimum: 0
+        data_time_ms:
+          type:
+            - number
+            - "null"
+          minimum: 0
       required:
         - id
-        - name
-        - url
-        - check_type
-        - last_queued
-        - status
+        - checked_at
+        - checked_from
+        - passing
+        - response_time_ms
+        - attempt_number
+        - is_final_attempt
+        - dispatched_at_ms
+        - response_body
+        - body_availability
+        - tcp_status
+        - failure_source
+        - failure_type
+        - dns_time_ms
+        - connect_time_ms
+        - data_time_ms
+      additionalProperties: false
+    CheckResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/ExpandedCheck'
+        success:
+          type: boolean
+          default: true
+          example: true
+          description: Whether the API call was successful
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+      required:
+        - result
+        - success
+        - errors
+        - messages
     ExpandedCheck:
       allOf:
         - $ref: '#/components/schemas/Check'
@@ -3750,6 +3759,7 @@ components:
                 - NODE20_PLAYWRIGHT
                 - NODE24_PLAYWRIGHT
                 - CLOUDFLARE
+                - null
               example: NODE24_PLAYWRIGHT
               description: Runtime version for browser checks (null for standard uptime checks)
             script:
@@ -3925,55 +3935,56 @@ components:
             - pushover_alerts
             - oncall_alerts
             - webhook_alerts
-    CheckResponse:
+    Check:
       type: object
       properties:
-        result:
-          $ref: '#/components/schemas/ExpandedCheck'
-        success:
-          type: boolean
-          default: true
-          example: true
-          description: Whether the API call was successful
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: number
-              message:
-                type: string
-              type:
-                type:
-                  - string
-                  - "null"
-            required:
-              - code
-              - message
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: number
-              message:
-                type: string
-              type:
-                type:
-                  - string
-                  - "null"
-            required:
-              - code
-              - message
-          example: []
+        id:
+          type: string
+          example: a1b2c3d4
+          description: Uptime Check ID
+        name:
+          type: string
+          example: My landing page
+        url:
+          type:
+            - string
+            - "null"
+          format: uri
+          example: https://example.com
+          description: URL to check (null for script-based browser checks)
+        check_type:
+          type: string
+          enum:
+            - UPTIME
+            - BROWSER
+          example: UPTIME
+          description: Indicates whether the check is a regular uptime check or browser check.
+        last_queued:
+          type:
+            - string
+            - "null"
+          example: "2021-01-01T00:00:00.000Z"
+          description: Last time the check was queued
+        status:
+          type: string
+          enum:
+            - UP
+            - DOWN
+            - PENDING
+            - PAUSED
+            - MUTED
+            - MAINTENANCE
+            - RECOVERING
+            - VERIFYING
+          example: UP
+          description: Current status of the check based on the latest uptime event
       required:
-        - result
-        - success
-        - errors
-        - messages
+        - id
+        - name
+        - url
+        - check_type
+        - last_queued
+        - status
     CheckInput:
       type: object
       properties:
@@ -4424,6 +4435,7 @@ components:
             - PAUSED
             - MAINTENANCE
             - MUTED
+            - null
           example: UP
           description: Current status of the heartbeat
         last_seen:
@@ -4835,6 +4847,7 @@ components:
             - DEGRADED_PERFORMANCE
             - MAINTENANCE
             - NO_IMPACT
+            - null
           example: MAJOR_OUTAGE
           description: Status of the component
         display_uptime:
@@ -4908,6 +4921,7 @@ components:
             - DEGRADED_PERFORMANCE
             - NO_IMPACT
             - MAINTENANCE
+            - null
           example: MAJOR_OUTAGE
           description: Impact of the incident
         started:
@@ -5146,6 +5160,32 @@ components:
                 - notify_subscribers_at_start
                 - notify_subscribers_at_end
               description: Scheduled maintenance info
+    StatusPageIncidentDetail:
+      allOf:
+        - $ref: '#/components/schemas/StatusPageIncidentWithLatestUpdate'
+        - type: object
+          properties:
+            components:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: comp123
+                    description: Component ID
+                  name:
+                    type: string
+                    example: API Server
+                    description: Component name
+                required:
+                  - id
+                  - name
+                description: Component associated with the incident
+            updates:
+              type: array
+              items:
+                $ref: '#/components/schemas/IncidentUpdate'
     IncidentUpdate:
       type: object
       properties:
@@ -5224,32 +5264,6 @@ components:
         - date_happened
         - created_at
         - updated_at
-    StatusPageIncidentDetail:
-      allOf:
-        - $ref: '#/components/schemas/StatusPageIncidentWithLatestUpdate'
-        - type: object
-          properties:
-            components:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: comp123
-                    description: Component ID
-                  name:
-                    type: string
-                    example: API Server
-                    description: Component name
-                required:
-                  - id
-                  - name
-                description: Component associated with the incident
-            updates:
-              type: array
-              items:
-                $ref: '#/components/schemas/IncidentUpdate'
     Webhook:
       type: object
       properties:
@@ -6162,6 +6176,23 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              basic:
+                summary: Create token with read permissions
+                value:
+                  name: My API Token
+                  grants:
+                    - scope: UPTIME_CHECKS
+                      permission: READ
+              advanced:
+                summary: Create token with multiple permissions
+                value:
+                  name: Full Access Token
+                  grants:
+                    - scope: UPTIME_CHECKS
+                      permission: EDIT
+                    - scope: STATUS_PAGES
+                      permission: EDIT
             schema:
               type: object
               properties:
@@ -6207,23 +6238,6 @@ paths:
               required:
                 - name
                 - grants
-            examples:
-              basic:
-                summary: Create token with read permissions
-                value:
-                  name: My API Token
-                  grants:
-                    - scope: UPTIME_CHECKS
-                      permission: READ
-              advanced:
-                summary: Create token with multiple permissions
-                value:
-                  name: Full Access Token
-                  grants:
-                    - scope: UPTIME_CHECKS
-                      permission: EDIT
-                    - scope: STATUS_PAGES
-                      permission: EDIT
       responses:
         "201":
           description: Create a new API token
@@ -6630,8 +6644,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/DnsCheckInput'
             examples:
               basic:
                 summary: Basic DNS A record check
@@ -6648,6 +6660,8 @@ paths:
                   dns_record_type: A
                   dns_resolver: 8.8.8.8:53
                   dns_protocol: UDP
+            schema:
+              $ref: '#/components/schemas/DnsCheckInput'
       responses:
         "201":
           description: Create a new OnlineOrNot DNS Check
@@ -6857,8 +6871,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/DnsCheckPatch'
             examples:
               updateDnsConfig:
                 summary: Update DNS query config
@@ -6867,6 +6879,8 @@ paths:
                   dns_record_type: TXT
                   dns_resolver: 1.1.1.1:53
                   dns_protocol: TCP
+            schema:
+              $ref: '#/components/schemas/DnsCheckPatch'
       responses:
         "200":
           description: Modify an OnlineOrNot DNS Check
@@ -6991,8 +7005,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/TcpCheckInput'
             examples:
               basic:
                 summary: Basic TCP connection check
@@ -7013,6 +7025,8 @@ paths:
                       property: response_data
                       comparison: CONTAINS
                       expected: PONG
+            schema:
+              $ref: '#/components/schemas/TcpCheckInput'
       responses:
         "201":
           description: Create a new OnlineOrNot TCP Check
@@ -7222,8 +7236,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/TcpCheckPatch'
             examples:
               updateTcpConfig:
                 summary: Update TCP target config
@@ -7231,6 +7243,8 @@ paths:
                   tcp_hostname: example.org
                   tcp_port: 8443
                   tcp_ip_family: IPv4
+            schema:
+              $ref: '#/components/schemas/TcpCheckPatch'
       responses:
         "200":
           description: Modify an OnlineOrNot TCP Check
@@ -7355,8 +7369,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/UptimeCheckInput'
             examples:
               basic:
                 summary: Basic uptime check
@@ -7364,6 +7376,8 @@ paths:
                   name: My Website Check
                   url: https://example.com
                   test_interval: 60
+            schema:
+              $ref: '#/components/schemas/UptimeCheckInput'
       responses:
         "201":
           description: Create a new OnlineOrNot Uptime Check
@@ -7617,8 +7631,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/BrowserCheckInput'
             examples:
               url:
                 summary: URL-based browser check
@@ -7626,6 +7638,8 @@ paths:
                   name: Homepage browser check
                   url: https://example.com
                   test_interval: 60
+            schema:
+              $ref: '#/components/schemas/BrowserCheckInput'
       responses:
         "201":
           description: Create a new OnlineOrNot Browser Check
@@ -8948,8 +8962,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/CheckInput'
             examples:
               basic:
                 summary: Basic uptime check
@@ -8966,6 +8978,8 @@ paths:
                     Authorization: Bearer token
                   test_interval: 30
                   alert_priority: HIGH
+            schema:
+              $ref: '#/components/schemas/CheckInput'
       responses:
         "201":
           description: Create a new OnlineOrNot Check
@@ -9239,8 +9253,6 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/CheckPatch'
             examples:
               updateHeaders:
                 summary: Update check headers
@@ -9248,6 +9260,8 @@ paths:
                   muted: true
                   headers:
                     X-Custom-Header: new-value
+            schema:
+              $ref: '#/components/schemas/CheckPatch'
       responses:
         "200":
           description: Modify an OnlineOrNot Check
@@ -9496,6 +9510,21 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              simple:
+                summary: Simple interval heartbeat
+                value:
+                  name: Daily backup job
+                  report_period: 86400
+                  grace_period: 300
+              cron:
+                summary: Cron-based heartbeat
+                value:
+                  name: Hourly sync task
+                  report_period_cron: 0 * * * *
+                  timezone: America/New_York
+                  grace_period: 600
+                  alert_priority: HIGH
             schema:
               type: object
               properties:
@@ -9582,21 +9611,6 @@ paths:
               required:
                 - name
                 - grace_period
-            examples:
-              simple:
-                summary: Simple interval heartbeat
-                value:
-                  name: Daily backup job
-                  report_period: 86400
-                  grace_period: 300
-              cron:
-                summary: Cron-based heartbeat
-                value:
-                  name: Hourly sync task
-                  report_period_cron: 0 * * * *
-                  timezone: America/New_York
-                  grace_period: 600
-                  alert_priority: HIGH
       responses:
         "201":
           description: Create a new OnlineOrNot Heartbeat
@@ -9818,6 +9832,20 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              updateSchedule:
+                summary: Update heartbeat schedule
+                value:
+                  report_period: 7200
+                  grace_period: 600
+              pause:
+                summary: Pause heartbeat monitoring
+                value:
+                  paused: true
+              mute:
+                summary: Mute heartbeat alerts
+                value:
+                  muted: true
             schema:
               type: object
               properties:
@@ -9913,20 +9941,6 @@ paths:
                   type: boolean
                   example: false
                   description: Suppresses alerts without stopping heartbeat monitoring.
-            examples:
-              updateSchedule:
-                summary: Update heartbeat schedule
-                value:
-                  report_period: 7200
-                  grace_period: 600
-              pause:
-                summary: Pause heartbeat monitoring
-                value:
-                  paused: true
-              mute:
-                summary: Mute heartbeat alerts
-                value:
-                  muted: true
       responses:
         "200":
           description: Modify an OnlineOrNot Heartbeat
@@ -10328,6 +10342,31 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              simple:
+                summary: Weekly maintenance window
+                value:
+                  name: Weekly Server Maintenance
+                  start_date: "2026-09-13T03:00:00.000Z"
+                  duration_minutes: 60
+                  timezone: America/New_York
+                  days_of_week:
+                    - SUNDAY
+              withAssociations:
+                summary: With checks and heartbeats
+                value:
+                  name: Database Maintenance
+                  start_date: "2026-09-13T02:00:00.000Z"
+                  duration_minutes: 120
+                  timezone: UTC
+                  days_of_week:
+                    - SATURDAY
+                    - SUNDAY
+                  checks:
+                    - abc123
+                    - def456
+                  heartbeats:
+                    - ghi789
             schema:
               type: object
               properties:
@@ -10389,31 +10428,6 @@ paths:
                 - duration_minutes
                 - timezone
                 - days_of_week
-            examples:
-              simple:
-                summary: Weekly maintenance window
-                value:
-                  name: Weekly Server Maintenance
-                  start_date: "2026-09-13T03:00:00.000Z"
-                  duration_minutes: 60
-                  timezone: America/New_York
-                  days_of_week:
-                    - SUNDAY
-              withAssociations:
-                summary: With checks and heartbeats
-                value:
-                  name: Database Maintenance
-                  start_date: "2026-09-13T02:00:00.000Z"
-                  duration_minutes: 120
-                  timezone: UTC
-                  days_of_week:
-                    - SATURDAY
-                    - SUNDAY
-                  checks:
-                    - abc123
-                    - def456
-                  heartbeats:
-                    - ghi789
       responses:
         "201":
           description: Returns the created maintenance window
@@ -10635,6 +10649,28 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              updateName:
+                summary: Update name only
+                value:
+                  name: Updated Maintenance Window
+              toggleStatus:
+                summary: Disable maintenance window
+                value:
+                  status: DISABLED
+              updateSchedule:
+                summary: Update schedule
+                value:
+                  start_date: "2026-09-13T04:00:00.000Z"
+                  duration_minutes: 90
+                  days_of_week:
+                    - SATURDAY
+              updateAssociations:
+                summary: Replace check/heartbeat associations
+                value:
+                  checks:
+                    - newcheck123
+                  heartbeats: []
             schema:
               type: object
               properties:
@@ -10694,28 +10730,6 @@ paths:
                   example:
                     - ghi789
                   description: Heartbeat IDs. Replaces existing associations.
-            examples:
-              updateName:
-                summary: Update name only
-                value:
-                  name: Updated Maintenance Window
-              toggleStatus:
-                summary: Disable maintenance window
-                value:
-                  status: DISABLED
-              updateSchedule:
-                summary: Update schedule
-                value:
-                  start_date: "2026-09-13T04:00:00.000Z"
-                  duration_minutes: 90
-                  days_of_week:
-                    - SATURDAY
-              updateAssociations:
-                summary: Replace check/heartbeat associations
-                value:
-                  checks:
-                    - newcheck123
-                  heartbeats: []
       responses:
         "200":
           description: Returns the updated maintenance window
@@ -11436,6 +11450,17 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              standardUser:
+                summary: Invite a standard user
+                value:
+                  email: newuser@example.com
+                  role: STANDARD
+              adminUser:
+                summary: Invite an admin user
+                value:
+                  email: admin@example.com
+                  role: ADMIN
             schema:
               type: object
               properties:
@@ -11454,17 +11479,6 @@ paths:
                   description: The role to assign to the invited user
               required:
                 - email
-            examples:
-              standardUser:
-                summary: Invite a standard user
-                value:
-                  email: newuser@example.com
-                  role: STANDARD
-              adminUser:
-                summary: Invite an admin user
-                value:
-                  email: admin@example.com
-                  role: ADMIN
       responses:
         "201":
           description: Returns the created invitation
@@ -15277,6 +15291,7 @@ paths:
                     - DEGRADED_PERFORMANCE
                     - NO_IMPACT
                     - MAINTENANCE
+                    - null
                   example: MAJOR_OUTAGE
                   description: Impact of the incident
               required:
@@ -17043,6 +17058,27 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              basic:
+                summary: Basic webhook for incidents
+                value:
+                  url: https://api.example.com/webhooks/onlineornot
+                  events:
+                    - status_page.incident.started
+                    - status_page.incident.resolved
+                  status_page_ids:
+                    - x9y8z7w6
+              withDescription:
+                summary: Webhook with description and status pages
+                value:
+                  url: https://api.example.com/webhooks/onlineornot
+                  description: Production incident notifications
+                  events:
+                    - status_page.incident.started
+                    - status_page.incident.updated
+                    - status_page.incident.resolved
+                  status_page_ids:
+                    - x9y8z7w6
             schema:
               type: object
               properties:
@@ -17110,27 +17146,6 @@ paths:
                     maxItems: 0
                   heartbeat_ids:
                     maxItems: 0
-            examples:
-              basic:
-                summary: Basic webhook for incidents
-                value:
-                  url: https://api.example.com/webhooks/onlineornot
-                  events:
-                    - status_page.incident.started
-                    - status_page.incident.resolved
-                  status_page_ids:
-                    - x9y8z7w6
-              withDescription:
-                summary: Webhook with description and status pages
-                value:
-                  url: https://api.example.com/webhooks/onlineornot
-                  description: Production incident notifications
-                  events:
-                    - status_page.incident.started
-                    - status_page.incident.updated
-                    - status_page.incident.resolved
-                  status_page_ids:
-                    - x9y8z7w6
       responses:
         "201":
           description: Webhook created successfully
@@ -17352,6 +17367,16 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              updateUrl:
+                summary: Update webhook URL
+                value:
+                  url: https://api.example.com/webhooks/new-endpoint
+              updateEvents:
+                summary: Update webhook events
+                value:
+                  events:
+                    - status_page.incident.started
             schema:
               type: object
               properties:
@@ -17407,16 +17432,6 @@ paths:
                     - h1i2j3k4
                     - l5m6n7o8
                   description: IDs of heartbeats to associate with this webhook
-            examples:
-              updateUrl:
-                summary: Update webhook URL
-                value:
-                  url: https://api.example.com/webhooks/new-endpoint
-              updateEvents:
-                summary: Update webhook events
-                value:
-                  events:
-                    - status_page.incident.started
       responses:
         "200":
           description: Webhook updated successfully
