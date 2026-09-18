@@ -216,9 +216,11 @@ components:
             - "null"
           description: Text to search for in the response
         reminder_alert_interval_minutes:
-          type: number
+          type:
+            - number
+            - "null"
           example: 1440
-          description: Interval in minutes between reminder alerts (-1 for never)
+          description: Interval in minutes between reminder alerts (-1 for never); null for legacy checks without a configured interval
         confirmation_period_seconds:
           type: number
           example: 60
@@ -478,9 +480,11 @@ components:
             - "null"
           description: Text to search for in the response
         reminder_alert_interval_minutes:
-          type: number
+          type:
+            - number
+            - "null"
           example: 1440
-          description: Interval in minutes between reminder alerts (-1 for never)
+          description: Interval in minutes between reminder alerts (-1 for never); null for legacy checks without a configured interval
         confirmation_period_seconds:
           type: number
           example: 60
@@ -764,9 +768,11 @@ components:
           example: UP
           description: Current status of the check based on the latest uptime event
         reminder_alert_interval_minutes:
-          type: number
+          type:
+            - number
+            - "null"
           example: 1440
-          description: Interval in minutes between reminder alerts (-1 for never)
+          description: Interval in minutes between reminder alerts (-1 for never); null for legacy checks without a configured interval
         confirmation_period_seconds:
           type: number
           example: 60
@@ -990,9 +996,11 @@ components:
           example: UP
           description: Current status of the check based on the latest uptime event
         reminder_alert_interval_minutes:
-          type: number
+          type:
+            - number
+            - "null"
           example: 1440
-          description: Interval in minutes between reminder alerts (-1 for never)
+          description: Interval in minutes between reminder alerts (-1 for never); null for legacy checks without a configured interval
         confirmation_period_seconds:
           type: number
           example: 60
@@ -3711,9 +3719,11 @@ components:
                 - "null"
               description: Text to search for in the response
             reminder_alert_interval_minutes:
-              type: number
+              type:
+                - number
+                - "null"
               example: 1440
-              description: Interval in minutes between reminder alerts (-1 for never)
+              description: Interval in minutes between reminder alerts (-1 for never); null for legacy checks without a configured interval
             confirmation_period_seconds:
               type: number
               example: 60
@@ -4445,7 +4455,9 @@ components:
           example: 300
           description: Grace period in seconds before alerting
         reminder_alert_interval_minutes:
-          type: number
+          type:
+            - number
+            - "null"
           example: 1440
           description: Interval in minutes between reminder alerts
         alert_priority:
@@ -4821,8 +4833,8 @@ components:
             - MAJOR_OUTAGE
             - PARTIAL_OUTAGE
             - DEGRADED_PERFORMANCE
-            - NO_IMPACT
             - MAINTENANCE
+            - NO_IMPACT
           example: MAJOR_OUTAGE
           description: Status of the component
         display_uptime:
@@ -5448,6 +5460,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -5458,6 +5471,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -5945,6 +5959,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -5955,6 +5970,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 10
             example: 10
             description: Number of tokens per page, default 10. Pagination metadata is nested at result.result_info.
@@ -7868,9 +7884,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -7879,9 +7895,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -7973,9 +7989,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -7984,9 +8000,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8078,9 +8094,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8089,9 +8105,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8183,9 +8199,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8194,9 +8210,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8288,9 +8304,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8299,9 +8315,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8399,9 +8415,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8410,9 +8426,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8510,9 +8526,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8521,9 +8537,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8621,9 +8637,9 @@ paths:
           in: path
         - schema:
             type: integer
-            default: 1
             minimum: 1
             maximum: 9007199254740991
+            default: 1
             example: 1
             description: Page number of paginated results
           required: false
@@ -8632,9 +8648,9 @@ paths:
           in: query
         - schema:
             type: integer
-            default: 20
             minimum: 1
             maximum: 100
+            default: 20
             example: 20
             description: Number of records per page, from 1 through 100
           required: false
@@ -8724,6 +8740,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -8734,6 +8751,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -9287,6 +9305,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -9297,6 +9316,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -10117,6 +10137,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -10127,6 +10148,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -10916,6 +10938,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -10926,6 +10949,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -11221,6 +11245,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -11231,6 +11256,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -12185,6 +12211,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -12195,6 +12222,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -12604,6 +12632,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -12614,6 +12643,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -13344,6 +13374,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -13354,6 +13385,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -14309,6 +14341,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -14319,6 +14352,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -14738,6 +14772,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -14748,6 +14783,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -15489,6 +15525,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -15499,6 +15536,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
@@ -16814,6 +16852,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 1
             example: 1
             description: Page number of paginated results, starting at 1.
@@ -16824,6 +16863,7 @@ paths:
         - schema:
             type: integer
             minimum: 1
+            maximum: 9007199254740991
             default: 20
             example: 20
             description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
