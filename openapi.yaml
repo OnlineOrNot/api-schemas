@@ -6016,6 +6016,7 @@ paths:
                                       - INTEGRATIONS
                                       - API_TOKENS
                                       - WEBHOOKS
+                                      - ENVIRONMENT_VARIABLES
                                   permission:
                                     type: string
                                     enum:
@@ -6180,6 +6181,7 @@ paths:
                           - INTEGRATIONS
                           - API_TOKENS
                           - WEBHOOKS
+                          - ENVIRONMENT_VARIABLES
                       permission:
                         type: string
                         enum:
@@ -6381,6 +6383,7 @@ paths:
                                 - INTEGRATIONS
                                 - API_TOKENS
                                 - WEBHOOKS
+                                - ENVIRONMENT_VARIABLES
                             permission:
                               type: string
                               enum:
