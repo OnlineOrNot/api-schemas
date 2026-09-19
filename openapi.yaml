@@ -9266,6 +9266,887 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+  /v1/env:
+    get:
+      tags:
+        - Environment Variables
+      summary: List environment variables
+      description: |-
+        List organization variable metadata. Values are omitted for both config and secret variables.
+
+        Requires ENVIRONMENT_VARIABLES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      operationId: listEnvironmentVariables
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+            default: 1
+          required: false
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          required: false
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated environment variable metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                          pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                          example: API_TOKEN
+                        type:
+                          type: string
+                          enum:
+                            - config
+                            - secret
+                        has_value:
+                          type: boolean
+                          enum:
+                            - true
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+                      required:
+                        - id
+                        - name
+                        - type
+                        - has_value
+                        - created_at
+                        - updated_at
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    post:
+      tags:
+        - Environment Variables
+      summary: Create an environment variable
+      description: |-
+        Create an organization config or secret variable. Type is immutable; names can be changed. Config values are readable; secret values are write-only.
+
+        Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      operationId: createEnvironmentVariable
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                  example: API_TOKEN
+                type:
+                  type: string
+                  enum:
+                    - config
+                    - secret
+                value:
+                  type: string
+              required:
+                - name
+                - type
+                - value
+              additionalProperties: false
+      responses:
+        "201":
+          description: Environment variable created. Config responses include the value; secret responses contain metadata only.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    oneOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - secret
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                        additionalProperties: false
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - config
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                          value:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                          - value
+                        additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Environment variable quota or name conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/env/{environment_variable_id}:
+    get:
+      tags:
+        - Environment Variables
+      summary: Get an environment variable
+      description: |-
+        Get organization variable metadata. Config details include the value; secret details never do.
+
+        Requires ENVIRONMENT_VARIABLES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      operationId: getEnvironmentVariable
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 1
+          required: true
+          name: environment_variable_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Environment variable detail.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    oneOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - secret
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                        additionalProperties: false
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - config
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                          value:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                          - value
+                        additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Environment variable not found or feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    patch:
+      tags:
+        - Environment Variables
+      summary: Update an environment variable
+      description: |-
+        Rename a variable, replace its value, or both. Renaming updates linked check header references atomically. Type is immutable. Config values are readable; secret values are write-only.
+
+        Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      operationId: updateEnvironmentVariable
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 1
+          required: true
+          name: environment_variable_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                  example: API_TOKEN
+                value:
+                  type: string
+              additionalProperties: false
+      responses:
+        "200":
+          description: Environment variable updated. Config responses include the value; secret responses contain metadata only.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    oneOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - secret
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                        additionalProperties: false
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                            pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+                            example: API_TOKEN
+                          type:
+                            type: string
+                            enum:
+                              - config
+                          has_value:
+                            type: boolean
+                            enum:
+                              - true
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+                          value:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - type
+                          - has_value
+                          - created_at
+                          - updated_at
+                          - value
+                        additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Environment variable not found or feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    delete:
+      tags:
+        - Environment Variables
+      summary: Delete an environment variable
+      description: |-
+        Delete an environment variable that is not referenced by a saved check.
+
+        Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
+      operationId: deleteEnvironmentVariable
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 1
+          required: true
+          name: environment_variable_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Environment variable deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Environment variable not found or feature disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Environment variable is referenced by a check
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
   /v1/heartbeats:
     get:
       tags:
