@@ -2343,10 +2343,10 @@ components:
           type: object
           additionalProperties:
             type: string
-            example: My Value
+            example: Bearer {{API_TOKEN}}
           example:
-            X-My-Header: My Value
-          description: Headers to send with the request
+            Authorization: Bearer {{API_TOKEN}}
+          description: 'Headers to send. Uptime checks support environment variable references such as {{API_TOKEN}}. Terraform example: Authorization = "Bearer {{API_TOKEN}}". Terraform stores the template; create the referenced variable separately.'
         method:
           type: string
           enum:
@@ -2545,10 +2545,10 @@ components:
           type: object
           additionalProperties:
             type: string
-            example: My Value
+            example: Bearer {{API_TOKEN}}
           example:
-            X-My-Header: My Value
-          description: Headers to send with the request
+            Authorization: Bearer {{API_TOKEN}}
+          description: 'Headers to send. Uptime checks support environment variable references such as {{API_TOKEN}}. Terraform example: Authorization = "Bearer {{API_TOKEN}}". Terraform stores the template; create the referenced variable separately.'
         method:
           type: string
           enum:
@@ -2787,7 +2787,7 @@ components:
             example: My Value
           example:
             X-My-Header: My Value
-          description: Headers to send with the request
+          description: Headers to send with the browser request. Environment variable references are not supported.
         method:
           type: string
           enum:
@@ -3006,7 +3006,7 @@ components:
             example: My Value
           example:
             X-My-Header: My Value
-          description: Headers to send with the request
+          description: Headers to send with the browser request. Environment variable references are not supported.
         method:
           type: string
           enum:
@@ -4095,10 +4095,10 @@ components:
           type: object
           additionalProperties:
             type: string
-            example: My Value
+            example: Bearer {{API_TOKEN}}
           example:
-            X-My-Header: My Value
-          description: Headers to send with the request
+            Authorization: Bearer {{API_TOKEN}}
+          description: 'Headers to send. Uptime checks support environment variable references such as {{API_TOKEN}}. Terraform example: Authorization = "Bearer {{API_TOKEN}}". Terraform stores the template; create the referenced variable separately.'
         method:
           type: string
           enum:
@@ -4318,10 +4318,10 @@ components:
           type: object
           additionalProperties:
             type: string
-            example: My Value
+            example: Bearer {{API_TOKEN}}
           example:
-            X-My-Header: My Value
-          description: Headers to send with the request
+            Authorization: Bearer {{API_TOKEN}}
+          description: 'Headers to send. Uptime checks support environment variable references such as {{API_TOKEN}}. Terraform example: Authorization = "Bearer {{API_TOKEN}}". Terraform stores the template; create the referenced variable separately.'
         method:
           type: string
           enum:
@@ -4411,6 +4411,48 @@ components:
               await expect(page.locator('h1')).toContainText('Example');
             });
           description: Playwright Test script to run. Must import from @playwright/test and contain at least one test() block.
+    EnvironmentVariableMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a1b2c3d4e5f6g7h8
+          description: Stable public environment variable ID.
+        name:
+          type: string
+          pattern: ^[A-Z_][A-Z0-9_]{0,63}$
+          example: API_TOKEN
+          description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+        type:
+          type: string
+          enum:
+            - config
+            - secret
+          example: secret
+          description: Immutable variable type. Config values are readable and unsuitable for credentials; secret values are write-only.
+        has_value:
+          type: boolean
+          enum:
+            - true
+          example: true
+          description: Confirms that a value is stored without revealing write-only secret values.
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-09-20T12:00:00.000Z"
+          description: Creation timestamp in ISO 8601 format.
+        updated_at:
+          type: string
+          format: date-time
+          example: "2026-09-20T12:00:00.000Z"
+          description: Last update timestamp in ISO 8601 format.
+      required:
+        - id
+        - name
+        - type
+        - has_value
+        - created_at
+        - updated_at
     Heartbeat:
       type: object
       properties:
@@ -7343,6 +7385,14 @@ paths:
                   name: My Website Check
                   url: https://example.com
                   test_interval: 60
+              variableBackedHeader:
+                summary: Uptime check with a variable-backed header
+                value:
+                  name: Authenticated API Check
+                  url: https://api.example.com/health
+                  headers:
+                    Authorization: Bearer {{API_TOKEN}}
+                  test_interval: 60
             schema:
               $ref: '#/components/schemas/UptimeCheckInput'
       responses:
@@ -7472,6 +7522,12 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              updateHeaderTemplates:
+                summary: Update check header templates
+                value:
+                  headers:
+                    Authorization: Bearer {{API_TOKEN}}
             schema:
               $ref: '#/components/schemas/UptimeCheckPatch'
       responses:
@@ -8936,13 +8992,13 @@ paths:
                   name: My Website Check
                   url: https://example.com
                   test_interval: 60
-              advanced:
-                summary: Advanced check with headers
+              variableBackedHeader:
+                summary: Uptime check with a variable-backed header
                 value:
                   name: API Check with Auth
                   url: https://api.example.com
                   headers:
-                    Authorization: Bearer token
+                    Authorization: Bearer {{API_TOKEN}}
                   test_interval: 30
                   alert_priority: HIGH
             schema:
@@ -9222,11 +9278,11 @@ paths:
           application/json:
             examples:
               updateHeaders:
-                summary: Update check headers
+                summary: Update check header templates
                 value:
                   muted: true
                   headers:
-                    X-Custom-Header: new-value
+                    Authorization: Bearer {{API_TOKEN}}
             schema:
               $ref: '#/components/schemas/CheckPatch'
       responses:
@@ -9272,7 +9328,7 @@ paths:
         - Environment Variables
       summary: List environment variables
       description: |-
-        List organization variable metadata. Values are omitted for both config and secret variables.
+        List environment variables. Values are omitted for both config and secret variables.
 
         Requires ENVIRONMENT_VARIABLES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: listEnvironmentVariables
@@ -9288,15 +9344,21 @@ paths:
             minimum: 1
             maximum: 9007199254740991
             default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
           required: false
+          description: Page number of paginated results, starting at 1.
           name: page
           in: query
         - schema:
             type: integer
             minimum: 1
-            maximum: 100
-            default: 50
+            maximum: 9007199254740991
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
       security:
@@ -9312,36 +9374,7 @@ paths:
                   result:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        name:
-                          type: string
-                          pattern: ^[A-Z_][A-Z0-9_]{0,63}$
-                          example: API_TOKEN
-                        type:
-                          type: string
-                          enum:
-                            - config
-                            - secret
-                        has_value:
-                          type: boolean
-                          enum:
-                            - true
-                        created_at:
-                          type: string
-                          format: date-time
-                        updated_at:
-                          type: string
-                          format: date-time
-                      required:
-                        - id
-                        - name
-                        - type
-                        - has_value
-                        - created_at
-                        - updated_at
+                      $ref: '#/components/schemas/EnvironmentVariableMetadata'
                   result_info:
                     type: object
                     properties:
@@ -9452,7 +9485,7 @@ paths:
         - Environment Variables
       summary: Create an environment variable
       description: |-
-        Create an organization config or secret variable. Type is immutable; names can be changed. Config values are readable; secret values are write-only.
+        Create a readable config or write-only secret variable. Type cannot be changed. Anyone who can edit uptime checks can use same-organization variables in request headers, including secret values, without permission to read variables. Variable-backed checks return limited diagnostics to protect values.
 
         Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: createEnvironmentVariable
@@ -9469,6 +9502,19 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              config:
+                summary: Create a readable config variable
+                value:
+                  name: PRIMARY_REGION
+                  type: config
+                  value: us-east-1
+              secret:
+                summary: Create a write-only secret variable
+                value:
+                  name: API_TOKEN
+                  type: secret
+                  value: <secret value>
             schema:
               type: object
               properties:
@@ -9476,13 +9522,18 @@ paths:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                   example: API_TOKEN
+                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                 type:
                   type: string
                   enum:
                     - config
                     - secret
+                  example: secret
+                  description: Immutable variable type. Config values are readable and unsuitable for credentials; secret values are write-only.
                 value:
                   type: string
+                  example: <value>
+                  description: Value of the variable, limited to 8 KiB of UTF-8. Secret values are write-only and never appear in API responses.
               required:
                 - name
                 - type
@@ -9502,10 +9553,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9514,12 +9568,18 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                         required:
                           - id
                           - name
@@ -9532,10 +9592,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9544,14 +9607,22 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                           value:
                             type: string
+                            example: us-east-1
+                            description: Readable config value.
                         required:
                           - id
                           - name
@@ -9630,7 +9701,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Environment variable quota or name conflict
+          description: The organization has 1,000 variables (environment_variable_limit_reached) or the name already exists (environment_variable_name_conflict)
           content:
             application/json:
               schema:
@@ -9653,7 +9724,7 @@ paths:
         - Environment Variables
       summary: Get an environment variable
       description: |-
-        Get organization variable metadata. Config details include the value; secret details never do.
+        Get an environment variable. Config responses include the value; secret responses do not.
 
         Requires ENVIRONMENT_VARIABLES:READ; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: getEnvironmentVariable
@@ -9667,7 +9738,10 @@ paths:
         - schema:
             type: string
             minLength: 1
+            example: a1b2c3d4e5f6g7h8
+            description: Environment variable ID.
           required: true
+          description: Environment variable ID.
           name: environment_variable_id
           in: path
       security:
@@ -9686,10 +9760,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9698,12 +9775,18 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                         required:
                           - id
                           - name
@@ -9716,10 +9799,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9728,14 +9814,22 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                           value:
                             type: string
+                            example: us-east-1
+                            description: Readable config value.
                         required:
                           - id
                           - name
@@ -9830,7 +9924,7 @@ paths:
         - Environment Variables
       summary: Update an environment variable
       description: |-
-        Rename a variable, replace its value, or both. Renaming updates linked check header references atomically. Type is immutable. Config values are readable; secret values are write-only.
+        Rename a variable, replace its value, or both. Renaming updates saved check header references. Type cannot be changed; secret values are never returned.
 
         Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: updateEnvironmentVariable
@@ -9844,7 +9938,10 @@ paths:
         - schema:
             type: string
             minLength: 1
+            example: a1b2c3d4e5f6g7h8
+            description: Environment variable ID.
           required: true
+          description: Environment variable ID.
           name: environment_variable_id
           in: path
       security:
@@ -9853,6 +9950,20 @@ paths:
         required: true
         content:
           application/json:
+            examples:
+              replaceValue:
+                summary: Replace a value
+                value:
+                  value: <replacement value>
+              rename:
+                summary: Rename without replacing the value
+                value:
+                  name: SERVICE_API_TOKEN
+              renameAndReplace:
+                summary: Rename and replace atomically
+                value:
+                  name: SERVICE_API_TOKEN
+                  value: <replacement value>
             schema:
               type: object
               properties:
@@ -9860,8 +9971,11 @@ paths:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                   example: API_TOKEN
+                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                 value:
                   type: string
+                  example: <value>
+                  description: Value of the variable, limited to 8 KiB of UTF-8. Secret values are write-only and never appear in API responses.
               additionalProperties: false
       responses:
         "200":
@@ -9877,10 +9991,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9889,12 +10006,18 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                         required:
                           - id
                           - name
@@ -9907,10 +10030,13 @@ paths:
                         properties:
                           id:
                             type: string
+                            example: a1b2c3d4e5f6g7h8
+                            description: Stable public environment variable ID.
                           name:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
                           type:
                             type: string
                             enum:
@@ -9919,14 +10045,22 @@ paths:
                             type: boolean
                             enum:
                               - true
+                            example: true
+                            description: Confirms that a value is stored without revealing write-only secret values.
                           created_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Creation timestamp in ISO 8601 format.
                           updated_at:
                             type: string
                             format: date-time
+                            example: "2026-09-20T12:00:00.000Z"
+                            description: Last update timestamp in ISO 8601 format.
                           value:
                             type: string
+                            example: us-east-1
+                            description: Readable config value.
                         required:
                           - id
                           - name
@@ -10005,7 +10139,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Conflict
+          description: The new name already exists (environment_variable_name_conflict)
           content:
             application/json:
               schema:
@@ -10027,7 +10161,7 @@ paths:
         - Environment Variables
       summary: Delete an environment variable
       description: |-
-        Delete an environment variable that is not referenced by a saved check.
+        Delete an environment variable that is not referenced by a saved check. References from paused checks also block deletion.
 
         Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: deleteEnvironmentVariable
@@ -10041,7 +10175,10 @@ paths:
         - schema:
             type: string
             minLength: 1
+            example: a1b2c3d4e5f6g7h8
+            description: Environment variable ID.
           required: true
+          description: Environment variable ID.
           name: environment_variable_id
           in: path
       security:
@@ -10130,7 +10267,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Environment variable is referenced by a check
+          description: The variable is referenced by a saved check (environment_variable_in_use)
           content:
             application/json:
               schema:
