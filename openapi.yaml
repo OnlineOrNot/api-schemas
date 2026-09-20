@@ -9469,7 +9469,7 @@ paths:
         - Environment Variables
       summary: Create an environment variable
       description: |-
-        Create a readable config or write-only secret variable. Type cannot be changed. Anyone who can edit uptime checks can use same-organization variables in request headers, including secret values, without permission to read variables. Variable-backed checks return limited diagnostics to protect values.
+        Create a reusable config or secret for uptime check request headers. Config values are readable; secrets are write-only. A variable's type cannot be changed after creation. Anyone who can edit uptime checks can use variables from the same organization. Exact secret values are automatically redacted from results; encoded or transformed values may remain visible.
 
         Requires ENVIRONMENT_VARIABLES:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: createEnvironmentVariable
