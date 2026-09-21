@@ -2422,8 +2422,8 @@ components:
           description: Assertions to run on the response
         verify_ssl:
           type: boolean
-          default: false
-          example: false
+          default: true
+          example: true
           description: Whether to fail a check if SSL verification fails
         auth_username:
           type: string
@@ -2863,8 +2863,8 @@ components:
           description: Assertions to run on the response
         verify_ssl:
           type: boolean
-          default: false
-          example: false
+          default: true
+          example: true
           description: Whether to fail a check if SSL verification fails
         auth_username:
           type: string
@@ -4174,8 +4174,8 @@ components:
           description: Assertions to run on the response
         verify_ssl:
           type: boolean
-          default: false
-          example: false
+          default: true
+          example: true
           description: Whether to fail a check if SSL verification fails
         auth_username:
           type: string
