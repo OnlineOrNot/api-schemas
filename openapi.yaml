@@ -9345,6 +9345,15 @@ paths:
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
+        - schema:
+            type: string
+            maxLength: 64
+            description: Case-insensitive substring search on environment variable names.
+            example: TOKEN
+          required: false
+          description: Case-insensitive substring search on environment variable names.
+          name: search
+          in: query
       security:
         - api_token: []
       responses:
