@@ -302,7 +302,6 @@ components:
             - string
             - "null"
           enum:
-            - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
             - CLOUDFLARE
             - null
@@ -714,7 +713,6 @@ components:
         version:
           type: string
           enum:
-            - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
             - CLOUDFLARE
           example: NODE24_PLAYWRIGHT
@@ -2428,11 +2426,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
       required:
         - name
         - url
@@ -2617,11 +2615,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
       additionalProperties: false
     BrowserCheckResponse:
       type: object
@@ -2869,11 +2867,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
         version:
           type: string
           enum:
@@ -3075,18 +3073,17 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
         version:
           type: string
           enum:
-            - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
           example: NODE24_PLAYWRIGHT
-          description: Runtime version for browser checks. NODE20_PLAYWRIGHT is deprecated; existing checks can keep this version but new checks should use NODE24_PLAYWRIGHT.
+          description: Runtime version for browser checks.
         script:
           type: string
           example: |-
@@ -3753,7 +3750,6 @@ components:
                 - string
                 - "null"
               enum:
-                - NODE20_PLAYWRIGHT
                 - NODE24_PLAYWRIGHT
                 - CLOUDFLARE
                 - null
@@ -4180,11 +4176,11 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
         version:
           type: string
           enum:
@@ -4390,18 +4386,17 @@ components:
         auth_username:
           type: string
           example: username
-          description: Username to use for URLs behind HTTP Basic Auth. An empty string represents an empty user-id.
+          description: Username to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; an empty string represents an empty user-id.
         auth_password:
           type: string
           example: password
-          description: Password to use for URLs behind HTTP Basic Auth. Empty strings are preserved.
+          description: Password to use for URLs behind HTTP Basic Auth. Uptime checks with environment variables can use {{NAME}} references; empty strings are preserved.
         version:
           type: string
           enum:
-            - NODE20_PLAYWRIGHT
             - NODE24_PLAYWRIGHT
           example: NODE24_PLAYWRIGHT
-          description: Runtime version for browser checks. NODE20_PLAYWRIGHT is deprecated; existing checks can keep this version but new checks should use NODE24_PLAYWRIGHT.
+          description: Runtime version for browser checks.
         script:
           type: string
           example: |-
