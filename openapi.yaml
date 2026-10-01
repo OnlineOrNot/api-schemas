@@ -5274,9 +5274,12 @@ components:
           description: Webhook ID
         url:
           type: string
-          format: uri
-          example: https://api.example.com/webhooks/onlineornot
-          description: Webhook endpoint URL
+          example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+          examples:
+            - https://api.example.com/webhooks/onlineornot
+            - '{{WEBHOOK_URL}}'
+            - https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+          description: Webhook URL. Use {{NAME}} to reference an environment variable.
         description:
           type:
             - string
@@ -18030,9 +18033,12 @@ paths:
               properties:
                 url:
                   type: string
-                  format: uri
-                  example: https://api.example.com/webhooks/onlineornot
-                  description: Webhook endpoint URL
+                  example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+                  examples:
+                    - https://api.example.com/webhooks/onlineornot
+                    - '{{WEBHOOK_URL}}'
+                    - https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+                  description: Webhook URL. Use {{NAME}} to reference an environment variable.
                 description:
                   type: string
                   example: Production webhook for incident notifications
@@ -18328,9 +18334,12 @@ paths:
               properties:
                 url:
                   type: string
-                  format: uri
-                  example: https://api.example.com/webhooks/onlineornot
-                  description: Webhook endpoint URL
+                  example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+                  examples:
+                    - https://api.example.com/webhooks/onlineornot
+                    - '{{WEBHOOK_URL}}'
+                    - https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
+                  description: Webhook URL. Use {{NAME}} to reference an environment variable.
                 description:
                   type: string
                   example: Production webhook for incident notifications
