@@ -18062,6 +18062,7 @@ paths:
                     - status_page.incident.started
                     - status_page.incident.resolved
                   description: Event types this webhook should subscribe to
+                  uniqueItems: true
                 status_page_ids:
                   type: array
                   items:
@@ -18070,6 +18071,7 @@ paths:
                     - x9y8z7w6
                     - p5q4r3s2
                   description: IDs of status pages to associate with this webhook
+                  uniqueItems: true
                 check_ids:
                   type: array
                   items:
@@ -18078,6 +18080,7 @@ paths:
                     - c1d2e3f4
                     - g5h6i7j8
                   description: IDs of uptime checks to associate with this webhook
+                  uniqueItems: true
                 heartbeat_ids:
                   type: array
                   items:
@@ -18086,10 +18089,11 @@ paths:
                     - h1i2j3k4
                     - l5m6n7o8
                   description: IDs of heartbeats to associate with this webhook
+                  uniqueItems: true
               required:
                 - url
                 - events
-              description: At least one nonempty status_page_ids, check_ids, or heartbeat_ids association is required.
+              description: At least one nonempty status_page_ids, check_ids, or heartbeat_ids association is required. Each selected resource type requires a matching event type, and each subscribed event type requires a resource of its type. Events and association IDs must not contain duplicates.
               not:
                 properties:
                   status_page_ids:
@@ -18363,6 +18367,7 @@ paths:
                     - status_page.incident.started
                     - status_page.incident.resolved
                   description: Event types this webhook should subscribe to
+                  uniqueItems: true
                 status_page_ids:
                   type: array
                   items:
@@ -18371,6 +18376,7 @@ paths:
                     - x9y8z7w6
                     - p5q4r3s2
                   description: IDs of status pages to associate with this webhook
+                  uniqueItems: true
                 check_ids:
                   type: array
                   items:
@@ -18379,6 +18385,7 @@ paths:
                     - c1d2e3f4
                     - g5h6i7j8
                   description: IDs of uptime checks to associate with this webhook
+                  uniqueItems: true
                 heartbeat_ids:
                   type: array
                   items:
@@ -18387,6 +18394,8 @@ paths:
                     - h1i2j3k4
                     - l5m6n7o8
                   description: IDs of heartbeats to associate with this webhook
+                  uniqueItems: true
+              description: Partial webhook update. The merged saved state must have matching resource and event types, at least one resource and event, and no duplicate events or association IDs.
       responses:
         "200":
           description: Webhook updated successfully
