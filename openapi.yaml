@@ -4844,6 +4844,24 @@ components:
             - "null"
           example: status.yourdomain.com
           description: Stored custom-domain hostname, without a URL scheme.
+        favicon_url:
+          type:
+            - string
+            - "null"
+          example: https://example.com/favicon.ico
+          description: URL to the favicon for the status page
+        logo_url:
+          type:
+            - string
+            - "null"
+          example: https://example.com/logo.png
+          description: URL to the logo for the status page
+        dark_logo_url:
+          type:
+            - string
+            - "null"
+          example: https://example.com/logo-dark.png
+          description: URL to the dark mode logo for the status page
       required:
         - id
         - name
@@ -12665,6 +12683,27 @@ paths:
             schema:
               type: object
               properties:
+                favicon:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
+                logo:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
+                dark_logo:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
                 name:
                   type: string
                   minLength: 1
@@ -13060,6 +13099,27 @@ paths:
             schema:
               type: object
               properties:
+                favicon:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
+                logo:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
+                dark_logo:
+                  type:
+                    - string
+                    - "null"
+                  maxLength: 13333436
+                  description: Image file contents as a base64 data URL, not a hosted URL. Supports PNG, JPEG, GIF, WebP, SVG and ICO; maximum decoded file size 10 MB. Omit to preserve the image; send null to remove it.
+                  example: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=
                 name:
                   type: string
                   minLength: 1
