@@ -4,9 +4,25 @@ info:
   description: |-
     Interact with OnlineOrNot programmatically via the OnlineOrNot API.
 
-    Using the OnlineOrNot API requires authentication so that OnlineOrNot knows who is making requests and what permissions you have. Create an API token to grant access to the API to perform actions.
+    Most management endpoints require an API token or OAuth bearer token in the Authorization header. Public endpoints, including status-page summaries and oonchk.com heartbeat pings, do not require bearer authentication; authentication requirements are documented per operation.
+
+    Scoped management routes also accept session cookies only when no bearer credential is supplied. Invalid bearer credentials never fall back to session cookies.
 
     To create an API token, from the OnlineOrNot dashboard, go to API Tokens and click Create token.
+
+    ## OAuth organization selection
+
+    API tokens are tied to an organization. Omit the X-OnlineOrNot-Organisation header for API tokens and OAuth grants authorizing a single organization.
+
+    For OAuth grants authorizing multiple organizations, send X-OnlineOrNot-Organisation with the public organization ID of an organization authorized by the grant. Replace `{organisation-id}` with that ID, not a raw database ID or the literal string value. Default request examples omit this optional header.
+
+    Example for a multi-organization OAuth grant with UPTIME_CHECKS:READ:
+
+    ```bash
+    curl 'https://api.onlineornot.com/v1/checks' \
+      --header 'Authorization: Bearer {access-token}' \
+      --header 'X-OnlineOrNot-Organisation: {organisation-id}'
+    ```
 
     ## Documentation
 
@@ -4985,6 +5001,10 @@ components:
         - $ref: '#/components/schemas/StatusPageIncident'
         - type: object
           properties:
+            id:
+              type: string
+              example: sm1b2c3d4
+              description: Scheduled maintenance ID
             start_date:
               type: string
               example: "2021-01-01T00:00:00.000Z"
@@ -5512,14 +5532,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
@@ -6178,7 +6190,17 @@ paths:
         - Tokens
       summary: Create an API token
       description: |-
-        Create a new API token for the organization
+        Create a new API token for the organization.
+
+        Your API token grants or OAuth access token scopes must permit each requested permission.
+        - EDIT permits READ or EDIT for the same scope.
+        - READ permits only READ for the same scope.
+        - The API returns HTTP 403 if your token does not have a required permission.
+        - This limit does not apply when you use session cookies.
+
+        Example requirements:
+        - Read permissions: API_TOKENS:EDIT and UPTIME_CHECKS:READ (or UPTIME_CHECKS:EDIT).
+        - Multiple permissions: API_TOKENS:EDIT, UPTIME_CHECKS:EDIT, and STATUS_PAGES:EDIT.
 
         Requires API_TOKENS:EDIT; EDIT also grants READ. Session cookies are accepted only when no bearer credential is supplied.
       operationId: createToken
@@ -6198,6 +6220,7 @@ paths:
             examples:
               basic:
                 summary: Create token with read permissions
+                description: Your token must have API_TOKENS:EDIT and UPTIME_CHECKS:READ (or UPTIME_CHECKS:EDIT).
                 value:
                   name: My API Token
                   grants:
@@ -6205,6 +6228,7 @@ paths:
                       permission: READ
               advanced:
                 summary: Create token with multiple permissions
+                description: Your token must have API_TOKENS:EDIT, UPTIME_CHECKS:EDIT, and STATUS_PAGES:EDIT.
                 value:
                   name: Full Access Token
                   grants:
@@ -6354,7 +6378,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
-          description: Insufficient permissions
+          description: Your token does not have API_TOKENS:EDIT or a requested permission
           content:
             application/json:
               schema:
@@ -11959,14 +11983,6 @@ paths:
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
-          in: query
       security:
         - api_token: []
       responses:
@@ -12263,14 +12279,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
@@ -12715,10 +12723,12 @@ paths:
                   example: status
                   description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                 custom_domain:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   format: uri
                   example: https://status.yourdomain.com
-                  description: The custom domain your status page is hosted at.
+                  description: The custom domain URL. On update, send null to remove the existing custom domain.
                 password:
                   type:
                     - string
@@ -13131,10 +13141,12 @@ paths:
                   example: status
                   description: The subdomain your status page will be hosted at. For example "status" would become "status.onlineornot.com"
                 custom_domain:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   format: uri
                   example: https://status.yourdomain.com
-                  description: The custom domain your status page is hosted at.
+                  description: The custom domain URL. On update, send null to remove the existing custom domain.
                 password:
                   type:
                     - string
@@ -13686,14 +13698,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
@@ -14426,14 +14430,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
@@ -15392,14 +15388,6 @@ paths:
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
           in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
-          in: query
       security:
         - api_token: []
       responses:
@@ -15820,14 +15808,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
@@ -16569,14 +16549,6 @@ paths:
           required: false
           description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
           name: per_page
-          in: query
-        - schema:
-            type: string
-            example: example
-            description: Search term to filter results.
-          required: false
-          description: Search term to filter results.
-          name: search
           in: query
       security:
         - api_token: []
