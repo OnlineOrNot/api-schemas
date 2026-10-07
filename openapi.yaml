@@ -17822,6 +17822,878 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+  /v1/webhooks/delivery-summary:
+    get:
+      tags:
+        - Webhooks
+      operationId: getWebhookDeliverySummary
+      summary: Read last-24-hour webhook summaries
+      description: Requires WEBHOOKS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            maxLength: 12900
+          required: true
+          name: webhook_ids
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Owned webhook delivery history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        delivery_count:
+                          type: integer
+                          minimum: 0
+                        error_count:
+                          type: integer
+                          minimum: 0
+                        average_response_time_ms:
+                          type:
+                            - number
+                            - "null"
+                          minimum: 0
+                        error_rate:
+                          type:
+                            - number
+                            - "null"
+                          minimum: 0
+                          maximum: 100
+                        webhook_id:
+                          type: string
+                        buckets:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              delivery_count:
+                                type: integer
+                                minimum: 0
+                              error_count:
+                                type: integer
+                                minimum: 0
+                              average_response_time_ms:
+                                type:
+                                  - number
+                                  - "null"
+                                minimum: 0
+                              error_rate:
+                                type:
+                                  - number
+                                  - "null"
+                                minimum: 0
+                                maximum: 100
+                              timestamp:
+                                type: string
+                                format: date-time
+                            required:
+                              - delivery_count
+                              - error_count
+                              - average_response_time_ms
+                              - error_rate
+                              - timestamp
+                      required:
+                        - delivery_count
+                        - error_count
+                        - average_response_time_ms
+                        - error_rate
+                        - webhook_id
+                        - buckets
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid history query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient webhook permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Webhook or attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Delivery history unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/webhooks/{webhook_id}/delivery-activity:
+    get:
+      tags:
+        - Webhooks
+      operationId: getWebhookDeliveryActivity
+      summary: Read webhook delivery activity
+      description: Requires WEBHOOKS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+        - schema:
+            type: string
+            enum:
+              - 24h
+              - 7d
+              - 14d
+            default: 24h
+          required: false
+          name: period
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Owned webhook delivery history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      summary:
+                        type: object
+                        properties:
+                          delivery_count:
+                            type: integer
+                            minimum: 0
+                          error_count:
+                            type: integer
+                            minimum: 0
+                          average_response_time_ms:
+                            type:
+                              - number
+                              - "null"
+                            minimum: 0
+                          error_rate:
+                            type:
+                              - number
+                              - "null"
+                            minimum: 0
+                            maximum: 100
+                          webhook_id:
+                            type: string
+                          buckets:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                delivery_count:
+                                  type: integer
+                                  minimum: 0
+                                error_count:
+                                  type: integer
+                                  minimum: 0
+                                average_response_time_ms:
+                                  type:
+                                    - number
+                                    - "null"
+                                  minimum: 0
+                                error_rate:
+                                  type:
+                                    - number
+                                    - "null"
+                                  minimum: 0
+                                  maximum: 100
+                                timestamp:
+                                  type: string
+                                  format: date-time
+                              required:
+                                - delivery_count
+                                - error_count
+                                - average_response_time_ms
+                                - error_rate
+                                - timestamp
+                        required:
+                          - delivery_count
+                          - error_count
+                          - average_response_time_ms
+                          - error_rate
+                          - webhook_id
+                          - buckets
+                      buckets:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            delivery_count:
+                              type: integer
+                              minimum: 0
+                            error_count:
+                              type: integer
+                              minimum: 0
+                            average_response_time_ms:
+                              type:
+                                - number
+                                - "null"
+                              minimum: 0
+                            error_rate:
+                              type:
+                                - number
+                                - "null"
+                              minimum: 0
+                              maximum: 100
+                            timestamp:
+                              type: string
+                              format: date-time
+                          required:
+                            - delivery_count
+                            - error_count
+                            - average_response_time_ms
+                            - error_rate
+                            - timestamp
+                    required:
+                      - summary
+                      - buckets
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid history query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient webhook permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Webhook or attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Delivery history unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/webhooks/{webhook_id}/deliveries:
+    get:
+      tags:
+        - Webhooks
+      operationId: listWebhookDeliveries
+      summary: List webhook delivery attempts
+      description: Requires WEBHOOKS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+        - schema:
+            type: string
+            enum:
+              - 24h
+              - 7d
+              - 14d
+            default: 24h
+          required: false
+          name: period
+          in: query
+        - schema:
+            type: string
+            enum:
+              - status_page.incident.started
+              - status_page.incident.updated
+              - status_page.incident.resolved
+              - uptime.down
+              - uptime.up
+              - heartbeat.down
+              - heartbeat.up
+            description: Webhook event type
+            example: status_page.incident.started
+          required: false
+          description: Webhook event type
+          name: event_type
+          in: query
+        - schema:
+            type: string
+            enum:
+              - success
+              - http_error
+              - timeout
+              - network_error
+              - resolution_error
+              - skipped
+          required: false
+          name: outcome
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          required: false
+          name: limit
+          in: query
+        - schema:
+            type: string
+            maxLength: 2048
+          required: false
+          name: cursor
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Owned webhook delivery history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      deliveries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            schema_version:
+                              type: number
+                              enum:
+                                - 1
+                            webhook_id:
+                              type: string
+                            event_id:
+                              type: string
+                            attempt_id:
+                              type: string
+                            event_type:
+                              type: string
+                              enum:
+                                - status_page.incident.started
+                                - status_page.incident.updated
+                                - status_page.incident.resolved
+                                - uptime.down
+                                - uptime.up
+                                - heartbeat.down
+                                - heartbeat.up
+                              description: Webhook event type
+                              example: status_page.incident.started
+                            queued_at:
+                              type: string
+                              format: date-time
+                            attempted_at:
+                              type: string
+                              format: date-time
+                            completed_at:
+                              type: string
+                              format: date-time
+                            outcome:
+                              type: string
+                              enum:
+                                - success
+                                - http_error
+                                - timeout
+                                - network_error
+                                - resolution_error
+                                - skipped
+                            failure_reason:
+                              type:
+                                - string
+                                - "null"
+                              maxLength: 128
+                            http_status:
+                              type:
+                                - integer
+                                - "null"
+                              minimum: 100
+                              maximum: 599
+                            response_time_ms:
+                              type:
+                                - number
+                                - "null"
+                              minimum: 0
+                            request_method:
+                              type: string
+                              enum:
+                                - POST
+                          required:
+                            - schema_version
+                            - webhook_id
+                            - event_id
+                            - attempt_id
+                            - event_type
+                            - queued_at
+                            - attempted_at
+                            - completed_at
+                            - outcome
+                            - failure_reason
+                            - http_status
+                            - response_time_ms
+                            - request_method
+                      next_cursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - deliveries
+                      - next_cursor
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid history query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient webhook permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Webhook or attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Delivery history unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/webhooks/{webhook_id}/deliveries/{attempt_id}:
+    get:
+      tags:
+        - Webhooks
+      operationId: getWebhookDelivery
+      summary: Inspect a webhook delivery attempt
+      description: Requires WEBHOOKS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: attempt_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Owned webhook delivery history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      schema_version:
+                        type: number
+                        enum:
+                          - 1
+                      webhook_id:
+                        type: string
+                      event_id:
+                        type: string
+                      attempt_id:
+                        type: string
+                      event_type:
+                        type: string
+                        enum:
+                          - status_page.incident.started
+                          - status_page.incident.updated
+                          - status_page.incident.resolved
+                          - uptime.down
+                          - uptime.up
+                          - heartbeat.down
+                          - heartbeat.up
+                        description: Webhook event type
+                        example: status_page.incident.started
+                      queued_at:
+                        type: string
+                        format: date-time
+                      attempted_at:
+                        type: string
+                        format: date-time
+                      completed_at:
+                        type: string
+                        format: date-time
+                      outcome:
+                        type: string
+                        enum:
+                          - success
+                          - http_error
+                          - timeout
+                          - network_error
+                          - resolution_error
+                          - skipped
+                      failure_reason:
+                        type:
+                          - string
+                          - "null"
+                        maxLength: 128
+                      http_status:
+                        type:
+                          - integer
+                          - "null"
+                        minimum: 100
+                        maximum: 599
+                      response_time_ms:
+                        type:
+                          - number
+                          - "null"
+                        minimum: 0
+                      request_method:
+                        type: string
+                        enum:
+                          - POST
+                      request_headers:
+                        type: string
+                      request_body:
+                        type:
+                          - string
+                          - "null"
+                      request_body_state:
+                        type: string
+                        enum:
+                          - captured
+                          - truncated
+                          - unavailable
+                      response_headers:
+                        type: string
+                      response_body:
+                        type:
+                          - string
+                          - "null"
+                      response_body_state:
+                        type: string
+                        enum:
+                          - captured
+                          - truncated
+                          - unavailable
+                          - not_received
+                    required:
+                      - schema_version
+                      - webhook_id
+                      - event_id
+                      - attempt_id
+                      - event_type
+                      - queued_at
+                      - attempted_at
+                      - completed_at
+                      - outcome
+                      - failure_reason
+                      - http_status
+                      - response_time_ms
+                      - request_method
+                      - request_headers
+                      - request_body
+                      - request_body_state
+                      - response_headers
+                      - response_body
+                      - response_body_state
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid history query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient webhook permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Webhook or attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Delivery history unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
   /v1/webhooks:
     get:
       tags:
