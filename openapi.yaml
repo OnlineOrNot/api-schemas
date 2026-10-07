@@ -5314,6 +5314,10 @@ components:
           type: string
           example: a1b2c3d4
           description: Webhook ID
+        enabled:
+          type: boolean
+          description: Whether webhook delivery is enabled
+          example: true
         url:
           type: string
           example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
@@ -5407,6 +5411,7 @@ components:
           description: Heartbeats this webhook is associated with
       required:
         - id
+        - enabled
         - url
         - description
         - events
@@ -18927,6 +18932,10 @@ paths:
             schema:
               type: object
               properties:
+                enabled:
+                  type: boolean
+                  description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
+                  example: true
                 url:
                   type: string
                   example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
@@ -19232,6 +19241,10 @@ paths:
             schema:
               type: object
               properties:
+                enabled:
+                  type: boolean
+                  description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
+                  example: true
                 url:
                   type: string
                   example: https://api.example.com/hooks/{{WEBHOOK_TOKEN}}
@@ -19359,7 +19372,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
-          description: Insufficient permissions
+          description: Webhook enable/disable requires paid feature access
           content:
             application/json:
               schema:
