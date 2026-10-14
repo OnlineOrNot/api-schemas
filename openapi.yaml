@@ -250,6 +250,13 @@ components:
     ExpandedUptimeCheck:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -514,6 +521,13 @@ components:
     ExpandedBrowserCheck:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -779,6 +793,13 @@ components:
     ExpandedDnsCheck:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -1008,6 +1029,13 @@ components:
     ExpandedTcpCheck:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -1310,6 +1338,13 @@ components:
     CheckListItem:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -1579,6 +1614,13 @@ components:
     DnsCheckInput:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Omit to select the organisation's stable Default project.
         name:
           type: string
           example: My monitor
@@ -1715,6 +1757,9 @@ components:
     DnsCheckPatch:
       type: object
       properties:
+        project_id:
+          type: string
+          not: {}
         name:
           type: string
           example: My monitor
@@ -1944,6 +1989,13 @@ components:
     TcpCheckInput:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Omit to select the organisation's stable Default project.
         name:
           type: string
           example: My monitor
@@ -2080,6 +2132,9 @@ components:
     TcpCheckPatch:
       type: object
       properties:
+        project_id:
+          type: string
+          not: {}
         name:
           type: string
           example: My monitor
@@ -2254,6 +2309,13 @@ components:
     UptimeCheckInput:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Omit to select the organisation's stable Default project.
         name:
           type: string
           example: My monitor
@@ -2458,6 +2520,9 @@ components:
     UptimeCheckPatch:
       type: object
       properties:
+        project_id:
+          type: string
+          not: {}
         name:
           type: string
           example: My monitor
@@ -2693,6 +2758,13 @@ components:
     BrowserCheckInput:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Omit to select the organisation's stable Default project.
         name:
           type: string
           example: My monitor
@@ -2914,6 +2986,9 @@ components:
     BrowserCheckPatch:
       type: object
       properties:
+        project_id:
+          type: string
+          not: {}
         name:
           type: string
           example: My monitor
@@ -3951,6 +4026,13 @@ components:
     Check:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -4001,6 +4083,13 @@ components:
     CheckInput:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Omit to select the organisation's stable Default project.
         name:
           type: string
           example: My monitor
@@ -4221,6 +4310,9 @@ components:
     CheckPatch:
       type: object
       properties:
+        project_id:
+          type: string
+          not: {}
         name:
           type: string
           example: My monitor
@@ -4429,6 +4521,13 @@ components:
     EnvironmentVariableMetadata:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4e5f6g7h8
@@ -4437,7 +4536,7 @@ components:
           type: string
           pattern: ^[A-Z_][A-Z0-9_]{0,63}$
           example: API_TOKEN
-          description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+          description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
         type:
           type: string
           enum:
@@ -4471,6 +4570,13 @@ components:
     Heartbeat:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -4759,6 +4865,38 @@ components:
         - email
         - role
         - created_at
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: staging
+          description: Editable display label. Project names need not be unique.
+        is_default:
+          type: boolean
+          description: Stable Default identity, independent of the editable name.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - is_default
+        - created_at
+        - updated_at
+      additionalProperties: false
     StatusPage:
       type: object
       properties:
@@ -5310,6 +5448,13 @@ components:
     Webhook:
       type: object
       properties:
+        project_id:
+          type: string
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Encoded project ID, not a project name or raw database ID.
         id:
           type: string
           example: a1b2c3d4
@@ -6083,6 +6228,7 @@ paths:
                                   scope:
                                     type: string
                                     enum:
+                                      - PROJECTS
                                       - UPTIME_CHECKS
                                       - STATUS_PAGES
                                       - HEARTBEAT_CHECKS
@@ -6260,6 +6406,7 @@ paths:
                       scope:
                         type: string
                         enum:
+                          - PROJECTS
                           - UPTIME_CHECKS
                           - STATUS_PAGES
                           - HEARTBEAT_CHECKS
@@ -6462,6 +6609,7 @@ paths:
                             scope:
                               type: string
                               enum:
+                                - PROJECTS
                                 - UPTIME_CHECKS
                                 - STATUS_PAGES
                                 - HEARTBEAT_CHECKS
@@ -6737,6 +6885,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
           content:
             application/json:
               schema:
@@ -7106,6 +7260,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -7465,6 +7625,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -7733,6 +7899,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -7934,6 +8106,161 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/checks/{check_id}/move:
+    post:
+      tags:
+        - Checks
+      operationId: moveCheck
+      summary: Move a check to another project
+      description: Requires UPTIME_CHECKS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Uptime Check ID
+          required: true
+          description: Uptime Check ID
+          name: check_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: string
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Encoded project ID, not a project name or raw database ID.
+              required:
+                - project_id
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved check identity and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        minLength: 8
+                        example: a1b2c3d4
+                        description: Uptime Check ID
+                      project_id:
+                        type: string
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Encoded project ID, not a project name or raw database ID.
+                    required:
+                      - id
+                      - project_id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: project_move_variable_conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -8841,6 +9168,17 @@ paths:
           in: query
         - schema:
             type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Omit to list resources across all authorized projects.
+          required: false
+          description: Omit to list resources across all authorized projects.
+          name: project_id
+          in: query
+        - schema:
+            type: string
             enum:
               - DOWN
               - MUTED
@@ -8992,6 +9330,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -9059,6 +9403,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
           content:
             application/json:
               schema:
@@ -9396,6 +9746,17 @@ paths:
           in: query
         - schema:
             type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Omit to list resources across all authorized projects.
+          required: false
+          description: Omit to list resources across all authorized projects.
+          name: project_id
+          in: query
+        - schema:
+            type: string
             maxLength: 64
             description: Case-insensitive substring search on environment variable names.
             example: TOKEN
@@ -9504,6 +9865,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "429":
           description: Rate limit exceeded
           content:
@@ -9521,7 +9888,7 @@ paths:
         - Environment Variables
       summary: Create an environment variable
       description: |-
-        Create a reusable config or secret for uptime check request headers, HTTP Basic Auth usernames and passwords, and webhook URL templates. Reference variables using {{NAME}}. Each uptime check supports at most 32 distinct variable references across its headers and HTTP Basic Auth combined. Browser checks do not support environment variable references. See [variable-backed webhook URL examples](https://developers.onlineornot.com/api/webhooks#create-a-webhook). Config values are readable; secrets are write-only. A variable's type cannot be changed after creation. Anyone who can edit uptime checks can use variables from the same organization. Exact secret values are automatically redacted from results; encoded or transformed values may remain visible.
+        Create a reusable config or secret for uptime check request headers, HTTP Basic Auth usernames and passwords, and webhook URL templates. Reference variables using {{NAME}}. Each uptime check supports at most 32 distinct variable references across its headers and HTTP Basic Auth combined. Browser checks do not support environment variable references. See [variable-backed webhook URL examples](https://developers.onlineornot.com/api/webhooks#create-a-webhook). Config values are readable; secrets are write-only. A variable's type cannot be changed after creation. Anyone who can edit uptime checks can use variables from the same organization and project, without inheritance or cross-project fallback. Exact secret values are automatically redacted from results; encoded or transformed values may remain visible.
 
         Requires ENVIRONMENT_VARIABLES:EDIT.
       operationId: createEnvironmentVariable
@@ -9554,11 +9921,18 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Omit to select the organisation's stable Default project.
                 name:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                   example: API_TOKEN
-                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                 type:
                   type: string
                   enum:
@@ -9587,6 +9961,13 @@ paths:
                     oneOf:
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -9595,7 +9976,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -9626,6 +10007,13 @@ paths:
                         additionalProperties: false
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -9634,7 +10022,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -9730,6 +10118,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
           description: The organization has 1,000 variables (environment_variable_limit_reached) or the name already exists (environment_variable_name_conflict)
           content:
@@ -9788,6 +10182,13 @@ paths:
                     oneOf:
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -9796,7 +10197,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -9827,6 +10228,13 @@ paths:
                         additionalProperties: false
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -9835,7 +10243,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -9997,11 +10405,14 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  not: {}
                 name:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                   example: API_TOKEN
-                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                  description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                 value:
                   type: string
                   example: <value>
@@ -10019,6 +10430,13 @@ paths:
                     oneOf:
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10027,7 +10445,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -10058,6 +10476,13 @@ paths:
                         additionalProperties: false
                       - type: object
                         properties:
+                          project_id:
+                            type: string
+                            minLength: 16
+                            maxLength: 128
+                            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                            example: a1b2c3d4e5f6g7h8
+                            description: Encoded project ID, not a project name or raw database ID.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10066,7 +10491,7 @@ paths:
                             type: string
                             pattern: ^[A-Z_][A-Z0-9_]{0,63}$
                             example: API_TOKEN
-                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the organization.
+                            description: Case-sensitive name matching [A-Z_][A-Z0-9_]{0,63}, unique within the project.
                           type:
                             type: string
                             enum:
@@ -10314,6 +10739,155 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+  /v1/heartbeats/{heartbeat_id}/move:
+    post:
+      tags:
+        - Heartbeats
+      operationId: moveHeartbeat
+      summary: Move a heartbeat to another project
+      description: Requires HEARTBEAT_CHECKS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Heartbeat ID
+          required: true
+          description: Heartbeat ID
+          name: heartbeat_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: string
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Encoded project ID, not a project name or raw database ID.
+              required:
+                - project_id
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved heartbeat identity and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        minLength: 8
+                        example: a1b2c3d4
+                        description: Heartbeat ID
+                      project_id:
+                        type: string
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Encoded project ID, not a project name or raw database ID.
+                    required:
+                      - id
+                      - project_id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
   /v1/heartbeats:
     get:
       tags:
@@ -10358,6 +10932,17 @@ paths:
           required: false
           description: Search term to filter results.
           name: search
+          in: query
+        - schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Omit to list resources across all authorized projects.
+          required: false
+          description: Omit to list resources across all authorized projects.
+          name: project_id
           in: query
       security:
         - api_token: []
@@ -10495,6 +11080,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -10541,6 +11132,13 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Omit to select the organisation's stable Default project.
                 name:
                   type: string
                   example: Daily backup job
@@ -10692,6 +11290,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
           content:
             application/json:
               schema:
@@ -10862,6 +11466,9 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  not: {}
                 name:
                   type: string
                   example: Daily backup job
@@ -12544,6 +13151,650 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/projects:
+    post:
+      tags:
+        - Projects
+      operationId: createProject
+      summary: Create a project
+      description: Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                  example: staging
+                  description: Editable display label. Project names need not be unique.
+              required:
+                - name
+              additionalProperties: false
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Project'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    get:
+      tags:
+        - Projects
+      operationId: listProjects
+      summary: List projects
+      description: Requires PROJECTS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated owned projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/projects/{project_id}:
+    get:
+      tags:
+        - Projects
+      operationId: getProject
+      summary: Get a project
+      description: Requires PROJECTS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Encoded project ID, not a project name or raw database ID.
+          required: true
+          description: Encoded project ID, not a project name or raw database ID.
+          name: project_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Owned project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Project'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    patch:
+      tags:
+        - Projects
+      operationId: updateProject
+      summary: Rename a project
+      description: Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Encoded project ID, not a project name or raw database ID.
+          required: true
+          description: Encoded project ID, not a project name or raw database ID.
+          name: project_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                  example: staging
+                  description: Editable display label. Project names need not be unique.
+              required:
+                - name
+              additionalProperties: false
+      responses:
+        "200":
+          description: Renamed project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Project'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    delete:
+      tags:
+        - Projects
+      operationId: deleteProject
+      summary: Delete an empty non-Default project
+      description: Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Encoded project ID, not a project name or raw database ID.
+          required: true
+          description: Encoded project ID, not a project name or raw database ID.
+          name: project_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Deleted project identity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Encoded project ID, not a project name or raw database ID.
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: project_is_default or project_not_empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -18744,6 +19995,17 @@ paths:
           description: Search term to filter results.
           name: search
           in: query
+        - schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+            example: a1b2c3d4e5f6g7h8
+            description: Omit to list resources across all authorized projects.
+          required: false
+          description: Omit to list resources across all authorized projects.
+          name: project_id
+          in: query
       security:
         - api_token: []
       responses:
@@ -18880,6 +20142,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -18932,6 +20200,13 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Omit to select the organisation's stable Default project.
                 enabled:
                   type: boolean
                   description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
@@ -19075,6 +20350,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
           description: Forbidden - Webhooks require a paid plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
           content:
             application/json:
               schema:
@@ -19241,6 +20522,9 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  not: {}
                 enabled:
                   type: boolean
                   description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
