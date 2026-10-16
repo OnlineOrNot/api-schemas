@@ -251,12 +251,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -522,12 +524,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -794,12 +798,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1030,12 +1036,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1339,12 +1347,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1620,7 +1630,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Omit to select the organisation's stable Default project.
+          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
         name:
           type: string
           example: My monitor
@@ -1995,7 +2005,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Omit to select the organisation's stable Default project.
+          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
         name:
           type: string
           example: My monitor
@@ -2315,7 +2325,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Omit to select the organisation's stable Default project.
+          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
         name:
           type: string
           example: My monitor
@@ -2764,7 +2774,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Omit to select the organisation's stable Default project.
+          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
         name:
           type: string
           example: My monitor
@@ -4027,12 +4037,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -4089,7 +4101,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Omit to select the organisation's stable Default project.
+          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
         name:
           type: string
           example: My monitor
@@ -4522,12 +4534,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4e5f6g7h8
@@ -4571,12 +4585,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -4874,16 +4890,16 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID.
         name:
           type: string
           minLength: 1
           maxLength: 255
           example: staging
-          description: Editable display label. Project names need not be unique.
+          description: Project name.
         is_default:
           type: boolean
-          description: Stable Default identity, independent of the editable name.
+          description: Legacy Default project marker, retained during the compatibility rollout.
         created_at:
           type: string
           format: date-time
@@ -4893,7 +4909,6 @@ components:
       required:
         - id
         - name
-        - is_default
         - created_at
         - updated_at
       additionalProperties: false
@@ -5449,12 +5464,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -8148,7 +8165,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Encoded project ID, not a project name or raw database ID.
+                  description: Project ID.
               required:
                 - project_id
               additionalProperties: false
@@ -8169,12 +8186,14 @@ paths:
                         example: a1b2c3d4
                         description: Uptime Check ID
                       project_id:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         minLength: 16
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Encoded project ID, not a project name or raw database ID.
+                        description: Project ID, or null for Unassigned.
                     required:
                       - id
                       - project_id
@@ -9172,9 +9191,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Omit to list resources across all authorized projects.
+            description: Project ID. Omit to list all authorised resources.
           required: false
-          description: Omit to list resources across all authorized projects.
+          description: Project ID. Omit to list all authorised resources.
           name: project_id
           in: query
         - schema:
@@ -9750,9 +9769,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Omit to list resources across all authorized projects.
+            description: Project ID. Omit to list all authorised resources.
           required: false
-          description: Omit to list resources across all authorized projects.
+          description: Project ID. Omit to list all authorised resources.
           name: project_id
           in: query
         - schema:
@@ -9927,7 +9946,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Omit to select the organisation's stable Default project.
+                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
                 name:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
@@ -9962,12 +9981,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10008,12 +10029,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10183,12 +10206,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10229,12 +10254,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10431,12 +10458,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10477,12 +10506,14 @@ paths:
                       - type: object
                         properties:
                           project_id:
-                            type: string
+                            type:
+                              - string
+                              - "null"
                             minLength: 16
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Encoded project ID, not a project name or raw database ID.
+                            description: Project ID, or null for Unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10777,7 +10808,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Encoded project ID, not a project name or raw database ID.
+                  description: Project ID.
               required:
                 - project_id
               additionalProperties: false
@@ -10798,12 +10829,14 @@ paths:
                         example: a1b2c3d4
                         description: Heartbeat ID
                       project_id:
-                        type: string
+                        type:
+                          - string
+                          - "null"
                         minLength: 16
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Encoded project ID, not a project name or raw database ID.
+                        description: Project ID, or null for Unassigned.
                     required:
                       - id
                       - project_id
@@ -10939,9 +10972,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Omit to list resources across all authorized projects.
+            description: Project ID. Omit to list all authorised resources.
           required: false
-          description: Omit to list resources across all authorized projects.
+          description: Project ID. Omit to list all authorised resources.
           name: project_id
           in: query
       security:
@@ -11138,7 +11171,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Omit to select the organisation's stable Default project.
+                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
                 name:
                   type: string
                   example: Daily backup job
@@ -13183,7 +13216,7 @@ paths:
                   minLength: 1
                   maxLength: 255
                   example: staging
-                  description: Editable display label. Project names need not be unique.
+                  description: Project name.
               required:
                 - name
               additionalProperties: false
@@ -13437,9 +13470,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Encoded project ID, not a project name or raw database ID.
+            description: Project ID.
           required: true
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID.
           name: project_id
           in: path
       security:
@@ -13553,9 +13586,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Encoded project ID, not a project name or raw database ID.
+            description: Project ID.
           required: true
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID.
           name: project_id
           in: path
       security:
@@ -13572,7 +13605,7 @@ paths:
                   minLength: 1
                   maxLength: 255
                   example: staging
-                  description: Editable display label. Project names need not be unique.
+                  description: Project name.
               required:
                 - name
               additionalProperties: false
@@ -13685,9 +13718,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Encoded project ID, not a project name or raw database ID.
+            description: Project ID.
           required: true
-          description: Encoded project ID, not a project name or raw database ID.
+          description: Project ID.
           name: project_id
           in: path
       security:
@@ -13709,7 +13742,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Encoded project ID, not a project name or raw database ID.
+                        description: Project ID.
                     required:
                       - id
                     additionalProperties: false
@@ -20001,9 +20034,9 @@ paths:
             maxLength: 128
             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
             example: a1b2c3d4e5f6g7h8
-            description: Omit to list resources across all authorized projects.
+            description: Project ID. Omit to list all authorised resources.
           required: false
-          description: Omit to list resources across all authorized projects.
+          description: Project ID. Omit to list all authorised resources.
           name: project_id
           in: query
       security:
@@ -20206,7 +20239,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Omit to select the organisation's stable Default project.
+                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
                 enabled:
                   type: boolean
                   description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
