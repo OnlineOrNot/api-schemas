@@ -1625,12 +1625,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+          description: Project ID. Omit or use null to leave the resource Unassigned.
         name:
           type: string
           example: My monitor
@@ -2000,12 +2002,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+          description: Project ID. Omit or use null to leave the resource Unassigned.
         name:
           type: string
           example: My monitor
@@ -2320,12 +2324,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+          description: Project ID. Omit or use null to leave the resource Unassigned.
         name:
           type: string
           example: My monitor
@@ -2769,12 +2775,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+          description: Project ID. Omit or use null to leave the resource Unassigned.
         name:
           type: string
           example: My monitor
@@ -4096,12 +4104,14 @@ components:
       type: object
       properties:
         project_id:
-          type: string
+          type:
+            - string
+            - "null"
           minLength: 16
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+          description: Project ID. Omit or use null to leave the resource Unassigned.
         name:
           type: string
           example: My monitor
@@ -8132,7 +8142,7 @@ paths:
       tags:
         - Checks
       operationId: moveCheck
-      summary: Move a check to another project
+      summary: Assign or unassign a check
       description: Requires UPTIME_CHECKS:EDIT.
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -8160,12 +8170,14 @@ paths:
               type: object
               properties:
                 project_id:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   minLength: 16
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID.
+                  description: Project ID, or null for Unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -9186,14 +9198,19 @@ paths:
           name: search
           in: query
         - schema:
-            type: string
-            minLength: 16
-            maxLength: 128
-            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
-            example: a1b2c3d4e5f6g7h8
-            description: Project ID. Omit to list all authorised resources.
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID. Omit to list all authorised resources.
+          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           name: project_id
           in: query
         - schema:
@@ -9764,14 +9781,19 @@ paths:
           name: per_page
           in: query
         - schema:
-            type: string
-            minLength: 16
-            maxLength: 128
-            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
-            example: a1b2c3d4e5f6g7h8
-            description: Project ID. Omit to list all authorised resources.
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID. Omit to list all authorised resources.
+          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           name: project_id
           in: query
         - schema:
@@ -9941,12 +9963,14 @@ paths:
               type: object
               properties:
                 project_id:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   minLength: 16
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+                  description: Project ID. Omit or use null to leave the resource Unassigned.
                 name:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
@@ -10775,7 +10799,7 @@ paths:
       tags:
         - Heartbeats
       operationId: moveHeartbeat
-      summary: Move a heartbeat to another project
+      summary: Assign or unassign a heartbeat
       description: Requires HEARTBEAT_CHECKS:EDIT.
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -10803,12 +10827,14 @@ paths:
               type: object
               properties:
                 project_id:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   minLength: 16
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID.
+                  description: Project ID, or null for Unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -10967,14 +10993,19 @@ paths:
           name: search
           in: query
         - schema:
-            type: string
-            minLength: 16
-            maxLength: 128
-            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
-            example: a1b2c3d4e5f6g7h8
-            description: Project ID. Omit to list all authorised resources.
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID. Omit to list all authorised resources.
+          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           name: project_id
           in: query
       security:
@@ -11166,12 +11197,14 @@ paths:
               type: object
               properties:
                 project_id:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   minLength: 16
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+                  description: Project ID. Omit or use null to leave the resource Unassigned.
                 name:
                   type: string
                   example: Daily backup job
@@ -13184,6 +13217,491 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/webhooks/{webhook_id}/move:
+    post:
+      operationId: moveWebhook
+      tags:
+        - Webhooks
+      summary: Assign or unassign a webhook
+      description: Requires WEBHOOKS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: a1b2c3d4
+            description: Webhook ID
+          required: true
+          description: Webhook ID
+          name: webhook_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project ID, or null for Unassigned.
+              required:
+                - project_id
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved resource and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project ID, or null for Unassigned.
+                    required:
+                      - id
+                      - project_id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Move would break variable references or create a name conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/env/{environment_variable_id}/move:
+    post:
+      operationId: moveEnvironmentVariable
+      tags:
+        - Environment Variables
+      summary: Assign or unassign an environment variable
+      description: Requires ENVIRONMENT_VARIABLES:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 1
+            example: a1b2c3d4e5f6g7h8
+            description: Environment variable ID.
+          required: true
+          description: Environment variable ID.
+          name: environment_variable_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project ID, or null for Unassigned.
+              required:
+                - project_id
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved resource and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project ID, or null for Unassigned.
+                    required:
+                      - id
+                      - project_id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Move would break variable references or create a name conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/resources/move:
+    post:
+      operationId: moveResources
+      tags:
+        - Projects
+      summary: Assign or unassign explicitly selected resources atomically
+      description: |-
+        Requires EDIT permission for every selected resource type. Moves only the selected resources; rejects broken variable references and name conflicts without partial changes.
+
+        Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project ID, or null for Unassigned.
+                resources:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      kind:
+                        type: string
+                        enum:
+                          - check
+                          - heartbeat
+                          - webhook
+                          - environment_variable
+                      id:
+                        type: string
+                        minLength: 1
+                        maxLength: 128
+                    required:
+                      - kind
+                      - id
+                    additionalProperties: false
+                  minItems: 1
+                  maxItems: 100
+              required:
+                - project_id
+                - resources
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved selection and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project ID, or null for Unassigned.
+                      resources:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            kind:
+                              type: string
+                              enum:
+                                - check
+                                - heartbeat
+                                - webhook
+                                - environment_variable
+                            id:
+                              type: string
+                              minLength: 1
+                              maxLength: 128
+                          required:
+                            - kind
+                            - id
+                          additionalProperties: false
+                    required:
+                      - project_id
+                      - resources
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Move would break variable references or create a name conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -20029,14 +20547,19 @@ paths:
           name: search
           in: query
         - schema:
-            type: string
-            minLength: 16
-            maxLength: 128
-            pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
-            example: a1b2c3d4e5f6g7h8
-            description: Project ID. Omit to list all authorised resources.
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID. Omit to list all authorised resources.
+          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
           name: project_id
           in: query
       security:
@@ -20234,12 +20757,14 @@ paths:
               type: object
               properties:
                 project_id:
-                  type: string
+                  type:
+                    - string
+                    - "null"
                   minLength: 16
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit to select the organisation Default project during the compatibility rollout.
+                  description: Project ID. Omit or use null to leave the resource Unassigned.
                 enabled:
                   type: boolean
                   description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
