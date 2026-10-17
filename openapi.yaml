@@ -4907,9 +4907,6 @@ components:
           maxLength: 255
           example: staging
           description: Project name.
-        is_default:
-          type: boolean
-          description: Legacy Default project marker, retained during the compatibility rollout.
         created_at:
           type: string
           format: date-time
@@ -14221,7 +14218,7 @@ paths:
       tags:
         - Projects
       operationId: deleteProject
-      summary: Delete an empty non-Default project
+      summary: Delete an empty project
       description: Requires PROJECTS:EDIT.
       parameters:
         - name: X-OnlineOrNot-Organisation
@@ -14333,7 +14330,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: project_is_default or project_not_empty
+          description: project_not_empty
           content:
             application/json:
               schema:
