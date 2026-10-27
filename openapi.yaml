@@ -6236,6 +6236,15 @@ paths:
                         items:
                           type: object
                           properties:
+                            project_id:
+                              type:
+                                - string
+                                - "null"
+                              minLength: 16
+                              maxLength: 128
+                              pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                              example: a1b2c3d4e5f6g7h8
+                              description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                             id:
                               type: string
                               example: a1b2c3d4
@@ -6257,29 +6266,44 @@ paths:
                             grants:
                               type: array
                               items:
-                                type: object
-                                properties:
-                                  scope:
-                                    type: string
-                                    enum:
-                                      - PROJECTS
-                                      - UPTIME_CHECKS
-                                      - STATUS_PAGES
-                                      - HEARTBEAT_CHECKS
-                                      - MAINTENANCE_WINDOWS
-                                      - PEOPLE
-                                      - INTEGRATIONS
-                                      - API_TOKENS
-                                      - WEBHOOKS
-                                      - ENVIRONMENT_VARIABLES
-                                  permission:
-                                    type: string
-                                    enum:
-                                      - READ
-                                      - EDIT
-                                required:
-                                  - scope
-                                  - permission
+                                anyOf:
+                                  - type: object
+                                    properties:
+                                      scope:
+                                        type: string
+                                        enum:
+                                          - PROJECTS
+                                          - LOGS
+                                          - UPTIME_CHECKS
+                                          - STATUS_PAGES
+                                          - HEARTBEAT_CHECKS
+                                          - MAINTENANCE_WINDOWS
+                                          - PEOPLE
+                                          - INTEGRATIONS
+                                          - API_TOKENS
+                                          - WEBHOOKS
+                                          - ENVIRONMENT_VARIABLES
+                                      permission:
+                                        type: string
+                                        enum:
+                                          - READ
+                                          - EDIT
+                                    required:
+                                      - scope
+                                      - permission
+                                  - type: object
+                                    properties:
+                                      scope:
+                                        type: string
+                                        enum:
+                                          - LOGS
+                                      permission:
+                                        type: string
+                                        enum:
+                                          - SEND
+                                    required:
+                                      - scope
+                                      - permission
                               description: List of grants (scope and permission pairs) assigned to this token
                           required:
                             - id
@@ -6385,7 +6409,13 @@ paths:
         - EDIT permits READ or EDIT for the same scope.
         - READ permits only READ for the same scope.
         - The API returns HTTP 403 if your token does not have a required permission.
-        - This limit does not apply when you use session cookies.
+        - This limit does not apply when you use session cookies. LOGS:EDIT and LOGS:SEND still require current ADMIN membership.
+        - OAuth callers also require current ADMIN membership to issue LOGS:EDIT or LOGS:SEND.
+        - LOGS:SEND can be combined with other explicitly granted permissions. Tokens with LOGS:SEND may specify project_id; omit it or use null for Unassigned.
+        - Project scope applies only to sending; other grants remain organisation-wide.
+        - Issuing LOGS:SEND requires LOGS:EDIT or explicit LOGS:SEND delegation authority in addition to API_TOKENS:EDIT for bearer callers. LOGS:EDIT itself does not authorize sending logs.
+        - Project scope is fixed at creation. Revoke and replace the token to change it. A sending credential with API_TOKENS:EDIT may delegate sending only to its own project unless it also holds organisation-wide LOGS:EDIT.
+        - Logs grants are available to authorized callers in every organisation. Ingestion and search are not available yet.
 
         Example requirements:
         - Read permissions: API_TOKENS:EDIT and UPTIME_CHECKS:READ (or UPTIME_CHECKS:EDIT).
@@ -6415,6 +6445,26 @@ paths:
                   grants:
                     - scope: UPTIME_CHECKS
                       permission: READ
+              logIngestion:
+                summary: Create an ingestion-only token for Unassigned logs
+                description: Requires API_TOKENS:EDIT plus LOGS:EDIT (or LOGS:SEND). The destination is Unassigned.
+                value:
+                  name: Application logs
+                  grants:
+                    - scope: LOGS
+                      permission: SEND
+                  project_id: null
+              combinedSending:
+                summary: Combine sending and token read access
+                description: Requires API_TOKENS:EDIT, LOGS:SEND (or LOGS:EDIT), and API_TOKENS:READ. Project scope applies only to sending; token read access is organisation-wide.
+                value:
+                  name: Application logs and token inspection
+                  grants:
+                    - scope: API_TOKENS
+                      permission: READ
+                    - scope: LOGS
+                      permission: SEND
+                  project_id: null
               advanced:
                 summary: Create token with multiple permissions
                 description: Your token must have API_TOKENS:EDIT, UPTIME_CHECKS:EDIT, and STATUS_PAGES:EDIT.
@@ -6435,40 +6485,64 @@ paths:
                 grants:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      scope:
-                        type: string
-                        enum:
-                          - PROJECTS
-                          - UPTIME_CHECKS
-                          - STATUS_PAGES
-                          - HEARTBEAT_CHECKS
-                          - MAINTENANCE_WINDOWS
-                          - PEOPLE
-                          - INTEGRATIONS
-                          - API_TOKENS
-                          - WEBHOOKS
-                          - ENVIRONMENT_VARIABLES
-                      permission:
-                        type: string
-                        enum:
-                          - READ
-                          - EDIT
-                    required:
-                      - scope
-                      - permission
+                    anyOf:
+                      - type: object
+                        properties:
+                          scope:
+                            type: string
+                            enum:
+                              - PROJECTS
+                              - LOGS
+                              - UPTIME_CHECKS
+                              - STATUS_PAGES
+                              - HEARTBEAT_CHECKS
+                              - MAINTENANCE_WINDOWS
+                              - PEOPLE
+                              - INTEGRATIONS
+                              - API_TOKENS
+                              - WEBHOOKS
+                              - ENVIRONMENT_VARIABLES
+                          permission:
+                            type: string
+                            enum:
+                              - READ
+                              - EDIT
+                        required:
+                          - scope
+                          - permission
+                      - type: object
+                        properties:
+                          scope:
+                            type: string
+                            enum:
+                              - LOGS
+                          permission:
+                            type: string
+                            enum:
+                              - SEND
+                        required:
+                          - scope
+                          - permission
                   example:
                     - scope: UPTIME_CHECKS
                       permission: READ
-                  description: List of grants (scope and permission pairs) for the token
+                  description: Permissions explicitly granted to this token.
                 expiresAt:
                   type:
                     - string
                     - "null"
                   format: date-time
                   example: "2025-12-31T23:59:59.000Z"
-                  description: Custom expiration date for the token. If not provided, defaults to 365 days from now. Set to null for no expiration.
+                  description: Custom expiration date. Omit for 365 days from now, or use null for no expiration.
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project receiving logs. Omit or use null for Unassigned. Requires LOGS:SEND and applies only to sending; other grants remain organisation-wide. Scope cannot be changed after issuance.
               required:
                 - name
                 - grants
@@ -6483,6 +6557,15 @@ paths:
                   result:
                     type: object
                     properties:
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                       id:
                         type: string
                         example: a1b2c3d4
@@ -6573,12 +6656,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found in this organisation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Log credential storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
   /v1/tokens/{token_id}:
     get:
       tags:
@@ -6617,6 +6712,15 @@ paths:
                   result:
                     type: object
                     properties:
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                       id:
                         type: string
                         example: a1b2c3d4
@@ -6638,29 +6742,44 @@ paths:
                       grants:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            scope:
-                              type: string
-                              enum:
-                                - PROJECTS
-                                - UPTIME_CHECKS
-                                - STATUS_PAGES
-                                - HEARTBEAT_CHECKS
-                                - MAINTENANCE_WINDOWS
-                                - PEOPLE
-                                - INTEGRATIONS
-                                - API_TOKENS
-                                - WEBHOOKS
-                                - ENVIRONMENT_VARIABLES
-                            permission:
-                              type: string
-                              enum:
-                                - READ
-                                - EDIT
-                          required:
-                            - scope
-                            - permission
+                          anyOf:
+                            - type: object
+                              properties:
+                                scope:
+                                  type: string
+                                  enum:
+                                    - PROJECTS
+                                    - LOGS
+                                    - UPTIME_CHECKS
+                                    - STATUS_PAGES
+                                    - HEARTBEAT_CHECKS
+                                    - MAINTENANCE_WINDOWS
+                                    - PEOPLE
+                                    - INTEGRATIONS
+                                    - API_TOKENS
+                                    - WEBHOOKS
+                                    - ENVIRONMENT_VARIABLES
+                                permission:
+                                  type: string
+                                  enum:
+                                    - READ
+                                    - EDIT
+                              required:
+                                - scope
+                                - permission
+                            - type: object
+                              properties:
+                                scope:
+                                  type: string
+                                  enum:
+                                    - LOGS
+                                permission:
+                                  type: string
+                                  enum:
+                                    - SEND
+                              required:
+                                - scope
+                                - permission
                         description: List of grants (scope and permission pairs) assigned to this token
                     required:
                       - id
