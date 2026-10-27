@@ -4746,6 +4746,15 @@ components:
     MaintenanceWindow:
       type: object
       properties:
+        project_id:
+          type:
+            - string
+            - "null"
+          minLength: 16
+          maxLength: 128
+          pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+          example: a1b2c3d4e5f6g7h8
+          description: Project ID, or null for Unassigned.
         id:
           type: string
           example: abc123def456
@@ -4789,6 +4798,7 @@ components:
             - DISABLED
           example: ENABLED
       required:
+        - project_id
         - id
         - name
         - start_date
@@ -11820,7 +11830,7 @@ paths:
         - Maintenance Windows
       summary: List all maintenance windows
       description: |-
-        Retrieve a paginated list of all maintenance windows
+        Retrieve maintenance windows across all projects, or filter by project_id. Use unassigned for windows without a project.
 
         Requires MAINTENANCE_WINDOWS:READ.
       operationId: listMaintenanceWindows
@@ -11858,6 +11868,22 @@ paths:
           required: false
           description: Search term to filter maintenance windows by name
           name: search
+          in: query
+        - schema:
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          required: false
+          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          name: project_id
           in: query
       security:
         - api_token: []
@@ -11995,6 +12021,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -12005,7 +12037,7 @@ paths:
       tags:
         - Maintenance Windows
       description: |-
-        Create a new maintenance window with associated checks and heartbeats
+        Create a maintenance window. Omitted or null project_id leaves it Unassigned. Every selected check and heartbeat must belong to the same organisation and project.
 
         Requires MAINTENANCE_WINDOWS:EDIT.
       summary: Create a new maintenance window
@@ -12051,6 +12083,15 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project ID. Omit or use null to leave the resource Unassigned.
                 name:
                   type: string
                   minLength: 1
@@ -12181,6 +12222,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project or maintenance target not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Maintenance targets must belong to the same project as the window
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
         "500":
           description: Internal Server Error
           content:
@@ -12303,7 +12356,7 @@ paths:
       tags:
         - Maintenance Windows
       description: |-
-        Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations.
+        Update a maintenance window. All fields are optional - only provided fields will be updated. Updating checks or heartbeats replaces existing associations and requires the same project assignment. Assignment changes use the move operation.
 
         Requires MAINTENANCE_WINDOWS:EDIT.
       summary: Update a maintenance window
@@ -12355,6 +12408,9 @@ paths:
             schema:
               type: object
               properties:
+                project_id:
+                  type: string
+                  not: {}
                 name:
                   type: string
                   minLength: 1
@@ -12485,6 +12541,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "404":
           description: Not Found - Maintenance window does not exist or belongs to different organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Maintenance targets must belong to the same project as the window
           content:
             application/json:
               schema:
@@ -13357,7 +13419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Move would break variable references or create a name conflict
+          description: Move would break variable references, create a name conflict, or separate maintenance windows from their targets
           content:
             application/json:
               schema:
@@ -13507,7 +13569,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Move would break variable references or create a name conflict
+          description: Move would break variable references, create a name conflict, or separate maintenance windows from their targets
           content:
             application/json:
               schema:
@@ -13525,7 +13587,7 @@ paths:
         - Projects
       summary: Assign or unassign explicitly selected resources atomically
       description: |-
-        Requires EDIT permission for every selected resource type. Moves only the selected resources; rejects broken variable references and name conflicts without partial changes.
+        Requires EDIT permission for every selected resource type. Moves only the selected resources; rejects broken variable references, name conflicts and cross-project maintenance targets without partial changes.
 
         Requires PROJECTS:EDIT.
       parameters:
@@ -13565,6 +13627,7 @@ paths:
                           - heartbeat
                           - webhook
                           - environment_variable
+                          - maintenance_window
                       id:
                         type: string
                         minLength: 1
@@ -13611,6 +13674,7 @@ paths:
                                 - heartbeat
                                 - webhook
                                 - environment_variable
+                                - maintenance_window
                             id:
                               type: string
                               minLength: 1
@@ -13692,7 +13756,160 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "409":
-          description: Move would break variable references or create a name conflict
+          description: Move would break variable references, create a name conflict, or separate maintenance windows from their targets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/maintenance-windows/{maintenance_window_id}/move:
+    post:
+      operationId: moveMaintenanceWindow
+      tags:
+        - Maintenance Windows
+      summary: Assign or unassign a maintenance window
+      description: |-
+        The window and all its checks and heartbeats must retain the same assignment. Use the atomic resources move to select linked resources together.
+
+        Requires MAINTENANCE_WINDOWS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 8
+            example: abc123def456
+            description: Maintenance Window ID
+          required: true
+          description: Maintenance Window ID
+          name: maintenance_window_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type:
+                    - string
+                    - "null"
+                  minLength: 16
+                  maxLength: 128
+                  pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                  example: a1b2c3d4e5f6g7h8
+                  description: Project ID, or null for Unassigned.
+              required:
+                - project_id
+              additionalProperties: false
+      responses:
+        "200":
+          description: Moved resource and destination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      project_id:
+                        type:
+                          - string
+                          - "null"
+                        minLength: 16
+                        maxLength: 128
+                        pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                        example: a1b2c3d4e5f6g7h8
+                        description: Project ID, or null for Unassigned.
+                    required:
+                      - id
+                      - project_id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Resource or project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Move would break variable references, create a name conflict, or separate maintenance windows from their targets
           content:
             application/json:
               schema:
