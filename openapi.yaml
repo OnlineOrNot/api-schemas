@@ -258,7 +258,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -531,7 +531,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -805,7 +805,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1043,7 +1043,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1354,7 +1354,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -1572,6 +1572,56 @@ components:
         - result
         - errors
         - messages
+    LogBatch:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+              level:
+                type: string
+                enum:
+                  - TRACE
+                  - DEBUG
+                  - INFO
+                  - WARN
+                  - ERROR
+                  - FATAL
+                default: INFO
+              message:
+                type: string
+                minLength: 1
+                maxLength: 65536
+              service:
+                type: string
+                minLength: 1
+                maxLength: 255
+              environment:
+                type: string
+                minLength: 1
+                maxLength: 128
+              attributes:
+                type: object
+                additionalProperties: {}
+              trace_id:
+                type: string
+                pattern: ^[a-f0-9]{32}$/i
+              span_id:
+                type: string
+                pattern: ^[a-f0-9]{16}$/i
+            required:
+              - message
+            additionalProperties: false
+          minItems: 1
+          maxItems: 100
+      required:
+        - logs
+      additionalProperties: false
     DnsCheckResponse:
       type: object
       properties:
@@ -1632,7 +1682,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit or use null to leave the resource Unassigned.
+          description: Project ID. Omit or use null to leave the resource unassigned.
         name:
           type: string
           example: My monitor
@@ -2009,7 +2059,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit or use null to leave the resource Unassigned.
+          description: Project ID. Omit or use null to leave the resource unassigned.
         name:
           type: string
           example: My monitor
@@ -2331,7 +2381,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit or use null to leave the resource Unassigned.
+          description: Project ID. Omit or use null to leave the resource unassigned.
         name:
           type: string
           example: My monitor
@@ -2782,7 +2832,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit or use null to leave the resource Unassigned.
+          description: Project ID. Omit or use null to leave the resource unassigned.
         name:
           type: string
           example: My monitor
@@ -4052,7 +4102,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -4111,7 +4161,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID. Omit or use null to leave the resource Unassigned.
+          description: Project ID. Omit or use null to leave the resource unassigned.
         name:
           type: string
           example: My monitor
@@ -4551,7 +4601,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4e5f6g7h8
@@ -4602,7 +4652,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -4754,7 +4804,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: abc123def456
@@ -5488,7 +5538,7 @@ components:
           maxLength: 128
           pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
           example: a1b2c3d4e5f6g7h8
-          description: Project ID, or null for Unassigned.
+          description: Project ID, or null for unassigned.
         id:
           type: string
           example: a1b2c3d4
@@ -5684,6 +5734,401 @@ paths:
             text/plain:
               schema:
                 type: string
+  /v1/logs:
+    post:
+      tags:
+        - Logs
+      operationId: sendLogs
+      summary: Send JSON logs
+      description: Requires an API token with an explicit LOGS:SEND grant; session cookies and OAuth tokens are not accepted. The token determines the organisation and sending project; null means unassigned. Send at most 100 logs and 1 MiB of uncompressed JSON per request. Log records are limited to 128 KiB. HTTP 202 confirms acceptance for processing, not search availability. A delivery error may have accepted some or all logs; retrying may create duplicates.
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogBatch'
+      responses:
+        "202":
+          description: Log batch accepted for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      accepted:
+                        type: integer
+                        minimum: 1
+                        maximum: 100
+                      ids:
+                        type: array
+                        items:
+                          type: string
+                          format: uuid
+                        minItems: 1
+                        maxItems: 100
+                    required:
+                      - accepted
+                      - ids
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid log batch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "401":
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Requires an explicit LOGS:SEND grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "413":
+          description: Batch or record exceeds its byte limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "415":
+          description: Requires uncompressed application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Ingestion unavailable or delivery not confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+    get:
+      tags:
+        - Logs
+      operationId: searchLogs
+      summary: Search logs
+      description: |-
+        Search logs by the time they were received, over a non-empty range of at most one hour. Results are newest-first, with at most 100 logs and a continuation cursor. Omit project_id to search all projects in the authenticated organisation, or use unassigned for only unassigned logs. Sending-project assignments do not restrict explicitly granted read access. Message search is a case-insensitive literal substring. New logs may take minutes to become searchable. Searches may scan more data than they return; scanned_bytes reports the bytes scanned.
+
+        Requires LOGS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            format: date-time
+            description: Inclusive server receipt time, in RFC 3339 format.
+          required: true
+          description: Inclusive server receipt time, in RFC 3339 format.
+          name: from
+          in: query
+        - schema:
+            type: string
+            format: date-time
+            description: Exclusive server receipt time, at most one hour after from.
+          required: true
+          description: Exclusive server receipt time, at most one hour after from.
+          name: to
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 50
+            maximum: 100
+          required: false
+          name: limit
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 512
+          required: false
+          name: cursor
+          in: query
+        - schema:
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+          required: false
+          name: project_id
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          required: false
+          name: service
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          required: false
+          name: environment
+          in: query
+        - schema:
+            type: string
+            enum:
+              - TRACE
+              - DEBUG
+              - INFO
+              - WARN
+              - ERROR
+              - FATAL
+          required: false
+          name: level
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 256
+            description: Case-insensitive literal substring of the log message.
+          required: false
+          description: Case-insensitive literal substring of the log message.
+          name: q
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Matching logs and a continuation cursor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      logs:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            project_id:
+                              type:
+                                - string
+                                - "null"
+                              minLength: 16
+                              maxLength: 128
+                              pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                              example: a1b2c3d4e5f6g7h8
+                              description: Project ID, or null for unassigned.
+                            timestamp:
+                              type: string
+                              format: date-time
+                            received_at:
+                              type: string
+                              format: date-time
+                            level:
+                              type: string
+                              enum:
+                                - TRACE
+                                - DEBUG
+                                - INFO
+                                - WARN
+                                - ERROR
+                                - FATAL
+                            message:
+                              type: string
+                            service:
+                              type:
+                                - string
+                                - "null"
+                            environment:
+                              type:
+                                - string
+                                - "null"
+                            attributes:
+                              type: object
+                              additionalProperties: {}
+                            trace_id:
+                              type:
+                                - string
+                                - "null"
+                            span_id:
+                              type:
+                                - string
+                                - "null"
+                          required:
+                            - id
+                            - project_id
+                            - timestamp
+                            - received_at
+                            - level
+                            - message
+                            - service
+                            - environment
+                            - attributes
+                            - trace_id
+                            - span_id
+                          additionalProperties: false
+                        maxItems: 100
+                      next_cursor:
+                        type:
+                          - string
+                          - "null"
+                      scanned_bytes:
+                        type: integer
+                        minimum: 0
+                    required:
+                      - logs
+                      - next_cursor
+                      - scanned_bytes
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid or unbounded search request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Log search unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
   /v1/audit_logs:
     get:
       tags:
@@ -6244,7 +6689,7 @@ paths:
                               maxLength: 128
                               pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                               example: a1b2c3d4e5f6g7h8
-                              description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
+                              description: Project receiving logs, or null for unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                             id:
                               type: string
                               example: a1b2c3d4
@@ -6411,7 +6856,7 @@ paths:
         - The API returns HTTP 403 if your token does not have a required permission.
         - This limit does not apply when you use session cookies. LOGS:EDIT and LOGS:SEND still require current ADMIN membership.
         - OAuth callers also require current ADMIN membership to issue LOGS:EDIT or LOGS:SEND.
-        - LOGS:SEND can be combined with other explicitly granted permissions. Tokens with LOGS:SEND may specify project_id; omit it or use null for Unassigned.
+        - LOGS:SEND can be combined with other explicitly granted permissions. Tokens with LOGS:SEND may specify project_id; omit it or use null for unassigned.
         - Project scope applies only to sending; other grants remain organisation-wide.
         - Issuing LOGS:SEND requires LOGS:EDIT or explicit LOGS:SEND delegation authority in addition to API_TOKENS:EDIT for bearer callers. LOGS:EDIT itself does not authorize sending logs.
         - Project scope is fixed at creation. Revoke and replace the token to change it. A sending credential with API_TOKENS:EDIT may delegate sending only to its own project unless it also holds organisation-wide LOGS:EDIT.
@@ -6446,8 +6891,8 @@ paths:
                     - scope: UPTIME_CHECKS
                       permission: READ
               logIngestion:
-                summary: Create an ingestion-only token for Unassigned logs
-                description: Requires API_TOKENS:EDIT plus LOGS:EDIT (or LOGS:SEND). The destination is Unassigned.
+                summary: Create an ingestion-only token for unassigned logs
+                description: Requires API_TOKENS:EDIT plus LOGS:EDIT (or LOGS:SEND). The destination is unassigned.
                 value:
                   name: Application logs
                   grants:
@@ -6542,7 +6987,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project receiving logs. Omit or use null for Unassigned. Requires LOGS:SEND and applies only to sending; other grants remain organisation-wide. Scope cannot be changed after issuance.
+                  description: Project receiving logs. Omit or use null for unassigned. Requires LOGS:SEND and applies only to sending; other grants remain organisation-wide. Scope cannot be changed after issuance.
               required:
                 - name
                 - grants
@@ -6565,7 +7010,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
+                        description: Project receiving logs, or null for unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                       id:
                         type: string
                         example: a1b2c3d4
@@ -6720,7 +7165,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project receiving logs, or null for Unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
+                        description: Project receiving logs, or null for unassigned. Present for tokens with LOGS:SEND; other grants remain organisation-wide.
                       id:
                         type: string
                         example: a1b2c3d4
@@ -8303,7 +8748,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -8331,7 +8776,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                     required:
                       - id
                       - project_id
@@ -9334,9 +9779,9 @@ paths:
               - type: string
                 enum:
                   - unassigned
-            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+            description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           name: project_id
           in: query
         - schema:
@@ -9917,9 +10362,9 @@ paths:
               - type: string
                 enum:
                   - unassigned
-            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+            description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           name: project_id
           in: query
         - schema:
@@ -10096,7 +10541,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit or use null to leave the resource Unassigned.
+                  description: Project ID. Omit or use null to leave the resource unassigned.
                 name:
                   type: string
                   pattern: ^[A-Z_][A-Z0-9_]{0,63}$
@@ -10138,7 +10583,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10186,7 +10631,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10363,7 +10808,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10411,7 +10856,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10615,7 +11060,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10663,7 +11108,7 @@ paths:
                             maxLength: 128
                             pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                             example: a1b2c3d4e5f6g7h8
-                            description: Project ID, or null for Unassigned.
+                            description: Project ID, or null for unassigned.
                           id:
                             type: string
                             example: a1b2c3d4e5f6g7h8
@@ -10960,7 +11405,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -10988,7 +11433,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                     required:
                       - id
                       - project_id
@@ -11129,9 +11574,9 @@ paths:
               - type: string
                 enum:
                   - unassigned
-            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+            description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           name: project_id
           in: query
       security:
@@ -11330,7 +11775,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit or use null to leave the resource Unassigned.
+                  description: Project ID. Omit or use null to leave the resource unassigned.
                 name:
                   type: string
                   example: Daily backup job
@@ -11999,9 +12444,9 @@ paths:
               - type: string
                 enum:
                   - unassigned
-            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+            description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           name: project_id
           in: query
       security:
@@ -12156,7 +12601,7 @@ paths:
       tags:
         - Maintenance Windows
       description: |-
-        Create a maintenance window. Omitted or null project_id leaves it Unassigned. Every selected check and heartbeat must belong to the same organisation and project.
+        Create a maintenance window. Omitted or null project_id leaves it unassigned. Every selected check and heartbeat must belong to the same organisation and project.
 
         Requires MAINTENANCE_WINDOWS:EDIT.
       summary: Create a new maintenance window
@@ -12210,7 +12655,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit or use null to leave the resource Unassigned.
+                  description: Project ID. Omit or use null to leave the resource unassigned.
                 name:
                   type: string
                   minLength: 1
@@ -13439,7 +13884,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -13464,7 +13909,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                     required:
                       - id
                       - project_id
@@ -13589,7 +14034,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -13614,7 +14059,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                     required:
                       - id
                       - project_id
@@ -13733,7 +14178,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
                 resources:
                   type: array
                   items:
@@ -13780,7 +14225,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                       resources:
                         type: array
                         items:
@@ -13929,7 +14374,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID, or null for Unassigned.
+                  description: Project ID, or null for unassigned.
               required:
                 - project_id
               additionalProperties: false
@@ -13954,7 +14399,7 @@ paths:
                         maxLength: 128
                         pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                         example: a1b2c3d4e5f6g7h8
-                        description: Project ID, or null for Unassigned.
+                        description: Project ID, or null for unassigned.
                     required:
                       - id
                       - project_id
@@ -20890,9 +21335,9 @@ paths:
               - type: string
                 enum:
                   - unassigned
-            description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+            description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           required: false
-          description: Project ID, or unassigned to list only Unassigned resources. Omit to list all resources.
+          description: Project ID, or unassigned to list only unassigned resources. Omit to list all resources.
           name: project_id
           in: query
       security:
@@ -21097,7 +21542,7 @@ paths:
                   maxLength: 128
                   pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
                   example: a1b2c3d4e5f6g7h8
-                  description: Project ID. Omit or use null to leave the resource Unassigned.
+                  description: Project ID. Omit or use null to leave the resource unassigned.
                 enabled:
                   type: boolean
                   description: Whether webhook delivery is enabled. Defaults to true on creation; omitted PATCH values preserve the current state.
