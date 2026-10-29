@@ -1610,10 +1610,10 @@ components:
                 additionalProperties: {}
               trace_id:
                 type: string
-                pattern: ^[a-f0-9]{32}$/i
+                pattern: ^[a-fA-F0-9]{32}$
               span_id:
                 type: string
-                pattern: ^[a-f0-9]{16}$/i
+                pattern: ^[a-fA-F0-9]{16}$
             required:
               - message
             additionalProperties: false
