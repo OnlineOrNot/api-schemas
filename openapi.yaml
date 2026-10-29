@@ -1572,6 +1572,179 @@ components:
         - result
         - errors
         - messages
+    OtlpLogExportResponse:
+      type: object
+      properties: {}
+      additionalProperties: false
+    OtlpStatus:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
+    OtlpLogExport:
+      type: object
+      properties:
+        resourceLogs:
+          type:
+            - array
+            - "null"
+          items:
+            type: object
+            properties:
+              resource:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  attributes:
+                    type:
+                      - array
+                      - "null"
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          minLength: 1
+                          maxLength: 128
+                        value:
+                          description: OTLP AnyValue.
+                      required:
+                        - key
+                    maxItems: 64
+                  droppedAttributesCount:
+                    type:
+                      - integer
+                      - "null"
+                    minimum: 0
+                    maximum: 4294967295
+              schemaUrl:
+                type:
+                  - string
+                  - "null"
+              scopeLogs:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type: object
+                  properties:
+                    scope:
+                      type:
+                        - object
+                        - "null"
+                      properties:
+                        attributes:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type: object
+                            properties:
+                              key:
+                                type: string
+                                minLength: 1
+                                maxLength: 128
+                              value:
+                                description: OTLP AnyValue.
+                            required:
+                              - key
+                          maxItems: 64
+                        droppedAttributesCount:
+                          type:
+                            - integer
+                            - "null"
+                          minimum: 0
+                          maximum: 4294967295
+                        name:
+                          type:
+                            - string
+                            - "null"
+                        version:
+                          type:
+                            - string
+                            - "null"
+                    schemaUrl:
+                      type:
+                        - string
+                        - "null"
+                    logRecords:
+                      type:
+                        - array
+                        - "null"
+                      items:
+                        type: object
+                        properties:
+                          timeUnixNano:
+                            anyOf:
+                              - type: string
+                                pattern: ^-?\d+$
+                              - type: number
+                              - type: "null"
+                          observedTimeUnixNano:
+                            anyOf:
+                              - type: string
+                                pattern: ^-?\d+$
+                              - type: number
+                              - type: "null"
+                          severityNumber:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 24
+                          severityText:
+                            type:
+                              - string
+                              - "null"
+                          body:
+                            description: Log body as an OTLP AnyValue.
+                          attributes:
+                            type:
+                              - array
+                              - "null"
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                  minLength: 1
+                                  maxLength: 128
+                                value:
+                                  description: OTLP AnyValue.
+                              required:
+                                - key
+                            maxItems: 64
+                          droppedAttributesCount:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          flags:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          traceId:
+                            type:
+                              - string
+                              - "null"
+                          spanId:
+                            type:
+                              - string
+                              - "null"
+                          eventName:
+                            type:
+                              - string
+                              - "null"
+                      maxItems: 100
+                maxItems: 100
+          maxItems: 100
     LogBatch:
       type: object
       properties:
@@ -5734,13 +5907,113 @@ paths:
             text/plain:
               schema:
                 type: string
+  /v1/logs/otlp:
+    post:
+      tags:
+        - Logs
+      operationId: exportOtlpLogs
+      security:
+        - api_token: []
+      summary: Export OpenTelemetry logs
+      description: Requires an API token with LOGS:SEND. Supports gzip compression.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtlpLogExport'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: OTLP full success, in the request encoding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpLogExportResponse'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid OTLP export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Requires an explicit LOGS:SEND grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "405":
+          description: Requires POST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "413":
+          description: Export or record exceeds a size limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "415":
+          description: Unsupported content type or compression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "503":
+          description: Ingestion unavailable or delivery not confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
   /v1/logs:
     post:
       tags:
         - Logs
       operationId: sendLogs
       summary: Send JSON logs
-      description: Requires an API token with an explicit LOGS:SEND grant; session cookies and OAuth tokens are not accepted. The token determines the organisation and sending project; null means unassigned. Send at most 100 logs and 1 MiB of uncompressed JSON per request. Log records are limited to 128 KiB. HTTP 202 confirms acceptance for processing, not search availability. A delivery error may have accepted some or all logs; retrying may create duplicates.
+      description: Requires an API token with LOGS:SEND.
       security:
         - api_token: []
       requestBody:
@@ -5867,7 +6140,7 @@ paths:
       operationId: searchLogs
       summary: Search logs
       description: |-
-        Search logs by the time they were received, over a non-empty range of at most one hour. Results are newest-first, with at most 100 logs and a continuation cursor. Omit project_id to search all projects in the authenticated organisation, or use unassigned for only unassigned logs. Sending-project assignments do not restrict explicitly granted read access. Message search is a case-insensitive literal substring. New logs may take minutes to become searchable. Searches may scan more data than they return; scanned_bytes reports the bytes scanned.
+        Search logs by receipt time.
 
         Requires LOGS:READ.
       parameters:
