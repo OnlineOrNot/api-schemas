@@ -5997,6 +5997,21 @@ paths:
               schema:
                 type: string
                 format: binary
+        "429":
+          description: Log ingestion allowance exceeded
+          headers:
+            Retry-After:
+              description: Seconds until the next billing period
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
         "503":
           description: Ingestion unavailable or delivery not confirmed
           content:
@@ -6118,6 +6133,17 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "415":
           description: Requires uncompressed application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Log ingestion allowance exceeded
+          headers:
+            Retry-After:
+              description: Seconds until the next billing period
+              schema:
+                type: integer
           content:
             application/json:
               schema:
@@ -6398,6 +6424,143 @@ paths:
                 $ref: '#/components/schemas/PublicApiServerError'
         "503":
           description: Log search unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/logs/usage:
+    get:
+      tags:
+        - Logs
+      operationId: getLogUsage
+      summary: Read log usage
+      description: |-
+        Read log usage for the current billing period.
+
+        Requires LOGS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Current log usage and allowance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      period_start:
+                        type: string
+                        format: date-time
+                      period_end:
+                        type: string
+                        format: date-time
+                      used_bytes:
+                        type: integer
+                        minimum: 0
+                        description: Log bytes after decoding, including metadata.
+                      used_records:
+                        type: integer
+                        minimum: 0
+                      limit_bytes:
+                        type: integer
+                        minimum: 0
+                        example: 5000000000
+                      remaining_bytes:
+                        type: integer
+                        minimum: 0
+                      retention_days:
+                        type: integer
+                        exclusiveMinimum: 0
+                        example: 30
+                    required:
+                      - period_start
+                      - period_end
+                      - used_bytes
+                      - used_records
+                      - limit_bytes
+                      - remaining_bytes
+                      - retention_days
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Log usage unavailable
           content:
             application/json:
               schema:
