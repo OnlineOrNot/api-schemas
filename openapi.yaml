@@ -376,47 +376,83 @@ components:
             - array
             - "null"
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
           description: Assertions to validate the response
         auth_username:
           type:
@@ -643,47 +679,83 @@ components:
             - array
             - "null"
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
           description: Assertions to validate the response
         auth_username:
           type:
@@ -2688,47 +2760,83 @@ components:
         assertions:
           type: array
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
           example:
             - type: JSON_BODY
               property: $.data.name
@@ -2891,47 +2999,83 @@ components:
         assertions:
           type: array
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
         verify_ssl:
           type: boolean
           example: false
@@ -3182,16 +3326,6 @@ components:
               - property
               - comparison
               - expected
-          example:
-            - type: JSON_BODY
-              property: $.data.name
-              comparison: EQUALS
-              expected: John Doe
-            - type: HTML_BODY
-              property: meta[name="description"]
-              comparison: NOT_EMPTY
-              expected: ""
-          description: Assertions to run on the response
         verify_ssl:
           type: boolean
           default: true
@@ -4131,47 +4265,83 @@ components:
                 - array
                 - "null"
               items:
-                type: object
-                properties:
-                  type:
-                    type: string
-                    enum:
-                      - JSON_BODY
-                      - TEXT_BODY
-                      - RESPONSE_HEADERS
-                      - HTML_BODY
-                    example: JSON_BODY
-                    description: Type of assertion
-                  property:
-                    type: string
-                    example: $.data.name
-                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-                  comparison:
-                    type: string
-                    enum:
-                      - EQUALS
-                      - NOT_EQUALS
-                      - GREATER_THAN
-                      - LESS_THAN
-                      - "NULL"
-                      - NOT_NULL
-                      - EMPTY
-                      - NOT_EMPTY
-                      - CONTAINS
-                      - NOT_CONTAINS
-                      - "FALSE"
-                      - "TRUE"
-                    example: EQUALS
-                    description: Comparison operator
-                  expected:
-                    type: string
-                    example: John Doe
-                    description: Expected value
-                required:
-                  - type
-                  - property
-                  - comparison
-                  - expected
+                oneOf:
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - JSON_BODY
+                          - TEXT_BODY
+                          - RESPONSE_HEADERS
+                          - HTML_BODY
+                        example: JSON_BODY
+                        description: Type of assertion
+                      property:
+                        type: string
+                        example: $.data.name
+                        description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                      comparison:
+                        type: string
+                        enum:
+                          - EQUALS
+                          - NOT_EQUALS
+                          - GREATER_THAN
+                          - LESS_THAN
+                          - "NULL"
+                          - NOT_NULL
+                          - EMPTY
+                          - NOT_EMPTY
+                          - CONTAINS
+                          - NOT_CONTAINS
+                          - "FALSE"
+                          - "TRUE"
+                        example: EQUALS
+                        description: Comparison operator
+                      expected:
+                        type: string
+                        example: John Doe
+                        description: Expected value
+                    required:
+                      - type
+                      - property
+                      - comparison
+                      - expected
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - STATUS_CODE
+                      property:
+                        type: string
+                        enum:
+                          - ""
+                      comparison:
+                        type: string
+                        enum:
+                          - IS_ONE_OF
+                      expected:
+                        type: array
+                        items:
+                          type: integer
+                          minimum: 100
+                          maximum: 599
+                        minItems: 1
+                        maxItems: 500
+                    required:
+                      - type
+                      - property
+                      - comparison
+                      - expected
+                    description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                    example:
+                      type: STATUS_CODE
+                      property: ""
+                      comparison: IS_ONE_OF
+                      expected:
+                        - 200
+                        - 204
               description: Assertions to validate the response
             auth_username:
               type:
@@ -4471,47 +4641,83 @@ components:
         assertions:
           type: array
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
           example:
             - type: JSON_BODY
               property: $.data.name
@@ -4695,47 +4901,83 @@ components:
         assertions:
           type: array
           items:
-            type: object
-            properties:
-              type:
-                type: string
-                enum:
-                  - JSON_BODY
-                  - TEXT_BODY
-                  - RESPONSE_HEADERS
-                  - HTML_BODY
-                example: JSON_BODY
-                description: Type of assertion
-              property:
-                type: string
-                example: $.data.name
-                description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
-              comparison:
-                type: string
-                enum:
-                  - EQUALS
-                  - NOT_EQUALS
-                  - GREATER_THAN
-                  - LESS_THAN
-                  - "NULL"
-                  - NOT_NULL
-                  - EMPTY
-                  - NOT_EMPTY
-                  - CONTAINS
-                  - NOT_CONTAINS
-                  - "FALSE"
-                  - "TRUE"
-                example: EQUALS
-                description: Comparison operator
-              expected:
-                type: string
-                example: John Doe
-                description: Expected value
-            required:
-              - type
-              - property
-              - comparison
-              - expected
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - JSON_BODY
+                      - TEXT_BODY
+                      - RESPONSE_HEADERS
+                      - HTML_BODY
+                    example: JSON_BODY
+                    description: Type of assertion
+                  property:
+                    type: string
+                    example: $.data.name
+                    description: Property to assert on (JSONPath for JSON_BODY, header name for RESPONSE_HEADERS, CSS selector for HTML_BODY; unused for TEXT_BODY)
+                  comparison:
+                    type: string
+                    enum:
+                      - EQUALS
+                      - NOT_EQUALS
+                      - GREATER_THAN
+                      - LESS_THAN
+                      - "NULL"
+                      - NOT_NULL
+                      - EMPTY
+                      - NOT_EMPTY
+                      - CONTAINS
+                      - NOT_CONTAINS
+                      - "FALSE"
+                      - "TRUE"
+                    example: EQUALS
+                    description: Comparison operator
+                  expected:
+                    type: string
+                    example: John Doe
+                    description: Expected value
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - STATUS_CODE
+                  property:
+                    type: string
+                    enum:
+                      - ""
+                  comparison:
+                    type: string
+                    enum:
+                      - IS_ONE_OF
+                  expected:
+                    type: array
+                    items:
+                      type: integer
+                      minimum: 100
+                      maximum: 599
+                    minItems: 1
+                    maxItems: 500
+                required:
+                  - type
+                  - property
+                  - comparison
+                  - expected
+                description: Accept any listed HTTP response code instead of the default 2xx rule. Transport failures always fail.
+                example:
+                  type: STATUS_CODE
+                  property: ""
+                  comparison: IS_ONE_OF
+                  expected:
+                    - 200
+                    - 204
         verify_ssl:
           type: boolean
           example: false
@@ -8624,6 +8866,17 @@ paths:
                   name: My Website Check
                   url: https://example.com
                   test_interval: 60
+              acceptedStatusCodes:
+                summary: An endpoint that should reject unauthenticated requests
+                value:
+                  name: Authentication boundary
+                  url: https://api.example.com/private
+                  assertions:
+                    - type: STATUS_CODE
+                      property: ""
+                      comparison: IS_ONE_OF
+                      expected:
+                        - 401
               variableBackedHeader:
                 summary: Uptime check with a variable-backed header
                 value:
