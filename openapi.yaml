@@ -1867,6 +1867,502 @@ components:
       required:
         - logs
       additionalProperties: false
+    OtlpTraceExportResponse:
+      type: object
+      properties: {}
+      additionalProperties: false
+    OtlpTraceExport:
+      type: object
+      properties:
+        resourceSpans:
+          type:
+            - array
+            - "null"
+          items:
+            type: object
+            properties:
+              resource:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  attributes:
+                    type:
+                      - array
+                      - "null"
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          minLength: 1
+                          maxLength: 128
+                        value: {}
+                      required:
+                        - key
+                    maxItems: 128
+                  droppedAttributesCount:
+                    type:
+                      - integer
+                      - "null"
+                    minimum: 0
+                    maximum: 4294967295
+              schemaUrl:
+                type:
+                  - string
+                  - "null"
+                maxLength: 2048
+              scopeSpans:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type: object
+                  properties:
+                    scope:
+                      type:
+                        - object
+                        - "null"
+                      properties:
+                        attributes:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type: object
+                            properties:
+                              key:
+                                type: string
+                                minLength: 1
+                                maxLength: 128
+                              value: {}
+                            required:
+                              - key
+                          maxItems: 128
+                        droppedAttributesCount:
+                          type:
+                            - integer
+                            - "null"
+                          minimum: 0
+                          maximum: 4294967295
+                        name:
+                          type:
+                            - string
+                            - "null"
+                          maxLength: 255
+                        version:
+                          type:
+                            - string
+                            - "null"
+                          maxLength: 255
+                    schemaUrl:
+                      type:
+                        - string
+                        - "null"
+                      maxLength: 2048
+                    spans:
+                      type:
+                        - array
+                        - "null"
+                      items:
+                        type: object
+                        properties:
+                          traceId:
+                            type: string
+                            pattern: ^[a-fA-F0-9]{32}$
+                          spanId:
+                            type: string
+                            pattern: ^[a-fA-F0-9]{16}$
+                          parentSpanId:
+                            type:
+                              - string
+                              - "null"
+                            pattern: ^(?:[a-fA-F0-9]{16})?$
+                          traceState:
+                            type:
+                              - string
+                              - "null"
+                            maxLength: 512
+                          flags:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          name:
+                            type: string
+                            minLength: 1
+                            maxLength: 1024
+                          kind:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 5
+                          startTimeUnixNano:
+                            anyOf:
+                              - type: string
+                                pattern: ^\d+$
+                              - type: integer
+                                minimum: 0
+                          endTimeUnixNano:
+                            anyOf:
+                              - type: string
+                                pattern: ^\d+$
+                              - type: integer
+                                minimum: 0
+                          attributes:
+                            type:
+                              - array
+                              - "null"
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                  minLength: 1
+                                  maxLength: 128
+                                value: {}
+                              required:
+                                - key
+                            maxItems: 128
+                          droppedAttributesCount:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          events:
+                            type:
+                              - array
+                              - "null"
+                            items:
+                              type: object
+                              properties:
+                                timeUnixNano:
+                                  anyOf:
+                                    - type: string
+                                      pattern: ^\d+$
+                                    - type: integer
+                                      minimum: 0
+                                name:
+                                  type: string
+                                  maxLength: 1024
+                                attributes:
+                                  type:
+                                    - array
+                                    - "null"
+                                  items:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                        minLength: 1
+                                        maxLength: 128
+                                      value: {}
+                                    required:
+                                      - key
+                                  maxItems: 128
+                                droppedAttributesCount:
+                                  type:
+                                    - integer
+                                    - "null"
+                                  minimum: 0
+                                  maximum: 4294967295
+                              required:
+                                - timeUnixNano
+                                - name
+                            maxItems: 128
+                          droppedEventsCount:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          links:
+                            type:
+                              - array
+                              - "null"
+                            items:
+                              type: object
+                              properties:
+                                traceId:
+                                  type: string
+                                  pattern: ^[a-fA-F0-9]{32}$
+                                spanId:
+                                  type: string
+                                  pattern: ^[a-fA-F0-9]{16}$
+                                traceState:
+                                  type:
+                                    - string
+                                    - "null"
+                                  maxLength: 512
+                                attributes:
+                                  type:
+                                    - array
+                                    - "null"
+                                  items:
+                                    type: object
+                                    properties:
+                                      key:
+                                        type: string
+                                        minLength: 1
+                                        maxLength: 128
+                                      value: {}
+                                    required:
+                                      - key
+                                  maxItems: 128
+                                droppedAttributesCount:
+                                  type:
+                                    - integer
+                                    - "null"
+                                  minimum: 0
+                                  maximum: 4294967295
+                                flags:
+                                  type:
+                                    - integer
+                                    - "null"
+                                  minimum: 0
+                                  maximum: 4294967295
+                              required:
+                                - traceId
+                                - spanId
+                            maxItems: 128
+                          droppedLinksCount:
+                            type:
+                              - integer
+                              - "null"
+                            minimum: 0
+                            maximum: 4294967295
+                          status:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              code:
+                                type:
+                                  - integer
+                                  - "null"
+                                minimum: 0
+                                maximum: 2
+                              message:
+                                type:
+                                  - string
+                                  - "null"
+                                maxLength: 65536
+                        required:
+                          - traceId
+                          - spanId
+                          - name
+                          - startTimeUnixNano
+                          - endTimeUnixNano
+                      maxItems: 100
+                maxItems: 100
+          maxItems: 100
+    TraceSearchResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            spans:
+              type: array
+              items:
+                $ref: '#/components/schemas/TraceSpan'
+            next_cursor:
+              type:
+                - string
+                - "null"
+            scanned_bytes:
+              type: integer
+              minimum: 0
+          required:
+            - spans
+            - next_cursor
+            - scanned_bytes
+          additionalProperties: false
+        success:
+          type: boolean
+          default: true
+          example: true
+          description: Whether the API call was successful
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+      required:
+        - result
+        - success
+        - errors
+        - messages
+    TraceSpan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        project_id:
+          type:
+            - string
+            - "null"
+        received_at:
+          type: string
+          format: date-time
+        trace_id:
+          type: string
+          pattern: ^[a-fA-F0-9]{32}$
+        span_id:
+          type: string
+          pattern: ^[a-fA-F0-9]{16}$
+        parent_span_id:
+          type:
+            - string
+            - "null"
+          pattern: ^[a-fA-F0-9]{16}$
+        name:
+          type: string
+        service:
+          type:
+            - string
+            - "null"
+        environment:
+          type:
+            - string
+            - "null"
+        kind:
+          type: integer
+        start_time_unix_nano:
+          type: string
+        end_time_unix_nano:
+          type: string
+        duration_ms:
+          type: number
+          minimum: 0
+        status_code:
+          type: integer
+        status_message:
+          type:
+            - string
+            - "null"
+        trace_state:
+          type:
+            - string
+            - "null"
+        flags:
+          type: integer
+        attributes:
+          type: object
+          additionalProperties:
+            type:
+              - object
+              - array
+              - string
+              - number
+              - boolean
+              - "null"
+        resource:
+          type: object
+          additionalProperties:
+            type:
+              - object
+              - array
+              - string
+              - number
+              - boolean
+              - "null"
+        scope:
+          type: object
+          additionalProperties:
+            type:
+              - object
+              - array
+              - string
+              - number
+              - boolean
+              - "null"
+        events:
+          type: array
+          items:
+            type:
+              - object
+              - array
+              - string
+              - number
+              - boolean
+              - "null"
+        links:
+          type: array
+          items:
+            type:
+              - object
+              - array
+              - string
+              - number
+              - boolean
+              - "null"
+        dropped_attributes_count:
+          type: integer
+        dropped_events_count:
+          type: integer
+        dropped_links_count:
+          type: integer
+      required:
+        - id
+        - project_id
+        - received_at
+        - trace_id
+        - span_id
+        - parent_span_id
+        - name
+        - service
+        - environment
+        - kind
+        - start_time_unix_nano
+        - end_time_unix_nano
+        - duration_ms
+        - status_code
+        - status_message
+        - trace_state
+        - flags
+        - attributes
+        - resource
+        - scope
+        - events
+        - links
+        - dropped_attributes_count
+        - dropped_events_count
+        - dropped_links_count
+      additionalProperties: false
     DnsCheckResponse:
       type: object
       properties:
@@ -6675,9 +7171,9 @@ paths:
       tags:
         - Logs
       operationId: getLogUsage
-      summary: Read log usage
+      summary: Read log and trace usage
       description: |-
-        Read log usage for the current billing period.
+        Read combined log and trace ingestion usage for the current billing period.
 
         Requires LOGS:READ.
       parameters:
@@ -6803,6 +7299,256 @@ paths:
                 $ref: '#/components/schemas/PublicApiServerError'
         "503":
           description: Log usage unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/traces:
+    post:
+      tags:
+        - Traces
+      operationId: exportOtlpTraces
+      security:
+        - api_token: []
+      summary: Export OpenTelemetry traces
+      description: Requires an API token with LOGS:SEND. Supports gzip compression.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtlpTraceExport'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: OTLP full success, in the request encoding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpTraceExportResponse'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid OTLP export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Missing or invalid API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "403":
+          description: Requires an explicit LOGS:SEND grant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "405":
+          description: Requires POST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "413":
+          description: Export or record exceeds a size limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "415":
+          description: Unsupported content type or compression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "429":
+          description: Shared logs and traces ingestion allowance exceeded
+          headers:
+            Retry-After:
+              description: Seconds until the next billing period
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+        "503":
+          description: Ingestion unavailable or delivery not confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtlpStatus'
+            application/x-protobuf:
+              schema:
+                type: string
+                format: binary
+    get:
+      tags:
+        - Traces
+      operationId: searchTraces
+      summary: Search spans
+      description: |-
+        Search spans by receipt time, optionally filtered to a trace ID. Traces and logs share the monthly ingestion allowance and 30-day retention.
+
+        Requires LOGS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            format: date-time
+            description: Inclusive server receipt time, in RFC 3339 format.
+          required: true
+          description: Inclusive server receipt time, in RFC 3339 format.
+          name: from
+          in: query
+        - schema:
+            type: string
+            format: date-time
+            description: Exclusive server receipt time, at most one hour after from.
+          required: true
+          description: Exclusive server receipt time, at most one hour after from.
+          name: to
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 50
+            maximum: 100
+          required: false
+          name: limit
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 512
+          required: false
+          name: cursor
+          in: query
+        - schema:
+            anyOf:
+              - type: string
+                minLength: 16
+                maxLength: 128
+                pattern: ^(?=.*[a-zA-Z-])[a-zA-Z0-9-]+$
+                example: a1b2c3d4e5f6g7h8
+                description: Project ID.
+              - type: string
+                enum:
+                  - unassigned
+          required: false
+          name: project_id
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 255
+          required: false
+          name: service
+          in: query
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          required: false
+          name: environment
+          in: query
+        - schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+          required: false
+          name: trace_id
+          in: query
+        - schema:
+            type: string
+            enum:
+              - "0"
+              - "1"
+              - "2"
+          required: false
+          name: status_code
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Matching spans and a continuation cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceSearchResponse'
+        "400":
+          description: Invalid or unbounded search request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Trace search unavailable
           content:
             application/json:
               schema:
