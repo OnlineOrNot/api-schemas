@@ -5826,8 +5826,9 @@ components:
           enum:
             - ADMIN
             - STANDARD
+            - BILLING
           example: STANDARD
-          description: The role of the user in the organisation
+          description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
       required:
         - id
         - first_name
@@ -5851,8 +5852,9 @@ components:
           enum:
             - ADMIN
             - STANDARD
+            - BILLING
           example: STANDARD
-          description: The role of the user in the organisation
+          description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
         created_at:
           type: string
           example: "2024-01-15T10:30:00Z"
@@ -14971,6 +14973,155 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+    patch:
+      tags:
+        - People
+      summary: Change a user's role
+      description: |-
+        Change a team member's role in your organisation. An organisation must keep at least one admin. Dashboard sessions must belong to an admin.
+
+        Requires PEOPLE:EDIT.
+      operationId: updateUserRole
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            example: abc123def
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              billingUser:
+                summary: Give a user billing-only access
+                value:
+                  role: BILLING
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - STANDARD
+                    - BILLING
+                  example: STANDARD
+                  description: The new role for the user in the organisation
+              required:
+                - role
+              additionalProperties: false
+      responses:
+        "200":
+          description: Returns the user ID and new role
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: ID of the updated user
+                      role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - STANDARD
+                          - BILLING
+                        example: STANDARD
+                        description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
+                    required:
+                      - id
+                      - role
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Bad Request - Invalid user ID, invalid role or the organisation would have no admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Not Found - User not in organisation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
   /v1/invitations:
     get:
       tags:
@@ -15183,6 +15334,11 @@ paths:
                 value:
                   email: admin@example.com
                   role: ADMIN
+              billingUser:
+                summary: Invite a billing-only user
+                value:
+                  email: finance@example.com
+                  role: BILLING
             schema:
               type: object
               properties:
@@ -15196,6 +15352,7 @@ paths:
                   enum:
                     - ADMIN
                     - STANDARD
+                    - BILLING
                   default: STANDARD
                   example: STANDARD
                   description: The role to assign to the invited user
