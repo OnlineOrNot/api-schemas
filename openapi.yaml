@@ -2156,9 +2156,6 @@ components:
                           - name
                           - startTimeUnixNano
                           - endTimeUnixNano
-                      maxItems: 100
-                maxItems: 100
-          maxItems: 100
     TraceSearchResponse:
       type: object
       properties:
