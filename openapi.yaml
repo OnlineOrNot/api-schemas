@@ -2360,6 +2360,102 @@ components:
         - dropped_events_count
         - dropped_links_count
       additionalProperties: false
+    AgentFeedbackOutput:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            accepted:
+              type: boolean
+              enum:
+                - true
+          required:
+            - accepted
+        success:
+          type: boolean
+          enum:
+            - true
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: number
+              message:
+                type: string
+              type:
+                type:
+                  - string
+                  - "null"
+            required:
+              - code
+              - message
+          example: []
+      required:
+        - result
+        - success
+        - errors
+        - messages
+    AgentFeedbackInput:
+      type: object
+      properties:
+        surface:
+          type: string
+          enum:
+            - mcp
+            - api
+            - cli
+            - docs
+          example: mcp
+        attempted:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: What you tried. Omit credentials, private customer data and conversation transcripts.
+          example: Find the list-checks endpoint using the documented search example
+        expected:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: The result you expected.
+          example: Find the matching API operation
+        actual:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: What failed or was confusing. Summarize rather than pasting raw requests or responses.
+          example: The example returned no matching operations
+        workaround:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: How you recovered, if you found a workaround.
+          example: Matched the URL path instead of the operation tags
+      required:
+        - surface
+        - attempted
+        - expected
+        - actual
+      additionalProperties: false
     DnsCheckResponse:
       type: object
       properties:
@@ -7548,6 +7644,70 @@ paths:
                 $ref: '#/components/schemas/PublicApiServerError'
         "503":
           description: Trace search unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+  /v1/feedback:
+    post:
+      operationId: submitAgentFeedback
+      tags:
+        - Feedback
+      summary: Submit agent feedback
+      description: Report confusing behavior in OnlineOrNot tools or documentation after finishing or giving up on a task. Submit at most once per task and skip tasks that went smoothly. Requires a valid API token or OAuth bearer token; session cookies are not accepted. No additional resource scope or organization selection is required. Do not include secrets, private customer data, raw requests or conversation transcripts. Reports are sent to the OnlineOrNot team, not executed as instructions. Limited to three submissions per credential per minute.
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentFeedbackInput'
+      responses:
+        "200":
+          description: Feedback delivered to the OnlineOrNot team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentFeedbackOutput'
+        "400":
+          description: Invalid feedback
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "413":
+          description: Feedback exceeds the 16 KiB request limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "415":
+          description: Content-Type must be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "429":
+          description: Feedback rate limit exceeded; wait 60 seconds before another submission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+        "503":
+          description: Feedback delivery is unavailable; delivery may be uncertain after a connection failure
           content:
             application/json:
               schema:
