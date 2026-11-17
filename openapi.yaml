@@ -7970,6 +7970,20 @@ paths:
                       result:
                         type: object
                         properties:
+                          profile:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                minLength: 1
+                              name:
+                                type: string
+                              email:
+                                type: string
+                            required:
+                              - id
+                            additionalProperties: false
+                            description: Connected organization identity for API tokens. Independent of the token ID.
                           id:
                             type: string
                             example: a1b2c3d4
@@ -15593,6 +15607,124 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublicApiServerError'
+  /v1/invitations/{invitation_id}:
+    delete:
+      tags:
+        - People
+      summary: Revoke an invitation
+      description: |-
+        Revoke a pending invitation so its link can no longer be used to join your organisation
+
+        Requires PEOPLE:EDIT.
+      operationId: revokeInvitation
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            example: inv123
+            description: The unique identifier of the invitation
+          required: true
+          description: The unique identifier of the invitation
+          name: invitation_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Returns the ID of the revoked invitation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: inv123
+                        description: ID of the revoked invitation
+                    required:
+                      - id
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Not Found - No pending invitation with this ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
   /v1/webhooks/{webhook_id}/move:
     post:
       operationId: moveWebhook
@@ -20340,6 +20472,11 @@ paths:
                     - UPDATE
                   example: INVESTIGATING
                   description: The current status of the incident
+                date_happened:
+                  type: string
+                  format: date-time
+                  example: "2026-01-15T10:00:00.000Z"
+                  description: When the incident and its first update occurred. Defaults to now. Must not be in the future.
                 components:
                   type: array
                   items:
@@ -21960,6 +22097,30 @@ paths:
                   minimum: 1
                   example: 120
                   description: Updated duration in minutes
+                components_affected:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - comp_abc123
+                    - comp_def456
+                  description: Component IDs affected by this maintenance. Replaces the current list; send an empty array to remove all components.
+                notifications:
+                  type: object
+                  properties:
+                    an_hour_before:
+                      type: boolean
+                      example: false
+                      description: Notify subscribers one hour before maintenance starts
+                    at_start:
+                      type: boolean
+                      example: true
+                      description: Notify subscribers when maintenance starts
+                    at_end:
+                      type: boolean
+                      example: true
+                      description: Notify subscribers when maintenance ends
+                  description: Updated subscriber notification settings. Settings left out keep their current value.
       responses:
         "200":
           description: Returns the updated scheduled maintenance
