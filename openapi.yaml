@@ -6831,7 +6831,7 @@ paths:
                 type: string
                 format: binary
         "429":
-          description: Log ingestion allowance exceeded
+          description: Log allowance and pay-as-you-go budget exceeded
           headers:
             Retry-After:
               description: Seconds until the next billing period
@@ -6971,7 +6971,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "429":
-          description: Log ingestion allowance exceeded
+          description: Log allowance and pay-as-you-go budget exceeded
           headers:
             Retry-After:
               description: Seconds until the next billing period
@@ -7266,9 +7266,9 @@ paths:
       tags:
         - Logs
       operationId: getLogUsage
-      summary: Read log and trace usage
+      summary: Read log and span usage
       description: |-
-        Read combined log and trace ingestion usage for the current billing period.
+        Read separate accepted log-byte and span allowances, plus shared USD pay-as-you-go spending, for the current billing month.
 
         Requires LOGS:READ.
       parameters:
@@ -7300,10 +7300,42 @@ paths:
                       used_bytes:
                         type: integer
                         minimum: 0
-                        description: Log bytes after decoding, including metadata.
+                        description: Accepted uncompressed log bytes, including metadata; excludes spans.
                       used_records:
                         type: integer
                         minimum: 0
+                        description: Accepted log records; excludes spans.
+                      used_spans:
+                        type: integer
+                        minimum: 0
+                      limit_spans:
+                        type: integer
+                        exclusiveMinimum: 0
+                        example: 5000000
+                      remaining_spans:
+                        type: integer
+                        minimum: 0
+                      payg_budget_cents:
+                        type: integer
+                        minimum: 0
+                      payg_used_cents:
+                        type: integer
+                        minimum: 0
+                      next_period_budget_cents:
+                        type: integer
+                        minimum: 0
+                      currency:
+                        type: string
+                        enum:
+                          - usd
+                      logs_price_cents_per_gb:
+                        type: number
+                        enum:
+                          - 50
+                      spans_price_cents_per_million:
+                        type: number
+                        enum:
+                          - 200
                       limit_bytes:
                         type: integer
                         minimum: 0
@@ -7320,6 +7352,15 @@ paths:
                       - period_end
                       - used_bytes
                       - used_records
+                      - used_spans
+                      - limit_spans
+                      - remaining_spans
+                      - payg_budget_cents
+                      - payg_used_cents
+                      - next_period_budget_cents
+                      - currency
+                      - logs_price_cents_per_gb
+                      - spans_price_cents_per_million
                       - limit_bytes
                       - remaining_bytes
                       - retention_days
@@ -7489,7 +7530,7 @@ paths:
                 type: string
                 format: binary
         "429":
-          description: Shared logs and traces ingestion allowance exceeded
+          description: Span allowance and pay-as-you-go budget exceeded
           headers:
             Retry-After:
               description: Seconds until the next billing period
@@ -7519,7 +7560,7 @@ paths:
       operationId: searchTraces
       summary: Search spans
       description: |-
-        Search spans by receipt time, optionally filtered to a trace ID. Traces and logs share the monthly ingestion allowance and 30-day retention.
+        Search spans by receipt time, optionally filtered to a trace ID. Spans have a separate five-million monthly allowance; logs and spans share an optional pay-as-you-go budget and 30-day retention.
 
         Requires LOGS:READ.
       parameters:
