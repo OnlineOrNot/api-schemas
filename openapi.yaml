@@ -7871,6 +7871,11 @@ paths:
                             - string
                             - "null"
                           example: 91.169.182.144
+                        user_agent:
+                          type:
+                            - string
+                            - "null"
+                          example: onlineornot-cli/1.4.0
                         created_at:
                           type: string
                           example: "2026-02-17T10:58:07.000Z"
@@ -7895,6 +7900,7 @@ paths:
                         - action
                         - location
                         - remote_ip
+                        - user_agent
                         - created_at
                         - metadata
                   result_info:
