@@ -42,6 +42,8 @@ servers:
   - url: https://api.onlineornot.com
     description: Client API
 tags:
+  - name: Teams
+    description: Find and manage organisation teams
   - name: Audit Logs
     description: View audit log events for your organisation
   - name: Tokens
@@ -5985,6 +5987,91 @@ components:
         - created_at
         - updated_at
       additionalProperties: false
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 12
+          maxLength: 12
+          pattern: ^[a-z0-9]+$
+          example: izkpm55j334u
+          description: Team ID.
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        membership_role:
+          type:
+            - string
+            - "null"
+          enum:
+            - ADMIN
+            - CONTRIBUTOR
+            - null
+        join_requested:
+          type: boolean
+        capabilities:
+          type: object
+          properties:
+            can_manage_team:
+              type: boolean
+            can_manage_members:
+              type: boolean
+            can_delete_team:
+              type: boolean
+            can_join:
+              type: boolean
+            can_leave:
+              type: boolean
+          required:
+            - can_manage_team
+            - can_manage_members
+            - can_delete_team
+            - can_join
+            - can_leave
+          additionalProperties: false
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+        - membership_role
+        - join_requested
+        - capabilities
+      additionalProperties: false
+    OrganisationAccessSettings:
+      type: object
+      properties:
+        open_membership:
+          type: boolean
+        capabilities:
+          type: object
+          properties:
+            can_change_open_membership:
+              type: boolean
+            can_create_team:
+              type: boolean
+            can_create_project:
+              type: boolean
+            can_manage_organisation_tokens:
+              type: boolean
+          required:
+            - can_change_open_membership
+            - can_create_team
+            - can_create_project
+            - can_manage_organisation_tokens
+          additionalProperties: false
+      required:
+        - open_membership
+        - capabilities
+      additionalProperties: false
     StatusPage:
       type: object
       properties:
@@ -8362,6 +8449,7 @@ paths:
                                         type: string
                                         enum:
                                           - PROJECTS
+                                          - TEAMS
                                           - LOGS
                                           - UPTIME_CHECKS
                                           - STATUS_PAGES
@@ -8500,6 +8588,7 @@ paths:
         - The API returns HTTP 403 if your token does not have a required permission.
         - This limit does not apply when you use session cookies. LOGS:EDIT and LOGS:SEND still require current ADMIN membership.
         - OAuth callers also require current ADMIN membership to issue LOGS:EDIT or LOGS:SEND.
+        - Session and OAuth callers need current organisation Admin membership to issue TEAMS:READ, TEAMS:EDIT, PROJECTS:EDIT, or PEOPLE:EDIT. Only an organisation-wide API token can delegate these grants, and it must already hold the requested authority.
         - LOGS:SEND can be combined with other explicitly granted permissions. Tokens with LOGS:SEND may specify project_id; omit it or use null for unassigned.
         - Project scope applies only to sending; other grants remain organisation-wide.
         - Issuing LOGS:SEND requires LOGS:EDIT or explicit LOGS:SEND delegation authority in addition to API_TOKENS:EDIT for bearer callers. LOGS:EDIT itself does not authorize sending logs.
@@ -8581,6 +8670,7 @@ paths:
                             type: string
                             enum:
                               - PROJECTS
+                              - TEAMS
                               - LOGS
                               - UPTIME_CHECKS
                               - STATUS_PAGES
@@ -8743,7 +8833,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
-          description: Your token does not have API_TOKENS:EDIT or a requested permission
+          description: Insufficient permissions to issue one or more requested grants
           content:
             application/json:
               schema:
@@ -8841,6 +8931,7 @@ paths:
                                   type: string
                                   enum:
                                     - PROJECTS
+                                    - TEAMS
                                     - LOGS
                                     - UPTIME_CHECKS
                                     - STATUS_PAGES
@@ -15082,7 +15173,7 @@ paths:
         - People
       summary: Remove a user from the organisation
       description: |-
-        Remove a team member from your organisation
+        Remove a team member from your organisation. Session and OAuth callers must be current organisation admins.
 
         Requires PEOPLE:EDIT.
       operationId: removeUser
@@ -15199,7 +15290,7 @@ paths:
         - People
       summary: Change a user's role
       description: |-
-        Change a team member's role in your organisation. An organisation must keep at least one admin. Dashboard sessions must belong to an admin.
+        Change a team member's role in your organisation. An organisation must keep at least one admin. Session and OAuth callers must be current organisation admins.
 
         Requires PEOPLE:EDIT.
       operationId: updateUserRole
@@ -15527,7 +15618,7 @@ paths:
         - People
       summary: Create an invitation
       description: |-
-        Send an invitation email to add a new team member to your organisation
+        Send an invitation email to add a new team member to your organisation. Session and OAuth callers must be current organisation admins.
 
         Requires PEOPLE:EDIT.
       operationId: createInvitation
@@ -15650,7 +15741,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
-          description: Forbidden - Plan limit reached
+          description: Forbidden - Insufficient permissions or plan limit reached
           content:
             application/json:
               schema:
@@ -15667,7 +15758,7 @@ paths:
         - People
       summary: Revoke an invitation
       description: |-
-        Revoke a pending invitation so its link can no longer be used to join your organisation
+        Revoke a pending invitation so its link can no longer be used to join your organisation. Session and OAuth callers must be current organisation admins.
 
         Requires PEOPLE:EDIT.
       operationId: revokeInvitation
@@ -16947,7 +17038,10 @@ paths:
         - Projects
       operationId: deleteProject
       summary: Delete an empty project
-      description: Requires PROJECTS:EDIT.
+      description: |-
+        Deleting a shared project removes all of its team links. Requires an organisation Admin, an Admin of an associated team, or an organisation-wide token with PROJECTS:EDIT.
+
+        Requires PROJECTS:EDIT.
       parameters:
         - name: X-OnlineOrNot-Organisation
           in: header
@@ -17046,7 +17140,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "403":
-          description: Insufficient permissions
+          description: Insufficient permissions to delete this project
           content:
             application/json:
               schema:
@@ -17065,6 +17159,2568 @@ paths:
                 $ref: '#/components/schemas/PublicApiErrorResponse'
         "429":
           description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams:
+    get:
+      operationId: listTeams
+      tags:
+        - Teams
+      summary: List teams
+      description: Requires TEAMS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    post:
+      operationId: createTeam
+      tags:
+        - Teams
+      summary: Create a team
+      description: |-
+        Requires a paid plan or an active trial.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+              required:
+                - name
+              additionalProperties: false
+      responses:
+        "201":
+          description: Team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Team'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Team name already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}:
+    get:
+      operationId: getTeam
+      tags:
+        - Teams
+      summary: Get a team
+      description: Requires TEAMS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Team'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    patch:
+      operationId: updateTeam
+      tags:
+        - Teams
+      summary: Rename a team
+      description: Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+              required:
+                - name
+              additionalProperties: false
+      responses:
+        "200":
+          description: Team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Team'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: Team name already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    delete:
+      operationId: deleteTeam
+      tags:
+        - Teams
+      summary: Delete a team
+      description: |-
+        Removes team memberships, pending join requests, and project links, and revokes pending organisation invitations with this team. Does not delete any projects or monitoring resources. In a closed organisation, a project with no remaining team is only accessible to organisation Admins and appropriately granted organisation credentials.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Deleted team ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        minLength: 12
+                        maxLength: 12
+                        pattern: ^[a-z0-9]+$
+                        example: izkpm55j334u
+                        description: Team ID.
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/members:
+    get:
+      operationId: listTeamMembers
+      tags:
+        - Teams
+      summary: List team members
+      description: Requires TEAMS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated team members
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: abc123
+                          description: The unique identifier of the user
+                        first_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Jane
+                          description: The user's first name
+                        last_name:
+                          type:
+                            - string
+                            - "null"
+                          example: Doe
+                          description: The user's last name
+                        email:
+                          type:
+                            - string
+                            - "null"
+                          example: jane@example.com
+                          description: The user's email address
+                        image:
+                          type:
+                            - string
+                            - "null"
+                          example: https://example.com/avatar.jpg
+                          description: URL to the user's avatar image
+                        role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - STANDARD
+                            - BILLING
+                          example: STANDARD
+                          description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
+                        team_role:
+                          type: string
+                          enum:
+                            - ADMIN
+                            - CONTRIBUTOR
+                      required:
+                        - id
+                        - first_name
+                        - last_name
+                        - email
+                        - image
+                        - role
+                        - team_role
+                      additionalProperties: false
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/members/{user_id}:
+    put:
+      operationId: setTeamMember
+      tags:
+        - Teams
+      summary: Set a team member’s role
+      description: |-
+        Adds an eligible organisation member or changes their role on this team. Assigning Team Admin requires Business. Does not change their organisation role.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+            example: abc123
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      security:
+        - api_token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - CONTRIBUTOR
+              required:
+                - role
+              additionalProperties: false
+      responses:
+        "200":
+          description: Team member
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: The unique identifier of the user
+                      first_name:
+                        type:
+                          - string
+                          - "null"
+                        example: Jane
+                        description: The user's first name
+                      last_name:
+                        type:
+                          - string
+                          - "null"
+                        example: Doe
+                        description: The user's last name
+                      email:
+                        type:
+                          - string
+                          - "null"
+                        example: jane@example.com
+                        description: The user's email address
+                      image:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/avatar.jpg
+                        description: URL to the user's avatar image
+                      role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - STANDARD
+                          - BILLING
+                        example: STANDARD
+                        description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
+                      team_role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - CONTRIBUTOR
+                    required:
+                      - id
+                      - first_name
+                      - last_name
+                      - email
+                      - image
+                      - role
+                      - team_role
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: User is not eligible for team membership
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    delete:
+      operationId: removeTeamMember
+      tags:
+        - Teams
+      summary: Remove a team member
+      description: Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+            example: abc123
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Removed user ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: The unique identifier of the user
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team or team member not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/join:
+    post:
+      operationId: joinTeam
+      tags:
+        - Teams
+      summary: Join a team or request to join
+      description: |-
+        Joins as Contributor if Open Membership is enabled; otherwise requests membership. Only a signed-in user or user-authorized OAuth caller can join for themselves. Repeating the request does not change an existing role or create another request.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Membership or pending request state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      state:
+                        type: string
+                        enum:
+                          - member
+                          - pending
+                    required:
+                      - state
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/membership:
+    delete:
+      operationId: leaveTeam
+      tags:
+        - Teams
+      summary: Leave a team
+      description: |-
+        Removes only the signed-in user’s own team membership. Organisation tokens cannot leave a team on behalf of a user.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Removed user ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: The unique identifier of the user
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team or team membership not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/join-requests:
+    get:
+      operationId: listTeamJoinRequests
+      tags:
+        - Teams
+      summary: List pending team join requests
+      description: |-
+        Team and organisation Admins can list pending requests. A requester can see their own pending state on the team detail response.
+
+        Requires TEAMS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated join requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        team_id:
+                          type: string
+                          minLength: 12
+                          maxLength: 12
+                          pattern: ^[a-z0-9]+$
+                          example: izkpm55j334u
+                          description: Team ID.
+                        user:
+                          $ref: '#/components/schemas/OrgUser'
+                        created_at:
+                          type: string
+                          format: date-time
+                      required:
+                        - team_id
+                        - user
+                        - created_at
+                      additionalProperties: false
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/join-requests/{user_id}/approve:
+    post:
+      operationId: approveTeamJoinRequest
+      tags:
+        - Teams
+      summary: Approve a team join request
+      description: |-
+        Creates a Contributor membership and removes the pending request.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+            example: abc123
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "201":
+          description: New team member
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: The unique identifier of the user
+                      first_name:
+                        type:
+                          - string
+                          - "null"
+                        example: Jane
+                        description: The user's first name
+                      last_name:
+                        type:
+                          - string
+                          - "null"
+                        example: Doe
+                        description: The user's last name
+                      email:
+                        type:
+                          - string
+                          - "null"
+                        example: jane@example.com
+                        description: The user's email address
+                      image:
+                        type:
+                          - string
+                          - "null"
+                        example: https://example.com/avatar.jpg
+                        description: URL to the user's avatar image
+                      role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - STANDARD
+                          - BILLING
+                        example: STANDARD
+                        description: The role of the user in the organisation. ADMIN manages the organisation, its members and billing. STANDARD manages monitoring resources. BILLING manages only the subscription, payment details and invoices, and cannot access monitoring data, members, projects or API tokens.
+                      team_role:
+                        type: string
+                        enum:
+                          - ADMIN
+                          - CONTRIBUTOR
+                    required:
+                      - id
+                      - first_name
+                      - last_name
+                      - email
+                      - image
+                      - role
+                      - team_role
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team or join request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "409":
+          description: User is not eligible for team membership
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/join-requests/{user_id}:
+    delete:
+      operationId: deleteTeamJoinRequest
+      tags:
+        - Teams
+      summary: Reject or cancel a team join request
+      description: |-
+        An Admin can reject a request. The requester can cancel their own request.
+
+        Requires TEAMS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+            example: abc123
+            description: The unique identifier of the user
+          required: true
+          description: The unique identifier of the user
+          name: user_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: User ID of requester
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: abc123
+                        description: The unique identifier of the user
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team or join request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/teams/{team_id}/projects:
+    get:
+      operationId: listTeamProjects
+      tags:
+        - Teams
+      summary: List visible projects shared with a team
+      description: Requires PROJECTS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/projects/{project_id}/teams:
+    get:
+      operationId: listProjectTeams
+      tags:
+        - Teams
+      summary: List teams sharing a project
+      description: Requires PROJECTS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 128
+            pattern: ^(?:[0-9a-z]{12}|(?=[a-zA-Z0-9-]*[a-zA-Z-])[a-zA-Z0-9-]{16,128})$
+            example: a1b2c3d4e5f6g7h8
+            description: Project ID.
+          required: true
+          description: Project ID.
+          name: project_id
+          in: path
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+            description: Page number of paginated results, starting at 1.
+          required: false
+          description: Page number of paginated results, starting at 1.
+          name: page
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+            default: 20
+            example: 20
+            description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          required: false
+          description: Number of items per page. Defaults to 20. Continue requesting subsequent pages until the accumulated item count reaches result_info.total_count or a page is empty.
+          name: per_page
+          in: query
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Paginated teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+                  result_info:
+                    type: object
+                    properties:
+                      page:
+                        type: number
+                        default: 1
+                        example: 1
+                        description: Page number of paginated results.
+                      per_page:
+                        type: number
+                        default: 20
+                        example: 20
+                        description: Number of items per page.
+                      count:
+                        type: number
+                        example: 1
+                        description: Number of items on the current page.
+                      total_count:
+                        type: number
+                        example: 1
+                        description: Total number of items.
+                    required:
+                      - count
+                      - total_count
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - result_info
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/projects/{project_id}/teams/{team_id}:
+    put:
+      operationId: addProjectTeam
+      tags:
+        - Teams
+      summary: Share a project with a team
+      description: |-
+        Project Admins can share with any team in their organisation. Repeating the operation does not duplicate the team link.
+
+        Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 128
+            pattern: ^(?:[0-9a-z]{12}|(?=[a-zA-Z0-9-]*[a-zA-Z-])[a-zA-Z0-9-]{16,128})$
+            example: a1b2c3d4e5f6g7h8
+            description: Project ID.
+          required: true
+          description: Project ID.
+          name: project_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Team
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Team'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project or team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+    delete:
+      operationId: removeProjectTeam
+      tags:
+        - Teams
+      summary: Remove a project’s link to a team
+      description: |-
+        Only organisation Admins or Admins of the team being removed can detach it. In a closed organisation, removing the last team leaves the project accessible only to organisation Admins and appropriately granted organisation credentials.
+
+        Requires PROJECTS:EDIT.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 12
+            pattern: ^[a-z0-9]+$
+            example: izkpm55j334u
+            description: Team ID.
+          required: true
+          description: Team ID.
+          name: team_id
+          in: path
+        - schema:
+            type: string
+            minLength: 12
+            maxLength: 128
+            pattern: ^(?:[0-9a-z]{12}|(?=[a-zA-Z0-9-]*[a-zA-Z-])[a-zA-Z0-9-]{16,128})$
+            example: a1b2c3d4e5f6g7h8
+            description: Project ID.
+          required: true
+          description: Project ID.
+          name: project_id
+          in: path
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Detached team ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        minLength: 12
+                        maxLength: 12
+                        pattern: ^[a-z0-9]+$
+                        example: izkpm55j334u
+                        description: Team ID.
+                    required:
+                      - id
+                    additionalProperties: false
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "404":
+          description: Project, team or link not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiServerError'
+  /v1/organisation/access-settings:
+    get:
+      operationId: getOrganisationAccessSettings
+      tags:
+        - Teams
+      summary: Get organisation access settings
+      description: Requires TEAMS:READ.
+      parameters:
+        - name: X-OnlineOrNot-Organisation
+          in: header
+          required: false
+          description: Public organization ID to select from an OAuth grant. Required for grants authorizing multiple organizations. Omit for single-organization grants and API tokens.
+          schema:
+            type: string
+      security:
+        - api_token: []
+      responses:
+        "200":
+          description: Organisation access settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/OrganisationAccessSettings'
+                  success:
+                    type: boolean
+                    default: true
+                    example: true
+                    description: Whether the API call was successful
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                        type:
+                          type:
+                            - string
+                            - "null"
+                      required:
+                        - code
+                        - message
+                    example: []
+                required:
+                  - result
+                  - success
+                  - errors
+                  - messages
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiBadRequest'
+        "401":
+          description: Missing or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiErrorResponse'
+        "403":
+          description: Insufficient permissions
           content:
             application/json:
               schema:
